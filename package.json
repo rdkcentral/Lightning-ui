@@ -1,0 +1,17 @@
+{
+  "name": "@lightningjs/ui",
+  "version": "1.0.0",
+  "description": "Standard UI components for Lightning",
+  "dependencies": {
+    "@lightningjs/core": "2.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jfboeve/Lightning-UI.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jfboeve/Lightning-UI/issues"
+  },
+  "homepage": "https://github.com/jfboeve/Lightning-UI#readme"
+}
