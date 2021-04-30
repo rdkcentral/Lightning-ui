@@ -106,7 +106,7 @@ export default class Carousel extends CollectionWrapper {
         if(orientation !== this._direction) {
             return false;
         }
-
+        this._cleanUp();
         const targetIndex = this._index + shift;
         const childList = this.wrapper.childList;
         const {main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
@@ -136,12 +136,11 @@ export default class Carousel extends CollectionWrapper {
         if(shift > 0) {
             this._index = targetIndex;
         }
-        this._cleanUp();
         this._indexChanged({previousIndex: currentDataIndex, index: currentDataIndex + shift, dataLength: this._items.length});
         return true;
     }
 
-    _cleanUp(time = 1000) {
+    _cleanUp(time = 500) {
         if(this._cleanUpDebounce) {
             clearTimeout(this._cleanUpDebounce);
         }
@@ -150,15 +149,16 @@ export default class Carousel extends CollectionWrapper {
             const {main, mainDim, directionIsRow} = this._getPlotProperties(this._direction);
             const bound = this[mainDim];
             const viewboundMain = directionIsRow ? 1920 : 1080;
-            const offset = Math.abs(this._scrollTransition && this._scrollTransition.targetValue || 0);
+            const offset = this._scrollTransition && this._scrollTransition.targetValue || 0;
             
             let split = undefined;
-            const boundStart = - viewboundMain * 0.75;
-            const boundEnd = bound + viewboundMain * 0.75;
-            const rem = children.reduce((acc, child, index) => {
-                if(( offset - (child[main] + child[mainDim]) > boundEnd) ||
-                    (offset + child[main] < boundStart)) {
-                    if(index - acc[acc.length - 1] > 1) {
+            const boundStart = viewboundMain * 0.66;
+            const boundEnd = bound + viewboundMain * 0.66;
+            
+            let rem = children.reduce((acc, child, index) => {
+                if((offset + (child[main] + child[mainDim]) > bound + boundEnd) ||
+                    (offset + child[main] < -boundStart)) {
+                    if(acc[acc.length - 1] && index - acc[acc.length - 1] !== 1) {
                         split = acc.length;
                     }
                     acc.push(index);
@@ -167,10 +167,11 @@ export default class Carousel extends CollectionWrapper {
             }, []);
 
             if(rem.length > 0) {
-                rem.reverse().forEach((index) => {
+                rem.sort((a, b) => a - b).reverse().forEach((index) => {
                     this.wrapper.childList.removeAt(index);
                 });
-                this._index = this._index - (split || rem.length);
+                split = offset < 0 ? split || rem.length : split || 0;
+                this._index = this._index - split;
             }
         }, time)
     }

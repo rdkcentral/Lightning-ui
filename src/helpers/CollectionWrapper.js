@@ -209,7 +209,7 @@ export default class CollectionWrapper extends Lightning.Component {
         const {main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
         const cw = this.currentItemWrapper;
         const bound = this[mainDim];
-        const offset = Math.abs(this._scrollTransition && this._scrollTransition.targetValue || 0);
+        const offset = this._scrollTransition && this._scrollTransition.targetValue || 0;
 
         const sizes = this._getItemSizes(cw);
         const marginFrom = (sizes[mainMarginFrom] || sizes.margin || 0);
@@ -250,10 +250,10 @@ export default class CollectionWrapper extends Lightning.Component {
             else {
                 const backwardBound = bound * this._normalizePixelToPercentage(backward, bound);
                 const forwardBound = bound * this._normalizePixelToPercentage(forward, bound);
-                if(target < max - 1 && (previous < target && cw[main] + cw[mainDim] > offset + forwardBound)) {
+                if(target < max - 1 && (previous < target && offset + cw[main] + cw[mainDim] > forwardBound)) {
                     scroll = forwardBound - (cw[main] + cw[mainDim]);
                 }
-                else if(target > 0 && (target < previous && cw[main] < offset + back)) {
+                else if(target > 0 && (target < previous && offset + cw[main] < back)) {
                     scroll = backwardBound - cw[main];
                 }
                 else if(target === max - 1) {
@@ -265,10 +265,10 @@ export default class CollectionWrapper extends Lightning.Component {
             }
         }
         else if(isNaN(scroll)){
-            if(previous < target && cw[main] + cw[mainDim] > offset + bound) {
+            if(previous < target && offset + cw[main] + cw[mainDim] > bound) {
                 scroll = bound - (cw[main] + cw[mainDim])
             }
-            else if(target < previous && cw[main] < offset) {
+            else if(target < previous && offset + cw[main] < 0) {
                 scroll = marginFrom - cw[main]
             }
         }
