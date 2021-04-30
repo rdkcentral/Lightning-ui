@@ -7,10 +7,10 @@ The List component provides a collection wrapper to display Items in either a Ro
 If you want to use the List component, import it from Lightning UI.
 
 ```js
-import { List } from '@lightningjs/sdk'
+import { List } from '@lightningjs/ui'
 ```
 
-### initialize
+### Initialize
 
 To use the List component you create an instance with the `type` List:
 
