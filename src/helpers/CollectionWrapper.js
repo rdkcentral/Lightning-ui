@@ -207,9 +207,12 @@ export default class CollectionWrapper extends Lightning.Component {
             target = mainIndex;
             max = lines;
         }
-        const {main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
+        const {directionIsRow, main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
         const cw = this.currentItemWrapper;
-        const bound = this[mainDim];
+        let bound = this[mainDim];
+        if(bound === 0) {
+            bound = directionIsRow ? 1920 : 1080;
+        }
         const offset = this._scrollTransition && this._scrollTransition.targetValue || 0;
 
         const sizes = this._getItemSizes(cw);
@@ -378,7 +381,7 @@ export default class CollectionWrapper extends Lightning.Component {
         })
         .filter((item) => {
             if(!isNaN(item)) {
-                Log.warn(`Item at index: ${item}, is not a valid item. Removing it from dataset`);
+                console.warn(`Item at index: ${item}, is not a valid item. Removing it from dataset`);
                 return false;
             }
             return true;

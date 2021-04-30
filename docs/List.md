@@ -24,47 +24,70 @@ class MyApp extends Lightning.Application {
 }
 ```
 
-You can pass additional parameters to your List:
+You can pass additional parameters to your List, for example if you want your List to be displayed as a Row:
 
 ```js
 {
     MyList: {
         type: List,
-        x,
-        y   
+        direction: 'row'
     }
 }
 ```
 
-### adding Items
-
-You can add Items to the List on the fly by using the `add` method:
-
+or if you want your List to be displayed as a Column:
 ```js
-class MyApp extends Lightning.Application {
-    _setup() {
-        this.tag('MyList').add([
-            {type: Item, w: 400, h: 300, label: '1'},
-            {type: Item, w: 400, h: 300, label: '2'},
-            {type: Item, w: 400, h: 300, label: '3'},
-            {type: Item, w: 400, h: 300, label: '4'}
-        ])
+{
+    MyList: {
+        type: List,
+        direction: 'row'
     }
 }
 ```
 
-### clear Items
+## Available methods
 
+### setIndex
+You can set the index of the List by using the `setIndex` method: 
+```js
+this.tag('MyList').setIndex(index)
+```
+The parameter `index` should be a number starting from 0.
+
+### add
+You can add items to the List on the fly by using the `add` method:
+```js
+this.tag('MyList').add(items)
+```
+The parameter `items` can either be an array, object, string, or number.
+
+### addAt
+You can add items to the List at a starting from a specific index using the `addAt` method:
+```js
+this.tag('MyList').addAt(items, index)
+```
+The parameter `items` can either be an array, object, string, or number. The parameter `index` should be a number starting from 0.
+
+### removeAt
+You can remove item at a specific index by using the `removeAt` method:
+```js
+this.tag('MyList').removeAt(index)
+```
+The parameter `index` should be a number starting from 0.
+
+### remove
+You can let the List remove a specific item by using the `remove` method:
+```js
+this.tag('MyList').remove(item)
+```
+The parameter `item` should be a component that exists in the dataset of the List.
+
+### clear
 you can clear al existing items in the List by using the `clear` method:
-
 ```js
-class MyApp extends Lightning.Application {
-    _inactive() {
-        this.tag('MyList').clear()
-    }
-}
+this.tag('MyList').clear()
 ```
 
+## Setters
 
-
-
+## Getters
