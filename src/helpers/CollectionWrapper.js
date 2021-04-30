@@ -1,7 +1,8 @@
-import { Lightning, Log } from "@lightningjs/sdk";
+
+import Lightning from '@lightningjs/core';
 import { limitWithinRange } from './index.js';
 
-export default class CollectionWrapper extends Lightning.Component {
+export default class CollectionWrapper extends Lightning {
     static _template() {
         return {
             Wrapper: {

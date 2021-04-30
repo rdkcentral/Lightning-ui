@@ -1,4 +1,4 @@
-import { CollectionWrapper, ItemWrapper, limitWithinRange} from "./helpers";
+import { CollectionWrapper, ItemWrapper} from "./helpers";
 
 export default class Carousel extends CollectionWrapper {
     static _template() {
