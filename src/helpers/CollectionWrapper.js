@@ -2,7 +2,7 @@
 import Lightning from '@lightningjs/core';
 import { limitWithinRange } from './index.js';
 
-export default class CollectionWrapper extends Lightning {
+export default class CollectionWrapper extends Lightning.Component {
     static _template() {
         return {
             Wrapper: {
