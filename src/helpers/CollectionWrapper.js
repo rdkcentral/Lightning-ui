@@ -1,4 +1,4 @@
-import Lightning from "@lightningjs/core";
+import { Lightning, Log } from "@lightningjs/sdk";
 import { limitWithinRange } from './index.js';
 
 export default class CollectionWrapper extends Lightning.Component {
@@ -49,7 +49,7 @@ export default class CollectionWrapper extends Lightning.Component {
                 this.signal('onRequestForItems', obj)
                     .then((response) => {
                         if(Array.isArray(response)) {
-                            this.addItems(response);
+                            this.add(response);
                         }
                         this._requestingItems = false;
                     })
@@ -377,7 +377,7 @@ export default class CollectionWrapper extends Lightning.Component {
         })
         .filter((item) => {
             if(!isNaN(item)) {
-                console.warn(`Item at index: ${item}, is not a valid item. Removing it from dataset`);
+                Log.warn(`Item at index: ${item}, is not a valid item. Removing it from dataset`);
                 return false;
             }
             return true;

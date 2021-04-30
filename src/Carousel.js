@@ -106,62 +106,78 @@ export default class Carousel extends CollectionWrapper {
         if(orientation !== this._direction) {
             return false;
         }
+
         const targetIndex = this._index + shift;
         const childList = this.wrapper.childList;
-        const scroll = this.scroll;
-        const scrollIsAnchored = !isNaN(scroll);
         const {main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
-        
-        const bound = this[mainDim];
-        const offset = Math.abs(this._scrollTransition && this._scrollTransition.targetValue || 0);
-
         const currentDataIndex = this.currentItemWrapper.componentIndex;
-        let outOfBounds = true;
+        let referenceItem = childList.last;
+        if(shift < 0) {
+            referenceItem = childList.first;
+        }
 
-        const target = childList.getAt(targetIndex);
-        if(!scrollIsAnchored && shift > 0 && (target[main] + target[mainDim]) <= offset + bound) {
-            outOfBounds = false;
+        const targetDataIndex = this._normalizeDataIndex(referenceItem.componentIndex + shift);
+        const targetItem = this._items[targetDataIndex];
+        const sizes = this._getItemSizes(targetItem);
+        
+        let position = referenceItem[main] + (referenceItem[mainMarginFrom] || sizes.margin) + referenceItem[mainDim] + (sizes[mainMarginTo] || sizes.margin || this.spacing);
+        if(shift < 0) {
+            position = referenceItem[main] - (referenceItem[mainMarginTo] || sizes.margin)  - (sizes[mainDim] + (sizes[mainMarginFrom] || sizes.margin || this._spacing));
         }
-        else if(!scrollIsAnchored && shift < 0 && target[main] >= offset + 0) {
-            outOfBounds = false;
-        }
-        if(!outOfBounds) {
+        const child = this.stage.c({
+            type: ItemWrapper,
+            componentIndex: targetDataIndex,
+            forceLoad: this._forceLoad,
+            ...sizes,
+            [main]: position
+        });
+
+        childList.addAt(child, shift > 0 ? childList.length : 0);
+        if(shift > 0) {
             this._index = targetIndex;
-            this._indexChanged({previousIndex: currentDataIndex, index: targetIndex, dataLength: this._items.length})
         }
-        else {
-            let referenceItem = childList.last;
-            let removeAt = 0;
-
-            if(shift < 0) {
-                referenceItem = childList.first;
-                removeAt = childList.length - 1;
-            }
-
-            const targetDataIndex = this._normalizeDataIndex(referenceItem.componentIndex + shift);
-            const targetItem = this._items[targetDataIndex];
-            const sizes = this._getItemSizes(targetItem);
-            
-            let position = referenceItem[main] + (referenceItem[mainMarginFrom] || sizes.margin) + referenceItem[mainDim] + (sizes[mainMarginTo] || sizes.margin || this.spacing);
-
-            if(shift < 0) {
-                position = referenceItem[main] - (referenceItem[mainMarginTo] || sizes.margin)  - (sizes[mainDim] + (sizes[mainMarginFrom] || sizes.margin || this._spacing));
-            }
-
-            childList.removeAt(removeAt);
-
-            const child = this.stage.c({
-                type: ItemWrapper,
-                componentIndex: targetDataIndex,
-                forceLoad: this._forceLoad,
-                ...sizes,
-                [main]: position
-            });
-
-            childList.addAt(child, shift > 0 ? childList.length : 0);
-            this._indexChanged({previousIndex: currentDataIndex, index: currentDataIndex + shift, dataLength: this._items.length});
-        }
+        this._cleanUp();
+        this._indexChanged({previousIndex: currentDataIndex, index: currentDataIndex + shift, dataLength: this._items.length});
         return true;
+    }
+
+    _cleanUp(time = 1000) {
+        if(this._cleanUpDebounce) {
+            clearTimeout(this._cleanUpDebounce);
+        }
+        this._cleanUpDebounce = setTimeout(() => {
+            const children = this.wrapper.children;
+            const {main, mainDim, directionIsRow} = this._getPlotProperties(this._direction);
+            const bound = this[mainDim];
+            const viewboundMain = directionIsRow ? 1920 : 1080;
+            const offset = Math.abs(this._scrollTransition && this._scrollTransition.targetValue || 0);
+            
+            let split = undefined;
+            const boundStart = - viewboundMain * 0.75;
+            const boundEnd = bound + viewboundMain * 0.75;
+            const rem = children.reduce((acc, child, index) => {
+                if(( offset - (child[main] + child[mainDim]) > boundEnd) ||
+                    (offset + child[main] < boundStart)) {
+                    if(index - acc[acc.length - 1] > 1) {
+                        split = acc.length;
+                    }
+                    acc.push(index);
+                }
+                return acc;
+            }, []);
+
+            if(rem.length > 0) {
+                rem.reverse().forEach((index) => {
+                    this.wrapper.childList.removeAt(index);
+                });
+                this._index = this._index - (split || rem.length);
+            }
+        }, time)
+    }
+
+    _inactive() {
+        this._cleanUp();
+        super._inactive();
     }
 
     set threshold(num) {
