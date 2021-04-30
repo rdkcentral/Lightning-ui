@@ -40,7 +40,7 @@ or if you want your List to be displayed as a Column:
 {
     MyList: {
         type: List,
-        direction: 'row'
+        direction: 'column'
     }
 }
 ```
