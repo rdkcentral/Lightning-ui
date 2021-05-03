@@ -14,7 +14,7 @@ export default class CollectionWrapper extends Lightning.Component {
         this._direction = CollectionWrapper.DIRECTION.row;
         this._scrollTransitionSettings = this.stage.transitions.createSettings({});
 
-        this._spacing = 5;
+        this._spacing = 0;
         this._autoResize = false;
         
         this._requestingItems = false;
@@ -293,6 +293,7 @@ export default class CollectionWrapper extends Lightning.Component {
     $childInactive({child}) {
         if(typeof child === 'object') {
             const index = child.componentIndex;
+            child.component._spawned = false;
             for(let key in this._items[index]) {
                 if(child.component[key] !== undefined) {
                     this._items[index][key] = child.component[key];
@@ -303,6 +304,7 @@ export default class CollectionWrapper extends Lightning.Component {
     }
 
     $getChildComponent({index}) {
+        this._items[index]._spawned = true;
         return this._items[index];
     }
 
@@ -394,7 +396,7 @@ export default class CollectionWrapper extends Lightning.Component {
         }
         if(typeof item === 'object') {
             let id = this._generateUniqueID();
-            return {assignedID: id, type: this.itemType, collectionWrapper: this, ...item}
+            return {assignedID: id, type: this.itemType, collectionWrapper: this, _spawned: false, ...item}
         }
         return false;
     }
@@ -480,7 +482,7 @@ export default class CollectionWrapper extends Lightning.Component {
         return this.wrapper.children[this._index];
     }
 
-    get currentItemComponent() {
+    get currentItem() {
         return this.currentItemWrapper.component;
     }
 
@@ -498,7 +500,13 @@ export default class CollectionWrapper extends Lightning.Component {
     }
 
     get items() {
-        return this._items;
+        const itemWrapper = this.itemWrappers;
+        return this._items.map((item, index) => {
+            if(item._spawned) {
+                return itemWrapper[index].component;
+            }
+            return item;
+        });
     }
 
     get length() {
@@ -528,12 +536,12 @@ export default class CollectionWrapper extends Lightning.Component {
         return this._scrollTransition;
     }
 
-    set scrollTo(value) {
-        this._scrollTo = value;
+    set scroll(value) {
+        this._scroll = value;
     }
 
     get scrollTo() {
-        return this._scrollTo;
+        return this._scroll;
     }
 
     set autoResize(bool) {
