@@ -18,7 +18,7 @@ export default class CollectionWrapper extends Lightning.Component {
         this._autoResize = false;
         
         this._requestingItems = false;
-        this._requestMoreThreshold = 1;
+        this._requestThreshold = 1;
         this._requestsEnabled = false;
 
         this._gcThreshold = 5;
@@ -37,7 +37,7 @@ export default class CollectionWrapper extends Lightning.Component {
         this._scrollTransition = this.wrapper.transition(axis);
     }
     
-    _indexChanged(obj) {
+    _indexChanged(obj) {    
         let {previousIndex:previous, index:target, dataLength:max, mainIndex, previousMainIndex, lines} = obj;
         if(!isNaN(previousMainIndex) && !isNaN(mainIndex) && !isNaN(lines)) {
             previous = previousMainIndex;
@@ -45,12 +45,16 @@ export default class CollectionWrapper extends Lightning.Component {
             max = lines;
         }
         if(this._requestsEnabled && !this._requestingItems) {
-            if(previous < target && target + this._requestMoreThreshold >= max) {
+            if(previous < target && target + this._requestThreshold >= max) {
                 this._requestingItems = true;
-                this.signal('onRequestForItems', obj)
+                this.signal('onRequestItems', obj)
                     .then((response) => {
-                        if(Array.isArray(response)) {
+                        const type = typeof response;
+                        if(Array.isArray(response) || type === 'object' ||  type === 'string' || type === 'number') {
                             this.add(response);
+                        }
+                        if(response === false) {
+                            this.enableRequests = false;
                         }
                         this._requestingItems = false;
                     })
@@ -151,7 +155,6 @@ export default class CollectionWrapper extends Lightning.Component {
 
     repositionItems() {
         //placeHolder
-        this.signal('onItemsRepositioned');
     }
 
     up() {
@@ -447,11 +450,11 @@ export default class CollectionWrapper extends Lightning.Component {
     }
 
     set requestThreshold(num) {
-        this._requestMoreThreshold = num;
+        this._requestThreshold = num;
     }
 
-    get requestMoreThreshold() {
-        return this._requestMoreThreshold;
+    get requestThreshold() {
+        return this._requestThreshold;
     }
 
     set enableRequests(bool) {
@@ -459,7 +462,7 @@ export default class CollectionWrapper extends Lightning.Component {
     }
 
     get enableRequests() {
-        return this._requestsThreshold
+        return this._requestsEnabled
     }
 
     set gcThreshold(num) {

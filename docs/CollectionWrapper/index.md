@@ -235,12 +235,89 @@ this.tag('MyGrid').gcThreshold = 10
 This example will call the garbage collector every time 10 items have become inactive.
 
 ## Requests
+Sometimes datasets are split in multiple pages, the Collection Wrapper allows you to set up a Paging functionality that starts requesting for data when you reach a specific point in the collection:
 
+```js
+//in the template
+{
+    MyGrid: {type: Grid, enableRequests: true, requestThreshold: 3}
+}
 
+//in methods
+this.tag('MyGrid').enableRequests = true
+this.tag('MyGrid').requestThreshold = 3
+```
+The example above shows the first step in setting the paging functionality, `enableRequests` activates it, and `requestThreshold` determines how many Items (With a Grid these are either `rows` or `columns`) before the end of the current Collection it should start requesting for items.
 
+The Collection Wrapper requests for more items through the `signal` functionality in Lightning.
 
+```js
+class MyApp extends Lightning.Application {
+    static _template() {
+        return {
+            MyGrid: {type: Grid, signals: {onRequestItems: true}}
+        }
+    }
 
+    onRequestItems(indexData) {
+        return MyApiCall()
+            .then((response) => {
+                //return an array of Items or a single item.
+                return reponse.items
+            });
+    }
+}
+```
 
+## Signals
+The Collection Wrapper makes use of signals if you want to respond to certain actions:
+```js
+//in template
+{
+    MyGrid: {type: Grid, signals: {onIndexChanged: true}}
+}
+
+onIndexChanged(indexData) {
+    
+}
+```
+
+If you have multiple Collection Wrappers in one view, you can rename the signal to something like this:
+```js
+//in template
+{
+    MyList: {type: List, signals: {onIndexChanged: 'listIndexChanged'}},
+    MyGrid: {type: Grid, signals: {onIndexChanged: 'gridIndexChanged'}}
+}
+
+listIndexChanged(indexData) {
+    
+}
+gridIndexChanged(indexData) {
+    
+}
+```
+
+### onIndexChanged
+This signal is fired when the index has changed. This signal generally comes with the following object:
+```js
+{
+    index,
+    previousIndex,
+    dataLength
+}
+```
+
+### onRequestItems
+This signal is fired when the Collection Wrapper is requesting for more data. This signal generally comes with the following object:
+```js
+{
+    index,
+    previousIndex,
+    dataLength
+}
+```
+This signal requires you to return a promise that returns either Item, or if there are no Item you should return `false`. If you return `false` the enableRequest will be automatically changed to `false` aswell.
 
 
 ## Available methods
