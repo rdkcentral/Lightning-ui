@@ -94,7 +94,7 @@ export default class CollectionWrapper extends Lightning.Component {
 
     addAt(item, index = this._items.length) {
         if(index >= 0 && index <= this._items.length) {
-            if(typeof item == 'object' && !Array.isArray(item)) {
+            if(!Array.isArray(item)) {
                 item = [item];
             }
             const items = this._normalizeDataItems(item);
@@ -131,13 +131,8 @@ export default class CollectionWrapper extends Lightning.Component {
     }
 
     reload(item) {
-        if(typeof item == 'object') {
-            item = [item];
-        }
         this.clear();
-        const items = this._normalizeDataItems(item);
-        this._items = items;
-        this.plotItems(items);
+        this.add(item)
     }
 
     plotItems(items, options) {
