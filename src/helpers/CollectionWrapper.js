@@ -135,7 +135,7 @@ export default class CollectionWrapper extends Lightning.Component {
             item = [item];
         }
         this.clear();
-        const items = this._normalizeDataItems(items);
+        const items = this._normalizeDataItems(item);
         this._items = items;
         this.plotItems(items);
     }
