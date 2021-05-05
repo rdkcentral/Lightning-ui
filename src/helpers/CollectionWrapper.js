@@ -150,6 +150,7 @@ export default class CollectionWrapper extends Lightning.Component {
 
     repositionItems() {
         //placeHolder
+        this.signal('onItemsRepositioned')
     }
 
     up() {
