@@ -401,7 +401,7 @@ export default class CollectionWrapper extends Lightning.Component {
             let id = this._generateUniqueID();
             return {assignedID: id, type: this.itemType, collectionWrapper: this, isAlive: false, ...item}
         }
-        return false;
+        return index;
     }
 
     _normalizePixelToPercentage(value, max) {
