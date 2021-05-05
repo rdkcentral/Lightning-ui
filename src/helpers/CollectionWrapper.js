@@ -296,7 +296,7 @@ export default class CollectionWrapper extends Lightning.Component {
     $childInactive({child}) {
         if(typeof child === 'object') {
             const index = child.componentIndex;
-            child.component._spawned = false;
+            child.component.isAlive = false;
             for(let key in this._items[index]) {
                 if(child.component[key] !== undefined) {
                     this._items[index][key] = child.component[key];
@@ -307,7 +307,7 @@ export default class CollectionWrapper extends Lightning.Component {
     }
 
     $getChildComponent({index}) {
-        this._items[index]._spawned = true;
+        this._items[index].isAlive = true;
         return this._items[index];
     }
 
@@ -399,7 +399,7 @@ export default class CollectionWrapper extends Lightning.Component {
         }
         if(typeof item === 'object') {
             let id = this._generateUniqueID();
-            return {assignedID: id, type: this.itemType, collectionWrapper: this, _spawned: false, ...item}
+            return {assignedID: id, type: this.itemType, collectionWrapper: this, isAlive: false, ...item}
         }
         return false;
     }
@@ -505,7 +505,7 @@ export default class CollectionWrapper extends Lightning.Component {
     get items() {
         const itemWrapper = this.itemWrappers;
         return this._items.map((item, index) => {
-            if(item._spawned) {
+            if(item.isAlive) {
                 return itemWrapper[index].component;
             }
             return item;
