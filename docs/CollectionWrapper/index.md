@@ -1,11 +1,16 @@
 # Collection Wrapper
 
-The Collection Wrapper is the base `class` for the List, Grid, and Carousel. The main purpose of the Collection Wrapper is to manage the Items that are added to the Collection Wrapper and provide necessary methods to manipulate these Items. The List, Grid, and Carousel are extended from the Collection Wrapper in order to display data in their own specific way. The Collection Wrapper also features a default scroll functionality and the possibility to customize this.
+The Collection Wrapper is the base `class` for the List, Grid, and Carousel. The main purpose of the Collection Wrapper is to manage the Items that are added to the Collection Wrapper and provide necessary methods to manipulate these Items. The Collection Wrappers also makes sure that non-active Items are not always loaded in, through use of an ItemWrapper.
+
+The List, Grid, and Carousel are extended from the Collection Wrapper in order to display data in their own specific way. The Collection Wrapper also features a default scroll functionality and the possibility to customize this.
+
+## ItemWrapper
+ItemWrappers are used to load the desired Item at a specific position. The ItemWrapper also makes sure the Item is unloaded when it has become `inactive`, and loaded again when its `active`.
 
 ## Items
 
 ### Basics
-When we talk about Items, we talk about Buttons, Menu Items, Cells, things to put into a collection. Generally when create components in Lightning the look like something like this:
+When we talk about Items, we talk about Buttons, Menu Items, Cells, Tiles, long story short: components to put into a collection. Generally when creating components in Lightning it looks something like this:
 
 ```js
 {type: Item, w: 300, h: 200, ...properties}
@@ -21,7 +26,7 @@ this.tag('MyList').add([
 ])
 ```
 
-With the Collection Wrapper you are not limited to one type of item per collection but you can easily mix the height and width, because the Collection Wrapper will set it up in the right position for you, depending of course in which direction the Collection Wrapper is supposed to build.
+With the Collection Wrapper you are not limited to one type of Item per collection but you can easily mix the height and width, because the Collection Wrapper will put it in the right position for you.
 
 ```js
 this.tag('MyList').add([
@@ -33,7 +38,7 @@ this.tag('MyList').add([
 ```
 
 ### Item Dimensions
-When working with Item type components you generally have some basic widths and height you use all the time. If you use specific `static` getters in your Item component you allow the Collection Wrapper to automatically incorperate these values:
+When working with Item type components you generally have some basic widths and heights you use all the time. If you use specific `static` getters in your Item component you allow the Collection Wrapper to automatically incorperate these values:
 ```js
 class myItemComponent extends Lightning.Component {
     static get width() {
@@ -115,7 +120,7 @@ With the Collection Wrapper you can also set up a fallback ItemType which the Co
 this.tag('MyList').itemType = MyItemComponent
 ```
 
-One of the perks of using this, is that when are only using one specific Item type for one Collection wrapper is that you can also use this method to clean up your `adding Items` part of the code a bit more:
+One of the perks of using this is that when you only use one specific Item type for one Collection wrapper, you can also use this method to clean up your `adding Items` part of the code a bit more:
 
 ```js
 this.tag('MyList').itemType = MyItemComponent
@@ -159,7 +164,7 @@ this.tag('MyList').add([
 ```
 
 ## Scrolling
-The scrolling functionality is always in place, and main purpose of it is to always keep the current Item with the boundaries of the Collection Wrapper or at a specific anchor.
+The scrolling functionality is always in active by default, and main purpose of it is to always keep the current Item within the boundaries of the Collection Wrapper or anchored to a specific position.
 
 ### Boundaries
 The boundaries we are using here depends on the `direction` that has been set earlier which by default is `row`. If the direction is `row` the main boundary will be the width, if the width has not been applied it will use `1920` as a fallback value. When the direction is `column` the main boundary will be the height, if there is no height, `1080` will be used as a fallback value.
@@ -319,6 +324,9 @@ This signal is fired when the Collection Wrapper is requesting for more data. Th
 ```
 This signal requires you to return a promise that returns either Item, or if there are no Item you should return `false`. If you return `false` the enableRequest will be automatically changed to `false` aswell.
 
+### onItemsRepositioned
+This signal is fired when the Items have been repositioned by the Collection Wrapper.
+
 
 ## Available methods
 
@@ -335,6 +343,13 @@ You can add items to the Collection Wrapper at a starting from a specific index 
 this.tag('MyGrid').addAt(items, index)
 ```
 The parameter `items` can either be an array, object, string, or number. The parameter `index` should be a number starting from 0.
+
+### reload
+You can reload the Collection Wrapper with a new set of items by using the `reload` method.
+```js
+this.tag('MyGrid').reload(items)
+```
+The parameter `items` can either be an array, object, string, or number. This method basically does a `clear` and `add`, in one call.
 
 ### removeAt
 You can remove an Item at a specific index by using the `removeAt` method:
@@ -405,21 +420,21 @@ this.tag('MyGrid').up()
 This method returns `true` if the navigation was successful, or `false` if it was not successful.
 
 ### down
-You can attempt to navigate upwards by using the `down` method:
+You can attempt to navigate downwards by using the `down` method:
 ```js
 this.tag('MyGrid').down()
 ```
 This method returns `true` if the navigation was successful, or `false` if it was not successful.
 
 ### left
-You can attempt to navigate upwards by using the `left` method:
+You can attempt to navigate left by using the `left` method:
 ```js
 this.tag('MyGrid').left()
 ```
 This method returns `true` if the navigation was successful, or `false` if it was not successful.
 
 ### right
-You can attempt to navigate upwards by using the `right` method:
+You can attempt to navigate right by using the `right` method:
 ```js
 this.tag('MyGrid').right()
 ```
@@ -525,4 +540,3 @@ Returns the current `requestThreshold` value.
 
 ### gcThreshold
 Returns the current `gcThreshold` value.
-

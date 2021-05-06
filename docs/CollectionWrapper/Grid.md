@@ -1,45 +1,67 @@
-# List
+# Grid
 
-The List component provides a Collection Wrapper to display Items in either a Row or a Column
+The Grid component provides a Collection Wrapper to display Items in either Rows or Columns.
 
 ## Usage
 
-If you want to use the List component, import it from Lightning UI.
+If you want to use the Grid component, import it from Lightning UI.
 
 ```js
-import { List } from '@lightningjs/ui'
+import { Grid } from '@lightningjs/ui'
 ```
 
 ### Initialize
 
-To use the List component you create an instance with the `type` List:
+To use the Grid component you create an instance with the `type` Grid:
 
 ```js
 class MyApp extends Lightning.Application {
     static _template() {
         return {
-            MyList: {type: List}
+            MyGrid: {type: Grid}
         }
     }
 }
 ```
 
-You can pass additional parameters to your List, for example if you want your List to be displayed as a Row:
+You can pass additional parameters to your Grid, for example if you want your Grid to be displayed as 3 Rows:
 
 ```js
 {
-    MyList: {
-        type: List,
+    MyGrid: {
+        type: Grid,
+        rows: 3
+    }
+}
+```
+
+or if you want your Grid to be displayed as 3 Columns:
+```js
+{
+    MyGrid: {
+        type: Grid,
+        columns: 3
+    }
+}
+```
+
+If you use the `rows` or `columns`. It will automatically change the build direction to `row` or `column` respectively. You can still set up your Grid like you do with a List, that functionality allows you to make a mosaic grid, its your job however to calculate the proper widths and height of the items to make it look good.
+
+Use the following code if you want something custom:
+
+```js
+{
+    MyGrid: {
+        type: Grid,
         direction: 'row'
     }
 }
 ```
 
-or if you want your List to be displayed as a Column:
 ```js
 {
-    MyList: {
-        type: List,
+    MyGrid: {
+        type: Grid,
         direction: 'column'
     }
 }
@@ -50,105 +72,105 @@ Please check the Setters for all available options.
 ## Available methods
 
 ### add
-You can add items to the List on the fly by using the `add` method:
+You can add items to the Grid on the fly by using the `add` method:
 ```js
-this.tag('MyList').add(items)
+this.tag('MyGrid').add(items)
 ```
 The parameter `items` can either be an array, object, string, or number.
 
 ### addAt
-You can add items to the List at a starting from a specific index using the `addAt` method:
+You can add items to the Grid at a starting from a specific index using the `addAt` method:
 ```js
-this.tag('MyList').addAt(items, index)
+this.tag('MyGrid').addAt(items, index)
 ```
 The parameter `items` can either be an array, object, string, or number. The parameter `index` should be a number starting from 0.
 
 ### removeAt
 You can remove item at a specific index by using the `removeAt` method:
 ```js
-this.tag('MyList').removeAt(index)
+this.tag('MyGrid').removeAt(index)
 ```
 The parameter `index` should be a number starting from 0.
 
 ### remove
-You can let the List remove a specific item by using the `remove` method:
+You can let the Grid remove a specific item by using the `remove` method:
 ```js
-this.tag('MyList').remove(item)
+this.tag('MyGrid').remove(item)
 ```
-The parameter `item` should be a component that exists in the dataset of the List.
+The parameter `item` should be a component that exists in the dataset of the Grid.
 
 ### clear
-You can clear al existing items in the List by using the `clear` method:
+You can clear al existing items in the Grid by using the `clear` method:
 ```js
-this.tag('MyList').clear()
+this.tag('MyGrid').clear()
 ```
 
 ### reposition
 You can reposition the itemWrappers when the items have been resized.
 ```js
-//In the component where your List is initialized.
-this.tag('MyList').reposition()
+//In the component where your Grid is initialized.
+this.tag('MyGrid').reposition()
 
 //In a item component
 this.collectionWrapper.reposition()
 ```
 
 ### setIndex
-You can set the index of the List by using the `setIndex` method: 
+You can set the index of the Grid by using the `setIndex` method: 
 ```js
-this.tag('MyList').setIndex(index)
+this.tag('MyGrid').setIndex(index)
 ```
 The parameter `index` should be a number starting from 0.
 
 ### first
-You can set the index to the first item in the List by using the `first` method:
+You can set the index to the first item in the Grid by using the `first` method:
 ```js
-this.tag('MyList').first()
+this.tag('MyGrid').first()
 ```
 
 ### last
-You can set the index to the last item in the List by using the `last` method:
+You can set the index to the last item in the Grid by using the `last` method:
 ```js
-this.tag('MyList').last()
+this.tag('MyGrid').last()
 ```
 
 ### next
-You can set the index to the next item in the List by using the `next` method:
+You can set the index to the next item in the Grid by using the `next` method:
 ```js
-this.tag('MyList').next()
+this.tag('MyGrid').next()
 ```
 
 ### previous
-You can set the index to the previous item in the List by using the `previous` method:
+You can set the index to the previous item in the Grid by using the `previous` method:
 ```js
-this.tag('MyList').previous()
+this.tag('MyGrid').previous()
 ```
 
 ### up
 You can attempt to navigate upwards by using the `up` method:
 ```js
-this.tag('MyList').up()
+this.tag('MyGrid').up()
 ```
 This method returns `true` if the navigation was successful, or `false` if it was not successful.
 
 ### down
 You can attempt to navigate upwards by using the `down` method:
 ```js
-this.tag('MyList').down()
+this.tag('MyGrid').down()
 ```
 This method returns `true` if the navigation was successful, or `false` if it was not successful.
 
 ### left
 You can attempt to navigate upwards by using the `left` method:
 ```js
-this.tag('MyList').left()
+this.tag('MyGrid').left()
 ```
 This method returns `true` if the navigation was successful, or `false` if it was not successful.
 
 ### right
 You can attempt to navigate upwards by using the `right` method:
 ```js
-this.tag('MyList').right()
+this.tag('MyGrid').right()
 ```
 This method returns `true` if the navigation was successful, or `false` if it was not successful.
 
@@ -166,7 +188,7 @@ This signal is fired when the index has changed. This signal generally comes wit
 ```
 
 ### onRequestItems
-This signal is fired when the List is requesting for more data. This signal generally comes with the following object:
+This signal is fired when the Grid is requesting for more data. This signal generally comes with the following object:
 ```js
 {
     index,
@@ -183,28 +205,28 @@ This signal is fired when the Items have been repositioned by the Collection Wra
 ## Setters
 
 ### direction
-Sets the direction the List starts building towards, this value should be `row` of `column`. Default and fallback value is `row`.
+Sets the direction the Grid starts building towards, this value should be `row` of `column`. Default and fallback value is `row`.
 
 ### spacing
 Sets the fallback spacing between the items. Default value is 0(zero) `pixels`.
 
 ### itemType
-Sets the default itemType the List should use for the items. Expected input is a `Lightning.Component`.
+Sets the default itemType the Grid should use for the items. Expected input is a `Lightning.Component`.
 
 ### index
-Sets the index of the List. Expected input is a `number`.
+Sets the index of the Grid. Expected input is a `number`.
 
 ### items
-This setter `clears` the List and `adds` the new Items to the List. Expected input is an array, object, number, or string.
+This setter `clears` the Grid and `adds` the new Items to the Grid. Expected input is an array, object, number, or string.
 
 ### scroll
-Sets the scroll options for the List. Expected input is a `float` starting from 0.0 until 1.0, a `number` representing pixels, an `object`, or a `function`.
+Sets the scroll options for the Grid. Expected input is a `float` starting from 0.0 until 1.0, a `number` representing pixels, an `object`, or a `function`.
 
 ```js
-this.tag('MyList').scroll = 0.5 //anchor the scroll to center (0.5 === 50%)
-this.tag('MyList').scroll = 200 //anchor the scroll to 200 pixels
+this.tag('MyGrid').scroll = 0.5 //anchor the scroll to center (0.5 === 50%)
+this.tag('MyGrid').scroll = 200 //anchor the scroll to 200 pixels
 
-this.tag('MyList').scroll = {
+this.tag('MyGrid').scroll = {
     jump: 3, //after three cells
     start: 0.1 //stop scrolling at first item in set, default is 0.0,
     previous: 0.2//scroll here if not first item, default is start or 0.0,
@@ -212,7 +234,7 @@ this.tag('MyList').scroll = {
     end: 0.9 //stop scrolling here if at last item in set, default is 1.0
 }
 
-this.tag('MyList').scroll = (itemWrapper, indexData) => {
+this.tag('MyGrid').scroll = (itemWrapper, indexData) => {
     //calculation
     return myCalculateValue
 }
@@ -222,13 +244,13 @@ this.tag('MyList').scroll = (itemWrapper, indexData) => {
 Sets the scrollTransition. A transtion `object` generally used in Lightning is expected here.
 
 ### autoResize
-Sets whether the bounds of the List should resize to the size of the wrapper. Expected input is a `boolean`. Default value is `false`.
+Sets whether the bounds of the Grid should resize to the size of the wrapper. Expected input is a `boolean`. Default value is `false`.
 
 ### enableRequests
-Sets whether the List should request for more data. Expected input is a `boolean`.
+Sets whether the Grid should request for more data. Expected input is a `boolean`.
 
 ### requestThreshold
-Sets how many items before the end of the List, the List should start signaling for more data. Expected input is a `number`.
+Sets how many items before the end of the Grid, the Grid should start signaling for more data. Expected input is a `number`.
 
 ### gcThreshold
 Sets how many items should become inactive before the garbage collections is called. Expected input is a `number`.
@@ -236,13 +258,13 @@ Sets how many items should become inactive before the garbage collections is cal
 ## Getters
 
 ### direction
-Returns the current `direction` in which the List is being built.
+Returns the current `direction` in which the Grid is being built.
 
 ### spacing
-Returns the current fallback `spacing` the List is using.
+Returns the current fallback `spacing` the Grid is using.
 
 ### index
-Returns the current `index` of the List.
+Returns the current `index` of the Grid.
 
 ### wrapper
 Returns the wrapper in which the ItemWrappers are placed.
@@ -266,7 +288,7 @@ Returns the current item that is located at the current `index`.
 Returns the current item wrapper corresponding with currentItem.
 
 ### scrollTransition
-Returns the current `scrollTransition` of the List.
+Returns the current `scrollTransition` of the Grid.
 
 ### autoResize
 Returns the current `autoResize` value.

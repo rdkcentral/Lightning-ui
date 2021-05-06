@@ -369,9 +369,6 @@ export default class CollectionWrapper extends Lightning.Component {
         this._gcIncrement++;
         if(immediate || (this.active && this._gcThreshold !== 0 && this._gcIncrement >= this._gcThreshold)) {
             this._gcIncrement = 0;
-            if(this.fireAncestors('$appCollectGarbage')) {
-                return
-            }
             this.stage.gc();
         }
     }
