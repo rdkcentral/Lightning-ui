@@ -218,7 +218,7 @@ export default class CollectionWrapper extends Lightning.Component {
         const marginFrom = (sizes[mainMarginFrom] || sizes.margin || 0);
         const marginTo = (sizes[mainMarginTo] || sizes.margin || 0);
 
-        let scroll = this.scroll;
+        let scroll = this._scroll;
 
         if(!isNaN(scroll)) {
             if(scroll >= 0 && scroll <= 1) {

@@ -1,17 +1,20 @@
 {
   "name": "@lightningjs/ui",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Standard UI components for Lightning",
+  "scripts": {
+    "release": "npm publish --access public"
+  },
   "dependencies": {
     "@lightningjs/core": "2.3.0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jfboeve/Lightning-UI.git"
+    "url": "git+https://github.com/Metrological/lightning-ui.git"
   },
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/jfboeve/Lightning-UI/issues"
+    "url": "https://github.com/Metrological/lightning-ui/issues"
   },
-  "homepage": "https://github.com/jfboeve/Lightning-UI#readme"
+  "homepage": "https://github.com/Metrological/lightning-ui#readme"
 }

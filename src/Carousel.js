@@ -75,7 +75,8 @@ export default class Carousel extends CollectionWrapper {
         }
         position = positiveHalf[0][main] - (positiveHalf[0][mainMarginFrom] || positiveHalf[0].margin);
         index = itemIndex > 0 ? itemIndex - 1 : items.length - 1;
-        while(-(scrollOffsetStart + this._tresholdStart) < position) {
+        let lastWidth = 0;
+        while(-(scrollOffsetStart + this._tresholdStart) < position + lastWidth) {
             const item = items[index];
             const sizes = this._getItemSizes(item);
             if(crossSize < sizes[crossDim]) {
@@ -93,7 +94,7 @@ export default class Carousel extends CollectionWrapper {
                 [main]: position,
                 [cross]: crossPos
             });
-
+            lastWidth = sizes[mainDim];
             position -= (sizes[mainMarginFrom] || sizes.margin);
             index = this._normalizeDataIndex(index - 1, items);
         }
