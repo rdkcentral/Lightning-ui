@@ -141,6 +141,26 @@ export default class Carousel extends CollectionWrapper {
         return true;
     }
 
+    setIndex(index) {
+        this._index = index;
+        this.plotItems();
+        return true;
+    }
+
+    addAt(item, index = this._items.length) {
+        if(index >= 0 && index <= this._items.length) {
+            if(!Array.isArray(item)) {
+                item = [item];
+            }
+            const items = this._normalizeDataItems(item);
+            this._items.splice(index, 0, ...items);
+            this.plotItems();
+        }
+        else {
+            throw new Error('addAt: The index ' + index + ' is out of bounds ' + this._items.length);
+        }
+    }
+
     _cleanUp(time = 500) {
         if(this._cleanUpDebounce) {
             clearTimeout(this._cleanUpDebounce);
@@ -174,11 +194,11 @@ export default class Carousel extends CollectionWrapper {
                 split = offset < 0 ? split || rem.length : split || 0;
                 this._index = this._index - split;
             }
-        }, time)
+        }, time);
     }
 
     _inactive() {
-        this._cleanUp();
+        this._cleanUp(0);
         super._inactive();
     }
 
