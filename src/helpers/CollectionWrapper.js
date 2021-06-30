@@ -357,7 +357,7 @@ export default class CollectionWrapper extends Lightning.Component {
         return {
             w: item.w || (itemType && itemType['width']),
             h: item.h || (itemType && itemType['height']),
-            margin: item.margin || (itemType && itemType['margin']),
+            margin: item.margin || (itemType && itemType['margin']) || 0,
             marginLeft: item.marginLeft || (itemType && itemType['marginLeft']),
             marginRight: item.marginRight || (itemType && itemType['marginRight']),
             marginTop: item.marginTop || (itemType && itemType['marginTop']),
@@ -496,9 +496,9 @@ export default class CollectionWrapper extends Lightning.Component {
     }
 
     get items() {
-        const itemWrapper = this.itemWrappers;
+        const itemWrappers = this.itemWrappers;
         return this._items.map((item, index) => {
-            if(item.isAlive) {
+            if(itemWrappers[index] && item.isAlive) {
                 return itemWrapper[index].component;
             }
             return item;
