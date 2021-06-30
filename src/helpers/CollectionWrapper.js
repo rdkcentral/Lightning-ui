@@ -256,7 +256,7 @@ export default class CollectionWrapper extends Lightning.Component {
                 if(target < max - 1 && (previous < target && offset + cw[main] + cw[mainDim] > forwardBound)) {
                     scroll = forwardBound - (cw[main] + cw[mainDim]);
                 }
-                else if(target > 0 && (target < previous && offset + cw[main] < back)) {
+                else if(target > 0 && (target < previous && offset + cw[main] < backwardBound)) {
                     scroll = backwardBound - cw[main];
                 }
                 else if(target === max - 1) {
