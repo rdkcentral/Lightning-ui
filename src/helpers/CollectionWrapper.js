@@ -292,7 +292,6 @@ export default class CollectionWrapper extends Lightning.Component {
     $childInactive({child}) {
         if(typeof child === 'object') {
             const index = child.componentIndex;
-            child.component.isAlive = false;
             for(let key in this._items[index]) {
                 if(child.component[key] !== undefined) {
                     this._items[index][key] = child.component[key];
@@ -303,7 +302,6 @@ export default class CollectionWrapper extends Lightning.Component {
     }
 
     $getChildComponent({index}) {
-        this._items[index].isAlive = true;
         return this._items[index];
     }
 
@@ -438,6 +436,14 @@ export default class CollectionWrapper extends Lightning.Component {
         return undefined;
     }
 
+    set forceLoad(bool) {
+        this._forceLoad = bool;
+    }
+
+    get forceLoad() {
+        return this._forceLoad;
+    }    
+
     get requestingItems() {
         return this._requestingItems;
     }
@@ -498,7 +504,7 @@ export default class CollectionWrapper extends Lightning.Component {
     get items() {
         const itemWrappers = this.itemWrappers;
         return this._items.map((item, index) => {
-            if(itemWrappers[index] && item.isAlive) {
+            if(itemWrappers[index] && itemWrappers[index].component.isAlive) {
                 return itemWrappers[index].component;
             }
             return item;

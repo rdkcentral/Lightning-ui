@@ -12,6 +12,7 @@ export default class ItemWrapper extends Lightning.Component {
             return;
         }
         const component = this.fireAncestors('$getChildComponent', {index: this.componentIndex});
+        component.isAlive = true;
         this.children = [{...component, w: this.w, h: this.h}];
         if(this.hasFocus()) {
             this._refocus();
@@ -28,6 +29,7 @@ export default class ItemWrapper extends Lightning.Component {
 
     _inactive() {
         this._setState('');
+        this.children[0].isAlive = true;
         this.fireAncestors('$childInactive', {child: this});
         this.childList.clear();
     }
