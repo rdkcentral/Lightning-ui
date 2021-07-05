@@ -499,7 +499,7 @@ export default class CollectionWrapper extends Lightning.Component {
         const itemWrappers = this.itemWrappers;
         return this._items.map((item, index) => {
             if(itemWrappers[index] && item.isAlive) {
-                return itemWrapper[index].component;
+                return itemWrappers[index].component;
             }
             return item;
         });
