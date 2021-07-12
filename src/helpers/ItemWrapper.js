@@ -13,7 +13,8 @@ export default class ItemWrapper extends Lightning.Component {
         }
         const component = this.fireAncestors('$getChildComponent', {index: this.componentIndex});
         component.isAlive = true;
-        this.children = [{...component, w: this.w, h: this.h}];
+        const {w, h, margin, marginUp, marginBottom, marginRight, marginLeft} = this;
+        this.children = [{...component, w, h, margin, marginUp, marginRight, marginLeft, marginBottom}];
         if(this.hasFocus()) {
             this._refocus();
         }

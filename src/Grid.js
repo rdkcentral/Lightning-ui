@@ -124,7 +124,7 @@ export default class Grid extends CollectionWrapper {
         });
     }
 
-    async reposition() {
+    repositionItems() {
         const wrapper = this.wrapper;
         if(!wrapper && wrapper.children.length) {
             return true;
@@ -174,6 +174,7 @@ export default class Grid extends CollectionWrapper {
             [mainDim]: biggestInLastLine[main] + biggestInLastLine[mainDim],
             [crossDim]: crossSize
         });
+        super.repositionItems();
     }
 
     _getBiggestInLine(line) {
