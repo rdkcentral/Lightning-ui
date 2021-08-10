@@ -2,9 +2,13 @@
 
 Lightning-UI provides a set of components that are used very often when you are developing in Lightning, with the following components we hope to help you out with setting up your app a bit faster: 
 
-[CollectionWrapper](docs/CollectionWrapper/index.md)
-[List](docs/CollectionWrapper/List.md)
-[Carousel](docs/CollectionWrapper/Carousel.md)
-[Grid](docs/CollectionWrapper/Grid.md)
+* [CollectionWrapper](docs/CollectionWrapper/index.md)
+    * [List](docs/CollectionWrapper/List.md)
+    * [Carousel](docs/CollectionWrapper/Carousel.md)
+    * [Grid](docs/CollectionWrapper/Grid.md)
+
+
+# Examples
+In the following repository you can find code examples on how to use the components
 
 [Ui-component-examples](https://github.com/mlapps/ui-component-examples)

@@ -10,11 +10,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Metrological/lightning-ui.git"
+    "url": "git+https://github.com/rdkcentral/Lightning-ui"
   },
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/Metrological/lightning-ui/issues"
+    "url": "https://github.com/rdkcentral/lightning-ui/issues"
   },
-  "homepage": "https://github.com/Metrological/lightning-ui#readme"
+  "homepage": "https://github.com/rdkcentral/lightning-ui#readme"
 }
