@@ -216,15 +216,10 @@ export default class Grid extends CollectionWrapper {
         let targetIndex = this._index;
         
         if(overCross && targetCrossIndex > -1 && targetCrossIndex <= this._lines[targetMainIndex].length) {
-            const targetExists = this._lines[targetMainIndex][targetCrossIndex] !== undefined;
-            if(!targetExists && targetCrossIndex > 0 && targetCrossIndex === this._lines[targetMainIndex].length && (this._lines[targetMainIndex - 1] && targetCrossIndex < this._lines[targetMainIndex - 1].length)) {
-                targetMainIndex -= 1;
+            if(this._lines[targetMainIndex][targetCrossIndex] !== undefined) {
+                targetIndex = this._lines[targetMainIndex][targetCrossIndex];
+                this._previous = undefined;
             }
-            else if (!targetExists) {
-                targetCrossIndex = this._crossIndex;
-            }
-            targetIndex = this._lines[targetMainIndex][targetCrossIndex];
-            this._previous = undefined;
         }
         else if (!overCross && targetMainIndex < this._lines.length && targetMainIndex > -1){
             const targetLine = this._lines[targetMainIndex];
@@ -244,13 +239,22 @@ export default class Grid extends CollectionWrapper {
                     }
                     return -1;
                 });
-                let t = m.reduce((acc, val, index, arr) => val > arr[acc] ? index : acc, 0);
-                if(t === 0 && targetCrossIndex !== 0) {
-                    t = targetLine.length - 1;
+
+                let acc = -1;
+                let t = -1;
+                for(let i = 0; i < m.length; i++) {
+                    if(m[i] === -1 && acc > -1) {
+                        break;
+                    }
+                    if(m[i] > acc) {
+                        acc = m[i];
+                        t = i;
+                    }
                 }
-                this._previous = this._index;
-                targetCrossIndex = t;
-                targetIndex = targetLine[t];
+                if(t > -1) {
+                    targetCrossIndex = t;
+                    targetIndex = targetLine[t];
+                }
             }
             this._previous = {mainIndex: this._mainIndex, crossIndex: this._crossIndex, realIndex: this._index};
         }
