@@ -199,11 +199,10 @@ this.tag('MyCarousel').scroll = 0.5 //anchor the scroll to center (0.5 === 50%)
 this.tag('MyCarousel').scroll = 200 //anchor the scroll to 200 pixels
 
 this.tag('MyCarousel').scroll = {
-    jump: 3, //after three cells
-    start: 0.1 //stop scrolling at first item in set, default is 0.0,
-    previous: 0.2//scroll here if not first item, default is start or 0.0,
-    next: 0.7 //scroll here if not last item, default is end or 1.0,
-    end: 0.9 //stop scrolling here if at last item in set, default is 1.0
+    after: 3, //start scrolling after 3 items
+    jump: 3, //after three items jump three Items
+    forward: 0.9, //unless last item: scroll forward if item bounds are after 90% of the List, or if value is above 1; scroll after f.e. 900 pixels
+    backward: 0.1, //unless first item: scroll backward if item bounds are before 10% of the List, or if value is above 1; scroll before f.e. 50 pixels
 }
 
 this.tag('MyCarousel').scroll = (itemWrapper, indexData) => {
