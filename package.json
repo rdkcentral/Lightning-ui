@@ -1,6 +1,6 @@
 {
   "name": "@lightningjs/ui",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Standard UI components for Lightning",
   "scripts": {
     "release": "npm publish --access public"
