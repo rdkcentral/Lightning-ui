@@ -18,7 +18,9 @@
  */
 
 export {default as CollectionWrapper} from './CollectionWrapper.js';
+export {default as Cursor} from './Cursor.js';
 export {default as ItemWrapper} from './ItemWrapper.js';
+export {default as KeyWrapper} from './KeyWrapper.js';
 
 export const limitWithinRange = (num, min, max) => {
     return Math.min(Math.max(num, min), max)

@@ -1,0 +1,149 @@
+/*
+ * If not stated otherwise in this file or this component's LICENSE file the
+ * following copyright and licenses apply:
+ *
+ * Copyright 2021 Metrological
+ *
+ * Licensed under the Apache License, Version 2.0 (the License);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { Lightning } from "@lightningjs/sdk";
+import Cursor from './helpers/Cursor.js';
+
+export default class InputField extends Lightning.Component {
+    static _template () {
+        return {
+            PreLabel: {},
+            PostLabel: {},
+            Cursor: {type: Cursor, rect: true, w: 4, h: 54, x: 0, y: 0},
+        }
+    }
+
+    _construct() {
+        this._input = '';
+        this._previousInput = '';
+        this._description = '';
+        this._cursorX = 0;
+        this._cursorIndex = 0;
+    }
+
+    _init() {
+        const preLabel = this.tag('PreLabel');
+        const cursor = this.tag('Cursor');
+        const postLabel = this.tag('PostLabel');
+
+        const positionCursor = () => {
+            this.h = preLabel.renderHeight || postLabel.renderHeight;
+            cursor.x = preLabel.renderWidth + this._cursorX;
+            postLabel.x = cursor.x + cursor.w * (1 - cursor.mountX);
+        };
+
+        preLabel.on('txLoaded', positionCursor);
+        postLabel.on('txLoaded', positionCursor);
+    }
+
+    onInputChanged({input = ''}) {
+        let targetIndex = Math.max((input.length - this._input.length) + this._cursorIndex, 0);
+        this._input = input;
+        this._update(targetIndex);
+    }
+
+    _update(index = 0) {
+        const hasInput = this._input.length > 0;
+        const cursor = this.tag('Cursor');
+        let pre = this._description;
+        let post = '';
+
+        if(hasInput) {
+            pre = this._input.substring(0, index);
+            post = this._input.substring(index, this._input.length);
+            cursor.show();
+        }
+        else {
+            cursor.hide();
+        }
+        
+        this.patch({
+            PreLabel: {text: {text: pre}},
+            PostLabel: {text: {text: post}},
+        });
+
+        if(this.h === 0) {
+            this.tag('PreLabel').loadTexture();
+            this.h = this.tag('PreLabel').renderHeight;
+        }
+        this._cursorIndex = index;
+    }
+
+    _handleRight() {
+        this._update(Math.min(this._input.length, this._cursorIndex + 1));
+    }
+
+    _handleLeft() {
+        this._update(Math.max(0, this._cursorIndex - 1));
+    }
+
+    _firstActive() {
+        this._update();
+    }
+
+    get input() {
+        return this._input;
+    }
+
+    get hasInput() {
+        return this._input.length > 0;
+    }
+
+    get cursorIndex() {
+        return this._cursorIndex;
+    }
+
+    set inputText (obj) {
+        this._inputText = obj;
+        this.tag('PreLabel').patch({text: obj});
+        this.tag('PostLabel').patch({text: obj});
+    }
+
+    get inputText() {
+        return this._inputText;
+    }
+
+    set description(str) {
+        this._description = str;
+    }
+
+    get description() {
+        return this._description;
+    }
+
+    set cursor(obj) {
+        if(obj.x) {
+            this._cursorX = obj.x;
+            delete obj.x;
+        }
+        this.tag('Cursor').patch(obj);
+    }
+
+    get cursor() {
+        return this.tag('Cursor');
+    }
+
+    set cursorOffsetX (num) {
+        this._cursorX = num;
+    }
+
+    get cursorOffsetX () {
+        return this._cursorX || 0;
+    }
+}
