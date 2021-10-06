@@ -7,6 +7,11 @@ Lightning-UI provides a set of components that are used very often when you are 
     * [Carousel](docs/CollectionWrapper/Carousel.md)
     * [Grid](docs/CollectionWrapper/Grid.md)
 
+# Install
+
+```bash
+npm i @lightningjs/ui
+```
 
 # Examples
 In the following repository you can find code examples on how to use the components
