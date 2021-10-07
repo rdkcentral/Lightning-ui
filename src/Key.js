@@ -84,7 +84,7 @@ export default class Key extends Lightning.Component {
         
         this.patch({
             Background: {color: hasFocus && focused ? focused : unfocused},
-            Label: {text: label, text: this._labelText, color: hasFocus && labelFocused ? labelFocused : labelUnfocused}
+            Label: {text: {text: label , ...this._labelText}, color: hasFocus && labelFocused ? labelFocused : labelUnfocused}
         });
     }
 
