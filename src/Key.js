@@ -34,6 +34,7 @@ export default class Key extends Lightning.Component {
     _construct() {
         this._backgroundColors = {};
         this._labelColors = {};
+        this._labelText = {};
     }
 
     set data(obj) {
