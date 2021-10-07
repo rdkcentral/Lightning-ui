@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-import { Lightning } from "@lightningjs/sdk";
+import Lightning from "@lightningjs/core";
 import Cursor from './helpers/Cursor.js';
 
 export default class InputField extends Lightning.Component {
