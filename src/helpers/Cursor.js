@@ -17,6 +17,8 @@
  * limitations under the License.
  */
 
+import Lightning from "@lightningjs/core";
+
 export default class Cursor extends Lightning.Component {
     static _template() {
         return {
