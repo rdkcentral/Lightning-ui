@@ -74,8 +74,8 @@ export default class Key extends Lightning.Component {
         const { label = '' } = this._data;
         const hasFocus = this.hasFocus();
 
-        let {focused, unfocused = 0xff000000} = this._backgroundColors;
-        let {focused: labelFocused, unfocused: labelUnfocused = 0xffffffff} = this._labelColors;
+        let {focused, unfocused = 0xff000000} = this._backgroundColors || {};
+        let {focused: labelFocused, unfocused: labelUnfocused = 0xffffffff} = this._labelColors || {};
         
         this.patch({
             Background: {color: hasFocus && focused ? focused : unfocused},
