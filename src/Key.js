@@ -34,7 +34,6 @@ export default class Key extends Lightning.Component {
     _construct() {
         this._backgroundColors = {};
         this._labelColors = {};
-        this._labelText = {};
     }
 
     set data(obj) {
@@ -48,7 +47,7 @@ export default class Key extends Lightning.Component {
 
     set labelText(obj) {
         this._labelText = obj;
-        this._update();
+        this.tag('Label').patch({text: obj});
     }
 
     get labelText() {
@@ -73,6 +72,14 @@ export default class Key extends Lightning.Component {
         return this._backgroundColors;
     }
 
+    set background(obj) {
+        this.tag('Background').patch(obj);
+    }
+
+    get background() {
+        return this.tag('Background');
+    }
+
     _update() {
         if(!this.active) {
             return;
@@ -85,7 +92,7 @@ export default class Key extends Lightning.Component {
         
         this.patch({
             Background: {color: hasFocus && focused ? focused : unfocused},
-            Label: {text: {text: label, ...this._labelText}, color: hasFocus && labelFocused ? labelFocused : labelUnfocused}
+            Label: {text: {text: label}, color: hasFocus && labelFocused ? labelFocused : labelUnfocused}
         });
     }
 

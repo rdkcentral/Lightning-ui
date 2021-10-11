@@ -6,6 +6,9 @@ Lightning-UI provides a set of components that are used very often when you are 
     * [List](docs/CollectionWrapper/List.md)
     * [Carousel](docs/CollectionWrapper/Carousel.md)
     * [Grid](docs/CollectionWrapper/Grid.md)
+* [Keyboard](docs/Keyboard/index.md)
+    * [Key](docs/Keyboard/Key.md)
+    * [InputField](docs/Keyboard/InputField.md)
 
 # Install
 

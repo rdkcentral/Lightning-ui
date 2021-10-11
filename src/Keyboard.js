@@ -47,12 +47,12 @@ export default class Keyboard extends Lightning.Component {
     }
 
     _update() {
-        const {layouts, buttonTypes = {}, offsets = {}} = this._config;
+        const {layouts, buttonTypes = {}, styling = {}} = this._config;
         if(!this._layout || (this._layout && layouts[this._layout] === undefined)) {
             console.error(`Configured layout "${this._layout}" does not exist. Picking first available: "${Object.keys(layouts)[0]}"`);
             this._layout = Object.keys(layouts)[0];
         }
-        const {horizontalSpacing = 0, verticalSpacing = 0, align = 'left'} = offsets;
+        const {horizontalSpacing = 0, verticalSpacing = 0, align = 'left'} = styling;
         let rowPosition = 0;
         const isEvent = /^[A-Z][A-Za-z0-9]{1}/;
         const hasLabel = /\:/;
@@ -71,7 +71,7 @@ export default class Keyboard extends Lightning.Component {
                 marginBottom,
                 spacing: rowHorizontalSpacing = horizontalSpacing || 0,
                 align: rowAlign = align
-            } = offsets[`Row${rowIndex+1}`] || {};
+            } = styling[`Row${rowIndex+1}`] || {};
 
             let keyPosition = 0;
             let rowHeight = 0;
@@ -135,7 +135,7 @@ export default class Keyboard extends Lightning.Component {
     }
 
     _getFocused() {
-        return this.currentKey || this;
+        return this.currentKeyWrapper || this;
     }
 
     _handleRight() {
@@ -185,7 +185,7 @@ export default class Keyboard extends Lightning.Component {
     }
 
     _handleEnter() {
-        const {origin, action} = this.currentKey.key.data;
+        const {origin, action} = this.currentKey.data;
         const event = {
             index: this._input.length,
             key: origin
@@ -209,6 +209,9 @@ export default class Keyboard extends Lightning.Component {
     }
 
     _changeInput(input) {
+        if(this._input.length === this._maxCharacters) {
+            return;
+        }
         const eventData = {
             previousInput: this._input, 
             input: this._input = input
@@ -290,7 +293,7 @@ export default class Keyboard extends Lightning.Component {
             }
             else {
                 const targetRow = this.rows[targetIndex];
-                const currentKey = this.currentKey;
+                const currentKey = this.currentKeyWrapper;
                 const currentX = this.rows[this._rowIndex].x + currentKey.x;
                 const m = targetRow.children.map((key) => {
                     const keyX = targetRow.x + key.x;
@@ -344,6 +347,9 @@ export default class Keyboard extends Lightning.Component {
 
     set config(obj) {
         this._config = obj;
+        if(this.active) {
+            this._update();
+        }
     }
 
     get config() {
@@ -378,7 +384,11 @@ export default class Keyboard extends Lightning.Component {
         return this._keys && this._keys.children;
     }
 
-    get currentKey() {
+    get currentKeyWrapper() {
         return this.rows && this.rows[this._rowIndex].children[this._columnIndex];
+    }
+
+    get currentKey() {
+        return this.currentKeyWrapper && this.currentKeyWrapper.key
     }
 }

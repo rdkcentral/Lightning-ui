@@ -138,12 +138,4 @@ export default class InputField extends Lightning.Component {
     get cursor() {
         return this.tag('Cursor');
     }
-
-    set cursorOffsetX (num) {
-        this._cursorX = num;
-    }
-
-    get cursorOffsetX () {
-        return this._cursorX || 0;
-    }
 }
