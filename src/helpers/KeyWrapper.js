@@ -28,7 +28,7 @@ export default class KeyWrapper extends Lightning.Component {
 
     _update() {
         let currentKey = this.children && this.children[0];
-        if(currentKey && currentKey.action === this._key.action) {
+        if(currentKey && currentKey.action === this._key.data.action) {
             currentKey.patch({
                 ...this._key
             });
