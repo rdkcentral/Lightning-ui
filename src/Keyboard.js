@@ -209,7 +209,7 @@ export default class Keyboard extends Lightning.Component {
     }
 
     _changeInput(input) {
-        if(this._input.length === this._maxCharacters) {
+        if(input >= this._maxCharacters) {
             return;
         }
         const eventData = {
