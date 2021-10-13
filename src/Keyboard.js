@@ -286,10 +286,11 @@ export default class Keyboard extends Lightning.Component {
         if(direction === 'column' && targetIndex > -1 && targetIndex < this.rows.length ) {    
             const currentRowIndex = this._rowIndex;
             const currentColumnIndex = this._columnIndex;
-            if(this._previousKey && this._previousKey.row === targetIndex) {
-                const tmp = this._previousKey.column;
-                this._previousKey.column = this._columnIndex;
+            if(this._previous && this._previous.row === targetIndex) {
+                const tmp = this._previous.column;
+                this._previous.column = this._columnIndex;
                 this._columnIndex = tmp;
+                this._rowIndex = this._previous.row;
             }
             else {
                 const targetRow = this.rows[targetIndex];
@@ -298,15 +299,16 @@ export default class Keyboard extends Lightning.Component {
                 const m = targetRow.children.map((key) => {
                     const keyX = targetRow.x + key.x;
                     if(keyX <= currentX && currentX < keyX + key.w) {
-                        return keyX + key.x - currentX;
+                        return (keyX + key.w) - currentX;
                     }
                     if(keyX >= currentX && keyX <= currentX + currentKey.w) {
-                        return currentX + currentKey.w - keyX;
+                        return (currentX + currentKey.w) - keyX;
                     }
                     return -1;
                 });
                 let acc = -1;
                 let t = -1;
+
                 for(let i = 0; i < m.length; i++) {
                     if(m[i] === -1 && acc > -1) {
                         break;
