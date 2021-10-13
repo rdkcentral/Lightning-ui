@@ -54,6 +54,14 @@ export default class Key extends Lightning.Component {
         return this._labelText;
     }
 
+    set label(obj) {
+        this.tag('Label').patch(obj);
+    }
+
+    get label() {
+        return this.tag('Label');
+    }
+
     set labelColors(obj) {
         this._labelColors = obj;
         this._update();

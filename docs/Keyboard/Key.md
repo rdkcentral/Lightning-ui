@@ -45,16 +45,18 @@ default: {
 
 When the colors object has no `focused` color it will use the `unfocused` color as a fallback. The fallback values for `unfocused` for the background is black and for the label white.
 
-If you want to change anything related to the label of the Key you can use the `labelText` setter:
+If you want to change anything related to the label of the Key you can use the `label` setter to adjust the label tag:
 
 ```js
 {
 default: {
     type: Key,
-    labelText: {
-        fontSize: 44,
-        fontFamily: 'MyFont-Regular',
-        //basically any setter you can use when using a text texture
+    label: {
+        text: {
+            fontSize: 44,
+            fontFamily: 'MyFont-Regular',
+            //basically any setter you can use when using a text texture
+        }
     }
 }
 ```
@@ -112,14 +114,14 @@ So for the IconKey component you could add a getter and setter for `icon` and co
 # data
 Sets the data `object` the Key component uses in order for it to display the correct label.
 
-# labelText
-Sets the labelText `object` the Key component uses to alter how the label is presented.
+# label
+Patches an object to the label `tag`, this allows you to customize the label tag.
 
 # labelColors
 Sets the colors `object` the Key component uses to switch the color when it is focused.
 
 # background
-Patches an object to the background tag, this allows you to customize the background tag.
+Patches an object to the background `tag`, this allows you to customize the background tag.
 
 # backgroundColors
 Sets the backgroundColors `object` the Key component uses to switch the color when it is focused.
@@ -129,14 +131,14 @@ Sets the backgroundColors `object` the Key component uses to switch the color wh
 # data
 Returns the data `object` the Key component uses in order for it to display the correct label.
 
-# labelText
-Returns the labelText `object` the Key component uses to alter how the label is presented.
+# label
+Returns the label `tag`, this allows you to customize the label `tag`.
 
 # labelColors
 Returns the colors `object` the Key component uses to switch the color when it is focused.
 
 # background
-Returns the background tag, this allows you to customize the background tag.
+Returns the background `tag`, this allows you to customize the background `tag`.
 
 # backgroundColors
 Returns the backgroundColors `object` the Key component uses to switch the color when it is focused.
