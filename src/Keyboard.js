@@ -280,7 +280,7 @@ export default class Keyboard extends Lightning.Component {
         const targetIndex = (direction === 'row' ? this._columnIndex : this._rowIndex) + shift;
         const currentRow = this.rows[this._rowIndex];
         if(direction === 'row' && targetIndex > -1 && targetIndex < currentRow.children.length) {
-            this._previousKey = null;
+            this._previous = null;
             return this._columnIndex = targetIndex;
         }
         if(direction === 'column' && targetIndex > -1 && targetIndex < this.rows.length ) {    
