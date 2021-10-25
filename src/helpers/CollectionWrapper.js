@@ -79,6 +79,7 @@ export default class CollectionWrapper extends Lightning.Component {
             }
         }
 
+        this._refocus();
         this.scrollCollectionWrapper(obj);
         this.signal('onIndexChanged', obj);
     }
@@ -230,7 +231,7 @@ export default class CollectionWrapper extends Lightning.Component {
         if(bound === 0) {
             bound = directionIsRow ? 1920 : 1080;
         }
-        const offset = this._scrollTransition && this._scrollTransition.targetValue || 0;
+        const offset = Math.min(this.wrapper[main], this._scrollTransition && this._scrollTransition.targetValue || 0);
 
         const sizes = this._getItemSizes(cw);
         const marginFrom = (sizes[mainMarginFrom] || sizes.margin || 0);
