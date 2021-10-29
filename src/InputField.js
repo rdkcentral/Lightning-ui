@@ -35,6 +35,8 @@ export default class InputField extends Lightning.Component {
         this._description = '';
         this._cursorX = 0;
         this._cursorIndex = 0;
+        this._showCursor = false;
+        this._autoHideCursor = true;
     }
 
     _init() {
@@ -62,15 +64,16 @@ export default class InputField extends Lightning.Component {
         const hasInput = this._input.length > 0;
         const cursor = this.tag('Cursor');
         let pre = this._description;
-        let post = '';
+        let post = ' ';
 
         if(hasInput) {
             pre = this._input.substring(0, index);
             post = this._input.substring(index, this._input.length);
-            cursor.show();
-        }
-        else {
-            cursor.hide();
+            this.showCursor = true;
+        } else {
+            if (this._autoHideCursor) {
+                this.showCursor = false;
+            }
         }
         
         this.patch({
@@ -125,6 +128,25 @@ export default class InputField extends Lightning.Component {
 
     get description() {
         return this._description;
+    }
+
+    set showCursor(bool) {
+        this._showCursor = bool;
+        let cursor = this.tag('Cursor');
+        bool? cursor.show(): cursor.hide();
+    }
+
+    get showCursor() {
+        return this._showCursor;
+    }
+
+    set autoHideCursor(bool){
+        this._autoHideCursor = bool;
+    }
+
+
+    get autoHideCursor(){
+        return this._autoHideCursor;
     }
 
     set cursor(obj) {
