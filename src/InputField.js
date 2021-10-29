@@ -62,7 +62,6 @@ export default class InputField extends Lightning.Component {
 
     _update(index = 0) {
         const hasInput = this._input.length > 0;
-        const cursor = this.tag('Cursor');
         let pre = this._description;
         let post = ' ';
 
