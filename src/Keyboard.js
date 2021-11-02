@@ -269,6 +269,8 @@ export default class Keyboard extends Lightning.Component {
 
     inputField(component) {
         if(component && component.isComponent) {
+            if(component.input !== undefined)
+                this._input = component.input;
             this._inputField = component;
         }
         else {
