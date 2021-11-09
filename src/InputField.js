@@ -63,7 +63,7 @@ export default class InputField extends Lightning.Component {
     _update(index = 0) {
         const hasInput = this._input.length > 0;
         let pre = this._description;
-        let post = ' ';
+        let post = '';
 
         if(hasInput) {
             pre = this._input.substring(0, index);
@@ -97,6 +97,12 @@ export default class InputField extends Lightning.Component {
 
     _firstActive() {
         this._update();
+        //render visualy empty string to position the cursor correctly
+        this
+            .patch({
+                PreLabel: { text: { text: '' } },
+                PostLabel: { text: { text: ' ' } }
+            })
     }
 
     get input() {
