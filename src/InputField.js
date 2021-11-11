@@ -61,7 +61,7 @@ export default class InputField extends Lightning.Component {
         this._update(targetIndex);
     }
 
-    toggleCursor(bool) {
+    toggleCursor(bool = !this._cursorVisible) {
         this._cursorVisible = bool;
         this.cursor[bool ? 'show' : 'hide']();
     }
@@ -149,6 +149,10 @@ export default class InputField extends Lightning.Component {
 
     get cursor() {
         return this.tag('Cursor');
+    }
+
+    get cursorVisible() {
+        return this._cursorVisible;
     }
 
     set autoHideCursor(bool){

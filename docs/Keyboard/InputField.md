@@ -75,6 +75,19 @@ You can also customize the cursor by using the `cursor` setter.
 }
 ```
 
+## Methods
+
+### toggleCursor
+Toggles the visibility of the curser. Expected input is a `boolean`. If no input is given it flips the current visibility status.
+
+## Setters 
+
+### passwordMode
+Sets if the input should be masked or not. Expected input is a `boolean`.
+
+### autoHideCursor
+Sets if the cursor should be hidden if there is no input. Expected input is a `boolean`.
+
 ## Getters
 
 ### input
@@ -88,6 +101,12 @@ Returns the cursor `index`.
 
 ### cursor
 Returns the cursor `tag`.
+
+### cursorVisible
+Returns if the cursor is visible or not. Returns a `boolean`.
+
+### autoHideCursor
+Returns if the cursor should be automatically hidden.
 
 ### inputText
 Return the input label configuration as an `object`. This returns only the altered values used by the developer.
