@@ -35,6 +35,7 @@ export default class InputField extends Lightning.Component {
         this._description = '';
         this._cursorX = 0;
         this._cursorIndex = 0;
+        this._passwordMode = false;
     }
 
     _init() {
@@ -71,6 +72,11 @@ export default class InputField extends Lightning.Component {
         }
         else {
             cursor.hide();
+        }
+
+        if(this._passwordMode){
+            pre = '*'.repeat(pre.length);
+            post = '*'.repeat(post.length);
         }
         
         this.patch({
@@ -137,5 +143,13 @@ export default class InputField extends Lightning.Component {
 
     get cursor() {
         return this.tag('Cursor');
+    }
+
+    set passwordMode(val){
+        this._passwordMode = val;
+    }
+
+    get passwordMode(){
+        return this._passwordMode;
     }
 }
