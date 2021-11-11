@@ -17,14 +17,15 @@
  * limitations under the License.
  */
 
-import Lightning from "@lightningjs/core";
+import Lightning from '@lightningjs/core';
+
 import Cursor from './helpers/Cursor.js';
 
 export default class InputField extends Lightning.Component {
     static _template () {
         return {
-            PreLabel: {},
-            PostLabel: {},
+            PreLabel: {renderOffscreen: true},
+            PostLabel: {renderOffscreen: true},
             Cursor: {type: Cursor, rect: true, w: 4, h: 54, x: 0, y: 0},
         }
     }
@@ -36,6 +37,7 @@ export default class InputField extends Lightning.Component {
         this._cursorX = 0;
         this._cursorIndex = 0;
         this._passwordMode = false;
+        this._autoHideCursor = true;
     }
 
     _init() {
@@ -59,19 +61,23 @@ export default class InputField extends Lightning.Component {
         this._update(targetIndex);
     }
 
+    toggleCursor(bool) {
+        this._cursorVisible = bool;
+        this.cursor[bool ? 'show' : 'hide']();
+    }
+
     _update(index = 0) {
         const hasInput = this._input.length > 0;
-        const cursor = this.tag('Cursor');
         let pre = this._description;
-        let post = '';
+        let post = ' ';
 
         if(hasInput) {
             pre = this._input.substring(0, index);
             post = this._input.substring(index, this._input.length);
-            cursor.show();
+            this.toggleCursor(true);
         }
-        else {
-            cursor.hide();
+        else if(this._autoHideCursor){
+            this.toggleCursor(false);
         }
 
         if(this._passwordMode){
@@ -143,6 +149,14 @@ export default class InputField extends Lightning.Component {
 
     get cursor() {
         return this.tag('Cursor');
+    }
+
+    set autoHideCursor(bool){
+        this._autoHideCursor = bool;
+    }
+
+    get autoHideCursor(){
+        return this._autoHideCursor;
     }
 
     set passwordMode(val){
