@@ -1,6 +1,6 @@
 import { getPlotProperties } from './';
 
-export default class GridBase extends this{
+export default class GridBase extends {} {
     _construct() {
         this._crossSpacing = 5;
         this._mainSpacing = 5;
