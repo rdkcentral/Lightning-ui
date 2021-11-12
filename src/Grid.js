@@ -22,6 +22,7 @@ import {
   limitWithinRange,
 } from './helpers';
 import GridBase from './helpers/GridBase.js';
+import Mixer from './helpers/Mixer.js';
 
 export default class Grid extends Mixer(CollectionWrapper, GridBase) {
     _construct() {
