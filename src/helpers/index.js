@@ -17,10 +17,10 @@
  * limitations under the License.
  */
 
-export {default as CollectionWrapper} from './CollectionWrapper.js';
-export {default as Cursor} from './Cursor.js';
-export {default as ItemWrapper} from './ItemWrapper.js';
-export {default as KeyWrapper} from './KeyWrapper.js';
+export { default as CollectionWrapper } from './CollectionWrapper.js';
+export { default as Cursor } from './Cursor.js';
+export { default as ItemWrapper } from './ItemWrapper.js';
+export { default as KeyWrapper } from './KeyWrapper.js';
 
 export const limitWithinRange = (num, min, max) => {
     return Math.min(Math.max(num, min), max)
@@ -40,4 +40,44 @@ export const isInteger = value => {
 
 export const isFloat = value => {
     return (isNumber(value) && (value % 1) !== 0);
+}
+
+export const getPlotProperties = (direction) => {
+    const directionIsRow = direction === 0;
+    return {
+        directionIsRow: directionIsRow ? true : false,
+        mainDirection: directionIsRow ? 'rows' : 'columns',
+        main: directionIsRow ? 'x' : 'y',
+        mainDim: directionIsRow ? 'w' : 'h',
+        mainMarginTo: directionIsRow ? 'marginRight' : 'marginBottom',
+        mainMarginFrom: directionIsRow ? 'marginLeft' : 'marginUp',
+        crossDirection: !directionIsRow ? 'columns' : 'rows',
+        cross: directionIsRow ? 'y' : 'x',
+        crossDim: directionIsRow ? 'h' : 'w',
+        crossMarginTo: directionIsRow ? 'marginBottom' : 'marginRight',
+        crossMarginFrom: directionIsRow ? 'marginUp' : 'marginLeft',
+    }
+}
+
+export const getItemSizes = (item) => {
+    const itemType = item.type;
+    if(item.component && item.component.__attached) {
+        item = item.component;
+    }
+    return {
+        w: item.w || (itemType && itemType['width']),
+        h: item.h || (itemType && itemType['height']),
+        margin: item.margin || (itemType && itemType['margin']) || 0,
+        marginLeft: item.marginLeft || (itemType && itemType['marginLeft']),
+        marginRight: item.marginRight || (itemType && itemType['marginRight']),
+        marginTop: item.marginTop || (itemType && itemType['marginTop']),
+        marginBottom: item.marginBottom || (itemType && itemType['marginBottom'])
+    }
+}
+
+export const normalizePixelToPercentage = (value, max) => {
+    if(value && value > 1) {
+        return value / max;
+    }
+    return value || 0;
 }
