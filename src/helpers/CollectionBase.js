@@ -29,7 +29,7 @@ export default class CollectionBase extends Lightning.Component {
     }
 
     _construct() {
-        this._direction = Collection.DIRECTION.row;
+        this._direction = CollectionBase.DIRECTION.row;
         this._scrollTransitionSettings = this.stage.transitions.createSettings({});
 
         this._spacing = 0;
@@ -262,11 +262,11 @@ export default class CollectionBase extends Lightning.Component {
     }
 
     set direction(string) {
-        this._direction = Collection.DIRECTION[string] || Collection.DIRECTION.row;
+        this._direction = CollectionBase.DIRECTION[string] || CollectionBase.DIRECTION.row;
     }
 
     get direction() {
-        return Object.keys(Collection.DIRECTION)[this._direction];
+        return Object.keys(CollectionBase.DIRECTION)[this._direction];
     }
 
     set items(array) {
@@ -328,7 +328,7 @@ export default class CollectionBase extends Lightning.Component {
     }
 }
 
-Collection.DIRECTION = {
+CollectionBase.DIRECTION = {
     row: 0,
     column: 1
 }
