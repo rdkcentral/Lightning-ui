@@ -6,7 +6,8 @@
     "release": "npm publish --access public"
   },
   "dependencies": {
-    "@lightningjs/core": "2.3.0"
+    "@lightningjs/core": "2.3.0",
+    "ts-mixer": "^6.0.0"
   },
   "repository": {
     "type": "git",

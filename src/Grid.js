@@ -17,14 +17,15 @@
  * limitations under the License.
  */
 
+import { Mixin } from 'ts-mixer';
+
 import {
   CollectionWrapper,
   limitWithinRange,
 } from './helpers';
 import GridBase from './helpers/GridBase.js';
-import Mixer from './helpers/Mixer.js';
 
-export default class Grid extends Mixer(CollectionWrapper, GridBase) {
+export default class Grid extends Mixin(CollectionWrapper, GridBase) {
     _construct() {
         this._crossSpacing = 5;
         this._mainSpacing = 5;
