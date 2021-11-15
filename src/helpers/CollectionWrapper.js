@@ -221,7 +221,7 @@ export default class CollectionWrapper extends CollectionBase {
 
     _getFocused() {
         if(this.hasItems) {
-            return this.currentItemWrapper;
+            return this.currentItemWrapper || this;
         }
         return this;
     }

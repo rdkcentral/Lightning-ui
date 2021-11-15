@@ -74,8 +74,7 @@ export default class CollectionBase extends Lightning.Component {
         this.addAt(item);
     }
 
-    addAt(item, index = this._items && this._items.length || 0) {
-        console.log('addAt', this._items)
+    addAt(item, index = this._items.length) {
         if(index >= 0 && index <= this._items.length) {
             if(!Array.isArray(item)) {
                 item = [item];
