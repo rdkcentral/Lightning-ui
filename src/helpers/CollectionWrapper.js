@@ -65,6 +65,7 @@ export default class CollectionWrapper extends CollectionBase {
 
     clear() {
         this._index = 0;
+        super.clear();
     }
 
     addAt(item, index) {
