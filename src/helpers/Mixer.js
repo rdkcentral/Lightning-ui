@@ -1,4 +1,4 @@
-export default Mixer = (baseClass, ...mixins) => {
+export default mixer = (baseClass, ...mixins) => {
     class base extends baseClass {
         constructor (...args) {
             super(...args);
