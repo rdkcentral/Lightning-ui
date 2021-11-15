@@ -19,6 +19,7 @@
 
 import CollectionBase from './CollectionBase.js';
 import {
+  getItemSizes,
   getPlotProperties,
   limitWithinRange,
   normalizePixelToPercentage,
@@ -136,7 +137,7 @@ export default class CollectionWrapper extends CollectionBase {
         }
         const offset = Math.min(this.wrapper[main], this._scrollTransition && this._scrollTransition.targetValue || 0);
 
-        const sizes = this._getItemSizes(cw);
+        const sizes = getItemSizes(cw);
         const marginFrom = (sizes[mainMarginFrom] || sizes.margin || 0);
         const marginTo = (sizes[mainMarginTo] || sizes.margin || 0);
 

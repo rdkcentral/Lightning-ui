@@ -105,7 +105,7 @@ export default class Carousel extends CollectionWrapper {
         let lastWidth = 0;
         while(-(scrollOffsetStart + this._tresholdStart) < position + lastWidth) {
             const item = items[index];
-            const sizes = this._getItemSizes(item);
+            const sizes = getItemSizes(item);
             if(crossSize < sizes[crossDim]) {
                 crossSize = sizes[crossDim];
             }
