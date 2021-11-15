@@ -17,7 +17,15 @@
  * limitations under the License.
  */
 
-import { CollectionWrapper, ItemWrapper} from "./helpers";
+import {
+  CollectionWrapper,
+  getClientHeight,
+  getClientWidth,
+  getItemSizes,
+  getPlotProperties,
+  ItemWrapper,
+  normalizePixelToPercentage,
+} from './helpers';
 
 export default class Carousel extends CollectionWrapper {
     static _template() {
@@ -49,13 +57,13 @@ export default class Carousel extends CollectionWrapper {
         const items = this._items;
         const wrapper = this.wrapper;
 
-        const {main, mainDim, mainMarginFrom, mainMarginTo, cross, crossDim} = this._getPlotProperties(this._direction);
+        const {main, mainDim, mainMarginFrom, mainMarginTo, cross, crossDim} = getPlotProperties(this._direction);
         const viewBound = this[mainDim];
         let crossPos = 0, crossSize = 0;
         
         const scroll = this.scroll;
         const scrollIsAnchored = !isNaN(scroll);
-        const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? this._normalizePixelToPercentage(scroll) : scroll) : null;
+        const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? normalizePixelToPercentage(scroll) : scroll) : null;
 
         const scrollOffsetStart = 0;
         const positiveHalf = [];
@@ -66,7 +74,7 @@ export default class Carousel extends CollectionWrapper {
 
         while((viewBound - scrollOffsetStart) + this._tresholdEnd > position) {
             const item = items[index];
-            const sizes = this._getItemSizes(item);
+            const sizes = getPlotProperties(item);
 
             if(index === 0 && scrollIsAnchored) {
                 position = (viewBound - sizes[mainDim]) * scrollAnchor;
@@ -129,7 +137,7 @@ export default class Carousel extends CollectionWrapper {
         this._cleanUp();
         const targetIndex = this._index + shift;
         const childList = this.wrapper.childList;
-        const {main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
+        const {main, mainDim, mainMarginFrom, mainMarginTo} = getPlotProperties(this._direction);
         const currentDataIndex = this.currentItemWrapper.componentIndex;
         let referenceItem = childList.last;
         if(shift < 0) {
@@ -138,7 +146,7 @@ export default class Carousel extends CollectionWrapper {
 
         const targetDataIndex = this._normalizeDataIndex(referenceItem.componentIndex + shift);
         const targetItem = this._items[targetDataIndex];
-        const sizes = this._getItemSizes(targetItem);
+        const sizes = getItemSizes(targetItem);
         
         let position = referenceItem[main] + (referenceItem[mainMarginFrom] || sizes.margin) + referenceItem[mainDim] + (sizes[mainMarginTo] || sizes.margin || this.spacing);
         if(shift < 0) {
@@ -186,9 +194,9 @@ export default class Carousel extends CollectionWrapper {
         }
         this._cleanUpDebounce = setTimeout(() => {
             const children = this.wrapper.children;
-            const {main, mainDim, directionIsRow} = this._getPlotProperties(this._direction);
+            const {main, mainDim, directionIsRow} = getPlotProperties(this._direction);
             const bound = this[mainDim];
-            const viewboundMain = directionIsRow ? 1920 : 1080;
+            const viewboundMain = directionIsRow ? getClientWidth() : getClientHeight();
             const offset = this._scrollTransition && this._scrollTransition.targetValue || 0;
             
             let split = undefined;

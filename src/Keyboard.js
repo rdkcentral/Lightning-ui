@@ -17,9 +17,10 @@
  * limitations under the License.
  */
 
-import Lightning from "@lightningjs/core";
-import KeyWrapper from "./helpers/KeyWrapper.js";
-import Key from "./Key.js";
+import Lightning from '@lightningjs/core';
+
+import KeyWrapper from './helpers/KeyWrapper.js';
+import Key from './Key.js';
 
 export default class Keyboard extends Lightning.Component {
     static _template() {

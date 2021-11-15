@@ -17,13 +17,18 @@
  * limitations under the License.
  */
 
-import { CollectionWrapper, ItemWrapper } from './helpers';
+import {
+  CollectionWrapper,
+  getItemSizes,
+  getPlotProperties,
+  ItemWrapper,
+} from './helpers';
 
 export default class List extends CollectionWrapper {
     plotItems() {
         const items = this._items;
         const wrapper = this.wrapper;
-        const {directionIsRow, main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim} = this._getPlotProperties(this._direction);
+        const {directionIsRow, main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim} = getPlotProperties(this._direction);
         let crossPos = 0, crossSize = 0, position = 0;
         const animateItems = [];
 
@@ -32,7 +37,7 @@ export default class List extends CollectionWrapper {
         const renderContext = this.core.renderContext
 
         const newChildren = items.map((item, index) => {
-            const sizes = this._getItemSizes(item);
+            const sizes = getItemSizes(item);
             position += (sizes[mainMarginFrom] || sizes.margin || 0);
             
             if(crossSize < sizes[crossDim]) {
@@ -82,10 +87,10 @@ export default class List extends CollectionWrapper {
         if(!wrapper && wrapper.children.length) {
             return true;
         }
-        const {main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim} = this._getPlotProperties(this._direction);
+        const {main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim} = getPlotProperties(this._direction);
         let crossPos = 0, crossSize = 0, position = 0;
         wrapper.children.forEach((item) => {
-            const sizes = this._getItemSizes(item.component);
+            const sizes = getItemSizes(item.component);
             position += sizes[mainMarginFrom] || sizes.margin || 0;
             crossPos = item[cross] || crossPos;
 

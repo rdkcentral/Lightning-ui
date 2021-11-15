@@ -21,6 +21,7 @@ import { Mixin } from 'ts-mixer';
 
 import {
   CollectionWrapper,
+  getPlotProperties,
   limitWithinRange,
 } from './helpers';
 import GridBase from './helpers/GridBase.js';
@@ -61,7 +62,7 @@ export default class Grid extends Mixin(CollectionWrapper, GridBase) {
     }
 
     navigate(shift, direction) {
-        const {directionIsRow, cross, crossDim} = this._getPlotProperties(this._direction);
+        const {directionIsRow, cross, crossDim} = getPlotProperties(this._direction);
         const overCross = ((directionIsRow && direction === CollectionWrapper.DIRECTION.column) 
                             || (!directionIsRow && direction === CollectionWrapper.DIRECTION.row));
 
