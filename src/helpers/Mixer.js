@@ -1,4 +1,3 @@
-
 export default Mixer = (baseClass, ...mixins) => {
     class base extends baseClass {
         constructor (...args) {

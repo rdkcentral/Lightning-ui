@@ -26,7 +26,6 @@ import {
 import ItemWrapper from './ItemWrapper.js';
 
 export default class CollectionWrapper extends CollectionBase {
-    
     _indexChanged(obj) {    
         let {previousIndex:previous, index:target, dataLength:max, mainIndex, previousMainIndex, lines} = obj;
         if(!isNaN(previousMainIndex) && !isNaN(mainIndex) && !isNaN(lines)) {
