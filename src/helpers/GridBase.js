@@ -1,4 +1,7 @@
-import { getPlotProperties } from './';
+import {
+  getItemSizes,
+  getPlotProperties,
+} from './';
 
 export default class GridBase {
     _construct() {
