@@ -69,9 +69,9 @@ export default class CollectionWrapper extends CollectionBase {
         super.clear();
     }
 
-    addAt(item, index) {
+    addAt(item, index = this._items.length) {
         super.addAt(item, index);
-        if(this._items && index >= 0 && index <= this._items.length && this._items.length > 0) {
+        if(index >= 0 && index <= this._items.length) {
             this.setIndex(this._index);
         }
     }

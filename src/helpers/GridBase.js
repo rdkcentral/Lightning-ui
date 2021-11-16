@@ -3,12 +3,13 @@ import {
   getPlotProperties,
 } from './';
 
-export default class GridBase {
+export const gridBaseMixedWith = (C) => class G extends C {
     _construct() {
         this._crossSpacing = 5;
         this._mainSpacing = 5;
         this._rows = 0;
         this._columns = 0;
+        this._lines = [[]];
         super._construct();
     }
 
@@ -27,8 +28,8 @@ export default class GridBase {
         const wrapper = this.wrapper;
 
         const {directionIsRow, mainDirection, main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim, crossMarginTo, crossMarginFrom} = getPlotProperties(this._direction);
-        const crossSize = this[crossDim];
-        let mainPos = 0, crossPos = 0, lineIndex = 0;
+        // const crossSize = this[crossDim];
+        let mainPos = 0, crossPos = 0, lineIndex = 0, crossSize = 0;
 
         const animateItems = [];
 
@@ -49,6 +50,8 @@ export default class GridBase {
             }
 
             if(cl.length > 0 && ((this[mainDirection] > 0 && this[mainDirection] === cl.length) || (this[mainDirection] === 0 && crossPos + targetCrossFromMargin + sizes[crossDim] > crossSize))) {
+                const lastInLine = cl[cl.length - 1];
+                crossSize = Math.max(lastInLine[cross] + lastInLine[crossDim] + (lastInLine[crossMarginTo] || lastInLine.margin || this._mainSpacing), crossSize);
                 const bil = this._getBiggestInLine(cl);
                 mainPos = bil[main] + bil[mainDim] + (bil[mainMarginTo] || bil.margin || this._mainSpacing);
                 crossPos = targetCrossFromMargin;
@@ -91,7 +94,6 @@ export default class GridBase {
             cl.push(newItem);
             return newItem; 
         });
-        
         wrapper.children = newChildren;
 
         animateItems.forEach((index) => {
@@ -101,6 +103,8 @@ export default class GridBase {
             });
         });
 
+        const lastInLine = cl[cl.length - 1];
+        crossSize = Math.max(lastInLine[cross] + lastInLine[crossDim] + (lastInLine[crossMarginTo] || lastInLine.margin || this._mainSpacing), crossSize);
         const biggestInLastLine = this._getBiggestInLine(cl);
         this._resizeWrapper({
             [mainDim]: biggestInLastLine[main] + biggestInLastLine[mainDim],
@@ -201,3 +205,5 @@ export default class GridBase {
         this._crossSpacing = num;
     }
 }
+
+export default class extends gridBaseMixedWith(Object) {}

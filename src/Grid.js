@@ -17,28 +17,18 @@
  * limitations under the License.
  */
 
-import { Mixin } from 'ts-mixer';
-
 import {
   CollectionWrapper,
   getPlotProperties,
   limitWithinRange,
 } from './helpers';
-import GridBase from './helpers/GridBase.js';
+import { gridBaseMixedWith } from './helpers/GridBase.js';
 
-export default class Grid extends Mixin(CollectionWrapper, GridBase) {
-    _construct() {
-        this._crossSpacing = 5;
-        this._mainSpacing = 5;
-        this._rows = 0;
-        this._columns = 0;
-        super._construct();
-    }
-
+export default class Grid extends gridBaseMixedWith(CollectionWrapper) {
     clear() {
-        super.clear();
         this._mainIndex = 0;
         this._crossIndex = 0;
+        super.clear();
     }
 
     setIndex(index) {
@@ -64,7 +54,7 @@ export default class Grid extends Mixin(CollectionWrapper, GridBase) {
     navigate(shift, direction) {
         const {directionIsRow, cross, crossDim} = getPlotProperties(this._direction);
         const overCross = ((directionIsRow && direction === CollectionWrapper.DIRECTION.column) 
-                            || (!directionIsRow && direction === CollectionWrapper.DIRECTION.row));
+            || (!directionIsRow && direction === CollectionWrapper.DIRECTION.row));
 
         let targetMainIndex = this._mainIndex + !!(!overCross) * shift;
         let targetCrossIndex = this._crossIndex + !!overCross * shift;

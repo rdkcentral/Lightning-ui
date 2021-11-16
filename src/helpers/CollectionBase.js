@@ -56,7 +56,6 @@ export default class CollectionBase extends Lightning.Component {
     }
 
     clear() {
-        console.log('clear')
         this._uids = [];
         this._items = [];
         if(this.wrapper) {

@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-import Lightning from "@lightningjs/core";
+import Lightning from '@lightningjs/core';
 
 export default class ItemWrapper extends Lightning.Component {
     static _template() {
