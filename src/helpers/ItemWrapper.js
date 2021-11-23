@@ -16,44 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import ItemBase from './ItemBase.js';
 
-import Lightning from '@lightningjs/core';
-
-export default class ItemWrapper extends Lightning.Component {
-    static _template() {
-        return {
-            clipbox: true
-        }
-    }
-
-    create() {
-        if(this.children.length > 0) {
-            return;
-        }
-        const component = this.fireAncestors('$getChildComponent', {index: this.componentIndex});
-        component.isAlive = true;
-        const {w, h, margin, marginUp, marginBottom, marginRight, marginLeft} = this;
-        this.children = [{...component, w, h, margin, marginUp, marginRight, marginLeft, marginBottom}];
-        if(this.hasFocus()) {
-            this._refocus();
-        }
-    }
-
-    get component() {
-        return this.children[0] || this.fireAncestors('$getChildComponent', {index: this.componentIndex});
-    }
-
-    _active() {
-        this.create();
-    }
-
-    _inactive() {
-        this._setState('');
-        this.children[0].isAlive = true;
-        this.fireAncestors('$childInactive', {child: this});
-        this.childList.clear();
-    }
-
+export default class ItemWrapper extends ItemBase {
     _getFocused() {
         return this.children && this.children[0] || this;
     }
