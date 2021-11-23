@@ -445,6 +445,9 @@ This method returns `true` if the navigation was successful, or `false` if it wa
 ### direction
 Sets the direction the Collection Wrapper starts building towards, this value should be `row` of `column`. Default and fallback value is `row`.
 
+### forceLoad
+Sets if the components that are added are force loaded, meaning they always exist as components and therefore might take up more memory than you would like. This value should be a `boolean`.
+
 ### spacing
 Sets the fallback spacing between the items. Default value is 0(zero) `pixels`.
 
@@ -496,6 +499,9 @@ Sets how many Items should become inactive before the garbage collections is cal
 
 ### direction
 Returns the current `direction` in which the Collection Wrapper is being built.
+
+### forceLoad
+Returns the current `forceLoad` configuration the Collection Wrapper is using.
 
 ### spacing
 Returns the current fallback `spacing` the Collection Wrapper is using.

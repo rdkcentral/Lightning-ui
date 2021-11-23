@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-import Lightning from "@lightningjs/core";
+import Lightning from '@lightningjs/core';
 
 export default class ItemWrapper extends Lightning.Component {
     static _template() {
@@ -43,15 +43,22 @@ export default class ItemWrapper extends Lightning.Component {
         return this.children[0] || this.fireAncestors('$getChildComponent', {index: this.componentIndex});
     }
 
+    _setup() {
+        if(this.forceLoad) {
+            this.create();
+        }
+    }
+
     _active() {
         this.create();
     }
 
     _inactive() {
-        this._setState('');
-        this.children[0].isAlive = true;
-        this.fireAncestors('$childInactive', {child: this});
-        this.childList.clear();
+        if(!this.forceLoad) {
+            this.children[0].isAlive = false;
+            this.fireAncestors('$childInactive', {child: this});
+            this.childList.clear();
+        }
     }
 
     _getFocused() {

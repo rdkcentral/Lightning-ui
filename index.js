@@ -17,9 +17,9 @@
  * limitations under the License.
  */
 
-export {default as Carousel} from './src/Carousel.js';
-export {default as Grid} from './src/Grid.js';
-export {default as InputField} from './src/InputField.js';
-export {default as Key} from './src/Key.js';
-export {default as Keyboard} from './src/Keyboard.js';
-export {default as List} from './src/List.js';
+export { default as Carousel } from './src/Carousel.js';
+export { default as Grid } from './src/Grid.js';
+export { default as InputField } from './src/InputField.js';
+export { default as Key } from './src/Key.js';
+export { default as Keyboard } from './src/Keyboard.js';
+export { default as List } from './src/List.js';

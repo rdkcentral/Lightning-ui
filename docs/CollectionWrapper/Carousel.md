@@ -179,6 +179,9 @@ This signal is fired when the Items have been repositioned by the Carousel.
 ### direction
 Sets the direction the Carousel starts building towards, this value should be `row` of `column`. Default and fallback value is `row`.
 
+### forceLoad
+Sets if the components that are added are force loaded, meaning they always exist as components and therefore might take up more memory than you would like. This value should be a `boolean`.
+
 ### spacing
 Sets the fallback spacing between the items. Default value is 0(zero) `pixels`.
 
@@ -230,6 +233,9 @@ Sets how many Items should become inactive before the garbage collections is cal
 
 ### direction
 Returns the current `direction` in which the Carousel is being built.
+
+### forceLoad
+Returns the current `forceLoad` configuration the Carousel is using.
 
 ### spacing
 Returns the current fallback `spacing` the Carousel is using.
