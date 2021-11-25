@@ -36,23 +36,18 @@ export default class InputField extends Lightning.Component {
         this._description = '';
         this._cursorX = 0;
         this._cursorIndex = 0;
+        this._passwordMask = '*';
         this._passwordMode = false;
         this._autoHideCursor = true;
     }
 
     _init() {
-        const preLabel = this.tag('PreLabel');
-        const cursor = this.tag('Cursor');
-        const postLabel = this.tag('PostLabel');
-
-        const positionCursor = () => {
-            this.h = preLabel.renderHeight || postLabel.renderHeight;
-            cursor.x = preLabel.renderWidth + this._cursorX;
-            postLabel.x = cursor.x + cursor.w * (1 - cursor.mountX);
-        };
-
-        preLabel.on('txLoaded', positionCursor);
-        postLabel.on('txLoaded', positionCursor);
+        this.tag('PreLabel').on('txLoaded', () => { 
+            this._labelTxLoaded();
+        });
+        this.tag('PostLabel').on('txLoaded', () => {
+            this._labelTxLoaded
+        });
     }
 
     onInputChanged({input = ''}) {
@@ -66,25 +61,37 @@ export default class InputField extends Lightning.Component {
         this.cursor[bool ? 'show' : 'hide']();
     }
 
+    _labelTxLoaded() {
+        const preLabel = this.tag('PreLabel');
+        const cursor = this.tag('Cursor');
+        const postLabel = this.tag('PostLabel');
+        this.h = preLabel.renderHeight || postLabel.renderHeight;
+        cursor.x = preLabel.renderWidth + this._cursorX;
+        postLabel.x = cursor.x + cursor.w * (1 - cursor.mountX);
+
+        if(!this.autoHideCursor) {
+            this.toggleCursor(true);
+        }
+    }
+
     _update(index = 0) {
         const hasInput = this._input.length > 0;
-        let pre = this._description;
-        let post = ' ';
+        let pre = this._description + '';
+        let post = '';
 
         if(hasInput) {
             pre = this._input.substring(0, index);
             post = this._input.substring(index, this._input.length);
+            if(this._passwordMode){
+                pre = this._passwordMask.repeat(pre.length);
+                post = this._passwordMask.repeat(post.length);
+            }
             this.toggleCursor(true);
         }
         else if(this._autoHideCursor){
             this.toggleCursor(false);
         }
 
-        if(this._passwordMode){
-            pre = '*'.repeat(pre.length);
-            post = '*'.repeat(post.length);
-        }
-        
         this.patch({
             PreLabel: {text: {text: pre}},
             PostLabel: {text: {text: post}},
@@ -106,6 +113,7 @@ export default class InputField extends Lightning.Component {
     }
 
     _firstActive() {
+        this._labelTxLoaded();
         this._update();
     }
 
@@ -169,5 +177,13 @@ export default class InputField extends Lightning.Component {
 
     get passwordMode(){
         return this._passwordMode;
+    }
+
+    set passwordMask(str) {
+        this._passwordMask = str;
+    }
+
+    get passwordmask() {
+        return this._passwordMask;
     }
 }

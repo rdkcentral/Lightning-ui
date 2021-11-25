@@ -23,3 +23,4 @@ export { default as InputField } from './src/InputField.js';
 export { default as Key } from './src/Key.js';
 export { default as Keyboard } from './src/Keyboard.js';
 export { default as List } from './src/List.js';
+export { default as ScrollingLabel } from './src/ScrollingLabel.js';
