@@ -9,6 +9,7 @@ Lightning-UI provides a set of components that are used very often when you are 
 * [Keyboard](docs/Keyboard/index.md)
     * [Key](docs/Keyboard/Key.md)
     * [InputField](docs/Keyboard/InputField.md)
+* [ScrollingLabel](docs/ScrollingLabel.md)
 
 # Install
 
