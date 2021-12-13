@@ -39,10 +39,12 @@ export default class InputField extends Lightning.Component {
         this._passwordMask = '*';
         this._passwordMode = false;
         this._autoHideCursor = true;
+        this._labelPositionStatic = true;
+        this._maxLabelWidth = 0;
     }
 
     _init() {
-        this.tag('PreLabel').on('txLoaded', () => { 
+        this.tag('PreLabel').on('txLoaded', () => {
             this._labelTxLoaded();
         });
         this.tag('PostLabel').on('txLoaded', () => {
@@ -68,7 +70,7 @@ export default class InputField extends Lightning.Component {
         this.h = preLabel.renderHeight || postLabel.renderHeight;
         cursor.x = preLabel.renderWidth + this._cursorX;
         postLabel.x = cursor.x + cursor.w * (1 - cursor.mountX);
-
+        this.setSmooth('x', this._labelOffset)
         if(!this.autoHideCursor) {
             this.toggleCursor(true);
         }
@@ -185,5 +187,28 @@ export default class InputField extends Lightning.Component {
 
     get passwordmask() {
         return this._passwordMask;
+    }
+
+    // the width at which the text start scrolling
+    set maxLabelWidth(val) {
+        this._maxLabelWidth = val;
+    }
+
+    get maxLabelWidth() {
+        return this._maxLabelWidth;
+    }
+
+    set labelPositionStatic(val){
+        this._labelPositionStatic = val;
+    }
+
+    get labelPositionStatic(){
+        return this._labelPositionStatic;
+    }
+
+    get _labelOffset() {
+        if (this._labelPositionStatic) return 0;
+        let offset = this.maxLabelWidth - this.tag('Cursor').x;
+        return offset < 0 ? offset : 0;
     }
 }
