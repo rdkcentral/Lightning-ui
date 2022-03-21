@@ -32,6 +32,7 @@ export default class Keyboard extends Lightning.Component {
         this._input = '';
         this._inputField = undefined;
         this._maxCharacters = 56;
+        this.navigationWrapAround = false;
         this.resetFocus();
     }
 
@@ -288,6 +289,10 @@ export default class Keyboard extends Lightning.Component {
         if(direction === 'row' && targetIndex > -1 && targetIndex < currentRow.children.length) {
             this._previous = null;
             return this._columnIndex = targetIndex;
+        } else if (direction === 'row' && this.navigationWrapAround) {
+            this._previous = null;
+            let rowLen = currentRow.children.length
+            return this._columnIndex = (targetIndex%rowLen + rowLen)%rowLen
         }
         if(direction === 'column' && targetIndex > -1 && targetIndex < this.rows.length ) {
             const currentRowIndex = this._rowIndex;
@@ -328,12 +333,22 @@ export default class Keyboard extends Lightning.Component {
                 if(t > -1) {
                     this._rowIndex = targetIndex;
                     this._columnIndex = t;
+                } // if no next row found and wraparound is on, loop back to first row
+                else if(this.navigationWrapAround){
+                    this._columnIndex = Math.min(this.rows[0].children.length-1, this._columnIndex)
+                    return this._rowIndex = 0;
                 }
             }
             if(this._rowIndex !== currentRowIndex) {
                 this._previous = {column: currentColumnIndex, row: currentRowIndex};
                 return this._rowIndex = targetIndex;
             }
+        }
+        else if(direction === 'column' && this.navigationWrapAround){
+          this._previous = {column: this._columnIndex, row: this._rowIndex};
+          let nrRows = this.rows.length
+          this._rowIndex = (targetIndex%nrRows + nrRows)%nrRows
+          this._columnIndex = Math.min(this.rows[this._rowIndex].children.length-1, this._columnIndex)
         }
         return false;
     }
