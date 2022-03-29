@@ -32,6 +32,7 @@ export default class Grid extends CollectionWrapper {
         super.clear();
         this._mainIndex = 0;
         this._crossIndex = 0;
+        this._previous = undefined;
     }
 
     setIndex(index) {
