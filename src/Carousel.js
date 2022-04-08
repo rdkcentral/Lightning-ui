@@ -17,7 +17,10 @@
  * limitations under the License.
  */
 
-import { CollectionWrapper, ItemWrapper} from "./helpers";
+import {
+  CollectionWrapper,
+  ItemWrapper,
+} from './helpers';
 
 export default class Carousel extends CollectionWrapper {
     static _template() {
@@ -191,27 +194,29 @@ export default class Carousel extends CollectionWrapper {
             const viewboundMain = directionIsRow ? 1920 : 1080;
             const offset = this._scrollTransition && this._scrollTransition.targetValue || 0;
             
-            let split = undefined;
             const boundStart = viewboundMain * 0.66;
             const boundEnd = bound + viewboundMain * 0.66;
             
             let rem = children.reduce((acc, child, index) => {
                 if((offset + (child[main] + child[mainDim]) > bound + boundEnd) ||
                     (offset + child[main] < -boundStart)) {
-                    if(acc[acc.length - 1] && index - acc[acc.length - 1] !== 1) {
-                        split = acc.length;
-                    }
                     acc.push(index);
                 }
                 return acc;
             }, []);
 
             if(rem.length > 0) {
+                if(rem[0] === 0) {
+                    for(let i = 0; i < rem.length; i++) {
+                        if(!rem[i + 1] || (rem[i+1] - rem[i] !== 1)) {
+                            this._index = this._index - (i + 1);
+                            break;
+                        }
+                    }
+                }
                 rem.sort((a, b) => a - b).reverse().forEach((index) => {
                     this.wrapper.childList.removeAt(index);
                 });
-                split = offset < 0 ? split || rem.length : split || 0;
-                this._index = this._index - split;
             }
         }, time);
     }
