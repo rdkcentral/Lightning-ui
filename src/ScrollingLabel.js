@@ -49,6 +49,7 @@ export default class ScrollingLabel extends Lightning.Component {
     }
 
     _init() {
+        this._autoStart = this.autoStart !== undefined ? this.autoStart : this._autoStart
         const label = this.tag('Label');
         label.on('txLoaded', () => {
             this._update(label);
