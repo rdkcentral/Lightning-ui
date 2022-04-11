@@ -140,6 +140,14 @@ export default class ScrollingLabel extends Lightning.Component {
     get align() {
         return this._align;
     }
+    
+    set autoStart(bool) {
+        this._autoStart = bool;   
+    }
+    
+    get autoStart() {
+        return this._autoStart;
+    }
 
     set repeat(num) {
         this.animationSettings = {repeat: num};
