@@ -89,8 +89,8 @@ export default class ScrollingLabel extends Lightning.Component {
             this._scrollAnimation.stopNow();
         }
         if(label.renderWidth > this.w) {
-            if(!this._scrollAnimation.duration) {
-                this._scrollAnimation.duration = label.renderWidth / 50;
+            if(!this._animationSettings.duration) {
+                this._animationSettings.duration = label.renderWidth / 50;
             }
             this._scrollAnimation = this.animation({
                 ...this._animationSettings,
