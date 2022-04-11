@@ -49,7 +49,6 @@ export default class ScrollingLabel extends Lightning.Component {
     }
 
     _init() {
-        this._autoStart = this.autoStart !== undefined ? this.autoStart : this._autoStart
         const label = this.tag('Label');
         label.on('txLoaded', () => {
             this._update(label);
@@ -140,6 +139,14 @@ export default class ScrollingLabel extends Lightning.Component {
 
     get align() {
         return this._align;
+    }
+    
+    set autoStart(bool) {
+        this._autoStart = bool;   
+    }
+    
+    get autoStart() {
+        return this._autoStart;
     }
 
     set repeat(num) {
