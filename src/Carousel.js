@@ -194,13 +194,12 @@ export default class Carousel extends CollectionWrapper {
             const viewboundMain = directionIsRow ? 1920 : 1080;
             const offset = this._scrollTransition && this._scrollTransition.targetValue || 0;
             
-            const boundStart = viewboundMain * 0.66;
+            const boundStart =  -viewboundMain * 0.66;
             const boundEnd = bound + viewboundMain * 0.66;
-            
+
             let rem = children.reduce((acc, child, index) => {
-                if((offset + (child[main] + child[mainDim]) > bound + boundEnd) ||
-                    (offset + child[main] < -boundStart)) {
-                    acc.push(index);
+                if(((offset + child[main]) + child[mainDim] < boundStart) || (offset + child[main] > boundEnd)) {
+                    acc.push(index)
                 }
                 return acc;
             }, []);
