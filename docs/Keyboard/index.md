@@ -237,15 +237,6 @@ This signal is fired when the input has changed. This signal generally comes wit
 }
 ```
 
-### onInputChanged
-This signal is fired when the input has changed. This signal generally comes with the following object:
-```js
-{
-    input,
-    previousInput
-}
-```
-
 ### onSpace
 This signal is fired when the Space key is pressed.
 
@@ -257,6 +248,36 @@ This signal is fired when the Backspace key is pressed.
 
 ### onLayout
 This signal is fired when the Layout key is pressed.
+
+### Custom actions
+The keyboard also fires signals for custom keys, for example if you want to a Search button to your keyboad.
+
+```js
+const myKeyboardConfig = {
+    layouts: {
+        'ABC': [
+            ['Space', 'Clear', 'Backspace', 'Layout:123', 'Search'],
+        ]
+    }
+}
+
+```
+
+When you add a key that starts with a capital letters, for example a Search the keyboard will see that as a custom event. The keyboard will translate the key to a signal named onSearch.
+
+```js
+//in template
+{
+    MyKeyboard: {type: Keyboard, signals: {onInputChanged: true, onSearch: true}}
+}
+
+onSearch(event) {
+    console.log('search for: ', event.input)
+}
+```
+
+The event parameter contains the following field: input, the keyboard itself, and key information.
+
 
 ## Input Field
 

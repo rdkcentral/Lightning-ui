@@ -17,9 +17,10 @@
  * limitations under the License.
  */
 
-import Lightning from "@lightningjs/core";
-import KeyWrapper from "./helpers/KeyWrapper.js";
-import Key from "./Key.js";
+import Lightning from '@lightningjs/core';
+
+import KeyWrapper from './helpers/KeyWrapper.js';
+import Key from './Key.js';
 
 export default class Keyboard extends Lightning.Component {
     static _template() {
@@ -202,7 +203,7 @@ export default class Keyboard extends Lightning.Component {
             if(eventFunction && eventFunction.apply && eventFunction.call) {
                 eventFunction.call(this, event);
             }
-            this.signal(call, event);
+            this.signal(call, {input: this._input, keyboard: this, ...event});
         }
         else {
             this.addAt(event.key, event.index);
