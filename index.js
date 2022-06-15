@@ -24,3 +24,10 @@ export { default as Key } from './src/Key.js';
 export { default as Keyboard } from './src/Keyboard.js';
 export { default as List } from './src/List.js';
 export { default as ScrollingLabel } from './src/ScrollingLabel.js';
+
+export { default as ColorShift } from './src/ColorShift.js';
+export { default as Adjuster } from './src/Adjuster.js';
+export { default as ArrowAdjuster } from './src/ArrowAdjuster.js';
+export { default as CarouselAdjuster } from './src/CarouselAdjuster.js';
+export { default as ProgressAdjuster } from './src/ProgressAdjuster.js';
+export { default as ProgressBar } from './src/ProgressBar.js';
