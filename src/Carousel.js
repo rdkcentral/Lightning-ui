@@ -125,6 +125,71 @@ export default class Carousel extends CollectionWrapper {
         this._indexChanged({previousIndex: this._index, index: this._index, dataLength: this._items.length});
     }
 
+    repositionItems() {
+        const children = this.wrapper.children;
+        const begin = children.slice(0, this._index);
+        const end = children.slice(this._index + 1);
+
+        const {main, mainDim, mainMarginFrom, mainMarginTo, cross, crossDim} = this._getPlotProperties(this._direction);
+        const viewBound = this[mainDim];
+        let crossPos = 0, crossSize = 0;
+
+        const scroll = this.scrollTo;
+        const scrollIsAnchored = !isNaN(scroll);
+        const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? this._normalizePixelToPercentage(scroll) : scroll) : null;
+
+        const focusedItem = children[this._index];
+        
+        let position = focusedItem[main] + (focusedItem[mainDim]- focusedItem.component[mainDim]) * scrollAnchor;
+
+
+        const focusedItemSizes = this._getItemSizes(focusedItem);
+        focusedItem.patch({
+            ...focusedItemSizes,
+            [`assigned${main.toUpperCase()}`]: position,
+            [`assigned${cross.toUpperCase()}`]: crossPos,
+            [main]: position,
+            [cross]: crossPos
+        });
+        
+        position = focusedItem[main] - (focusedItem[mainMarginFrom] || focusedItem.margin);
+
+        begin.reverse().forEach((item) => {
+            const sizes = this._getItemSizes(item);
+            if(crossSize < sizes[crossDim]) {
+                crossSize = sizes[crossDim];
+            }
+            
+            position -= (sizes[mainDim] + (sizes[mainMarginTo] || sizes.margin || this._spacing));
+            item.patch({
+                ...sizes,
+                [`assigned${main.toUpperCase()}`]: position,
+                [`assigned${cross.toUpperCase()}`]: crossPos,
+                [main]: position,
+                [cross]: crossPos
+            });
+        });
+
+        position = focusedItem[main] + focusedItem[mainDim] + (focusedItem[mainMarginTo] || focusedItem.margin || this._spacing);
+        end.forEach((item) => {
+            const sizes = this._getItemSizes(item);
+            if(crossSize < sizes[crossDim]) {
+                crossSize = sizes[crossDim];
+            }
+            position += (sizes[mainMarginFrom] || sizes.margin || 0);
+
+            item.patch({
+                ...sizes,
+                [`assigned${main.toUpperCase()}`]: position,
+                [`assigned${cross.toUpperCase()}`]: crossPos,
+                [main]: position,
+                [cross]: crossPos
+            });
+
+            position += sizes[mainDim] + (sizes[mainMarginTo] || sizes.margin || this._spacing);
+        });
+    }
+
     navigate(shift, orientation = this._direction) {
         if(orientation !== this._direction) {
             return false;
