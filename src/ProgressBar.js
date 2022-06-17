@@ -19,7 +19,7 @@
 
 import Lightning from '@lightningjs/core';
 
-import { defineProperties } from '../helpers';
+import { defineProperties } from './helpers';
 
 export default class ProgressBar extends Lightning.Component {
     static _template() {
@@ -60,9 +60,9 @@ export default class ProgressBar extends Lightning.Component {
         }
         this.patch({
             Background: {
-                color: this._backgroundColor,
+                color: this._backgroundColor, shader: {radius: this._backgroundRadius},
                 Progress: {
-                    color: this._progressColor
+                    color: this._progressColor, shader: {radius: this._progressRadius}
                 }
             }
         });
