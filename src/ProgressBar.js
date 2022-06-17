@@ -36,6 +36,8 @@ export default class ProgressBar extends Lightning.Component {
         this._progressColorFocused = undefined;
         this._backgroundColor = 0xff9d9d9d;
         this._backgroundColorFocused = undefined;
+        this._backgroundRadius = 5;
+        this._progressRadius = 0;
         defineProperties(this, ['progressColor', 'backgroundColor', 'progressColorFocused', 'backgroundColorFocused']);
     }
 
