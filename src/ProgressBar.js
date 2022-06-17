@@ -38,10 +38,11 @@ export default class ProgressBar extends Lightning.Component {
         this._backgroundColorFocused = undefined;
         this._backgroundRadius = 5;
         this._progressRadius = 0;
+        this.value = 0.5;
         defineProperties(this, ['progressColor', 'backgroundColor', 'progressColorFocused', 'backgroundColorFocused']);
     }
 
-    setProgress(p) {
+    progress(p) {
         if(p > 1) {
             p =  p / 100;
         }
@@ -119,16 +120,8 @@ export default class ProgressBar extends Lightning.Component {
         return this._progressRadius;
     }
 
-    set backgroundTag(obj) {
-        this.tag('Background').patch(obj);
-    }
-
     get backgroundTag() {
         return this.tag('Background');
-    }
-
-    set progressTag(obj) {
-        this.tag('Progress').patch(obj);
     }
 
     get progressTag() {

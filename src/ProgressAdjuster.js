@@ -50,7 +50,7 @@ export default class ProgressAdjuster extends Adjuster {
     set value(str) {
         this._value = str;
         if(this.active) {
-            this.tag('ProgressBar').setProgress(this._value);
+            this.tag('ProgressBar').value = this._value;
             this.tag('Value').text.text = this._value;
         }
     }

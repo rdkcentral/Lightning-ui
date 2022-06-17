@@ -11,6 +11,12 @@ Lightning-UI provides a set of components that are used very often when you are 
   * [InputField](Keyboard/InputField.md)
   * [Key](Keyboard/Key.md)
 * [Scrolling Label](ScrollingLabel.md)
+* [Progress Bar](ProgressBar.md)
+* [Adjuster](Adjuster/index.md)
+  * [ArrowAdjuster](Adjuster/ArrowAdjuster.md)
+  * [CarouselAdjuster](Adjuster/CarouselAdjuster.md)
+  * [ProgressAdjuster](Adjuster/ProgressAdjuster.md)
+* [Color Shift](ColorShift.md)
 <!---TOC_end--->
 
 # Examples

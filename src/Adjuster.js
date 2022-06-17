@@ -77,6 +77,7 @@ export default class Adjuster extends Lightning.Component {
     _createFocusAnimation() {
         this._focusAnimation = this.animation({duration: 0.2, stopMethod: 'reverse', actions: [
             {t: 'Focus', p: 'alpha', v: {0: 0, 1: 1}},
+            {t: 'Label', p: 'color', v: {0: this._labelColor, 1: this._labelColorFocused}},
             {t: 'ValueWrapper.Value', p: 'color', v: {0: this._labelColor, 1: this._labelColorFocused}},
         ]});
     }
@@ -147,9 +148,16 @@ export default class Adjuster extends Lightning.Component {
     }
 
     set options(arr) {
+        const refactor = arr.map((option) => {
+            if(typeof option === 'string') {
+                return {label: option};
+            }
+            return option;
+        })
+
         this._value = 0;
-        this._options = arr;
-        this._max = arr.length - 1;
+        this._options = refactor;
+        this._max = refactor.length - 1;
         this._update();
     }
 

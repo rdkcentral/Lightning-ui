@@ -124,35 +124,6 @@ export default class ColorShift extends Lightning.Component {
         this._update();
     }
 
-    set correctionTag(obj) {
-        if(this.active) {
-            this.tag('List').items[0].patch(obj);
-        }
-        else {
-            this._correctionTag = obj
-        }
-    }
-
-    get correctionTag() {
-        return this.tag('List').items[0];
-    }
-
-    set adjustmentTags(obj) {
-        if(this.active) {
-            const listItems = this.tag('List').items;
-            for(let i = 1; i < listItems.length; i++) {
-                listItems[i].patch(obj);
-            }
-        }
-        else {
-            this._adjustmentTag = obj;
-        }
-    }
-
-    get adjustmentTags() {
-        return this.tag('List').items.slice(1);
-    }
-
     set settings(obj) {
         this._settings = obj;
         if(this.active) {
@@ -166,6 +137,26 @@ export default class ColorShift extends Lightning.Component {
 
     get settings() {
         return this._settings;
+    }
+
+    get correctionTag() {
+        return this.tag('List').items[0];
+    }
+
+    get brightnessTag() {
+        return this.tag('List').items[1];
+    }
+
+    get contrastTag() {
+        return this.tag('List').items[2];
+    }
+
+    get gammaTag() {
+        return this.tag('List').items[3];
+    }
+
+    get adjustmentTags() {
+        return this.tag('List').items;
     }
 
     set adjusterComponent(component) {

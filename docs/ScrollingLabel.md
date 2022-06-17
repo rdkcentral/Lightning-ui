@@ -12,7 +12,7 @@ import { ScrollingLabel } from '@lightningjs/ui'
 
 ### Initialize
 
-To use the Input Field component you create an instance with the `type` InputField:
+To use the Scrolling Label component you create an instance with the `type` ScrollingLabel:
 
 ```js
 class MyApp extends Lightning.Application {
