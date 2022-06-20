@@ -1,6 +1,6 @@
 # ProgressBar
 
-The ProgressBar component allows you to display a progress bar on in your app and customize it in a few minutes.
+The ProgressBar component allows you to display a progress bar in your app and customize it in a few minutes.
 
 ## Usage
 

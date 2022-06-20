@@ -1,6 +1,6 @@
 # Adjusters
 
-The Adjuster component is a component you can use to Adjust option settings, for example on settings pages for volume, graphics, or accessibility. 
+The Adjuster component is a component you can use to adjust option settings, for example on settings pages for volume, graphics, or accessibility.
 
 ## Usage
 

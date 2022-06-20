@@ -1,6 +1,6 @@
-# ArrowAdjuster
+# CarouselAdjuster
 
-The ArrowAdjuster is an extension of the Adjuster component, this component components shows all options in a carousel.
+The CarouselAdjuster is an extension of the Adjuster component, this component components shows all options in a carousel.
 
 ## Usage
 
@@ -34,7 +34,7 @@ You can view the [Adjuster](../index.md) component page to see more information 
 You can always add / customize existing tags, to make this job a bit easier follow this template when altering the component:
 
 ```js
-this.tag('MyAdjuster').patch({
+this.tag('MyCarouselAdjuster').patch({
     Focus: {},
     Label: {},
     ValueWrapper: {
@@ -61,7 +61,7 @@ With this setter you can set the focus color of the rounded rectangle where the 
 With this setter you can set the color of all the labels. Expected input is an `argb`.
 
 ### labelColorFocused
-With this setter you can set the color of all the value label and arrows when focused. Expected input is an `argb`.
+With this setter you can set the color of all value label when focused. Expected input is an `argb`.
 
 ### padding
 With this setter you can set the padding on the left side of the Adjuster component. Expected input is a `number`

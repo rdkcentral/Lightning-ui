@@ -36,7 +36,7 @@ You can view the [Adjuster](../index.md) component page to see more information 
 You can always add / customize existing tags, to make this job a bit easier follow this template when altering the component:
 
 ```js
-this.tag('MyAdjuster').patch({
+this.tag('MyArrowAdjuster').patch({
     Focus: {},
     Label: {},
     ValueWrapper: {
@@ -71,7 +71,7 @@ With this setter you can set the focus color of the background. Expected input i
 With this setter you can set the color of all the labels. Expected input is an `argb`.
 
 ### labelColorFocused
-With this setter you can set the color of all the value label and arrows when focused. Expected input is an `argb`.
+With this setter you can set the color of the value label and arrows when focused. Expected input is an `argb`.
 
 ### padding
 With this setter you can set the padding on the left and right side of the Adjuster component. Expected input is a `number`
