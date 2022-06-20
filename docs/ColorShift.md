@@ -28,7 +28,7 @@ class MyApp extends Lightning.Application {
 }
 ```
 
-This code example should display a menu with four adjusters. If you are using the latest LightningJS SDK version you'll notice the colors changing according to the new settings.
+This code example should display a menu with four adjusters. If you are using LightningJS SDK version 4.9.0 or higher you will notice the colors changing according to the new settings.
 
 ## Customize
 
@@ -109,6 +109,9 @@ Sets new options for the correction tag to use. Expected input is an `array` of 
 ### settings
 Sets new settings for the Color Shift component to change to. Expected input is an `object`.
 
+### autoColorShift
+Sets if the component automatically tries to shift colors via the Lightning SDK colorshifter. Expected input is a `boolean`.
+
 ### adjusterComponent
 Sets a new component for the Color Shift component to use globally. Expected input is a `Component`, or adjuster component.
 
@@ -131,6 +134,9 @@ Returns the current options for the correction tag as an `array`.
 
 ### settings
 Returns the current settings of the Color Shift component as an `object`.
+
+### autoColorShift
+Returns the current value of the autoColorShift property.
 
 ### adjusterTags
 Returns the adjuster `tags` that the Color Shift component is using. This returns an `array` of all the adjusters the Color Shift component is using.

@@ -1,4 +1,4 @@
-import { Lightning } from '@lightningjs/sdk';
+import Lightning from '@lightningjs/core';
 import { List } from '@lightningjs/ui';
 
 import ArrowAdjuster from './ArrowAdjuster';
