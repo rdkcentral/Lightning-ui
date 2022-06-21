@@ -37,7 +37,10 @@ export default class CarouselRangeInput extends RangeInput {
     _update() {
         this.patch({
             Focus: {color: 0xff4d4d4d},
-            Label: {x: this._padding, color: this._labelColor, text: {text: this._label}}
+            Label: {x: this._padding, color: this._labelColor, text: {text: this._label}},
+            ValueWrapper: {
+                x: w => w - this._padding,
+            }
         });
         const carousel = this.tag('Carousel');
         carousel.add(this._options.map((option, index) => {return {label: option.label, index, w: 100, margin: 30, focusColor: this._focusColor, labelColor: this._labelColor, labelColorFocused: this._labelColorFocused}}));
