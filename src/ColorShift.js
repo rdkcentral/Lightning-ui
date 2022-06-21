@@ -93,7 +93,7 @@ export default class ColorShift extends Lightning.Component {
         this._shiftColors();
         const settingItems = rangeInputs.map((rangeInput) => {
             const lowerC = rangeInput.toLocaleLowerCase();
-            return {type: this[`${lowerC}Component`], label: rangeInput, value: settings[lowerC], w: this.w, h: 80, ...colors}
+            return {type: this[`${lowerC}Component`], label: rangeInput, value: settings[lowerC], w: this.finalW, h: 80, ...colors}
         });
         settingItems.unshift({type: this.correctionComponent, options, value: findIndexOfObject(options, settings.correction, 'type'), label: 'Color adjustment', w: this.finalW, h: 80, ...colors});
         list.clear();
