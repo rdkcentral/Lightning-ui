@@ -1,25 +1,25 @@
-# ArrowRangeInput
+# ArrowStepper
 
-The ArrowRangeInput component is an extension of the RangeInput component, this component has an arrow on both sides of the value.
+The ArrowStepper component is an extension of the Stepper component, this component has an arrow on both sides of the value.
 
 ## Usage
 
-If you want to use the ArrowRangeInput component, import it from Lightning UI.
+If you want to use the ArrowStepper component, import it from Lightning UI.
 
 ```js
-import { ArrowRangeInput } from '@lightningjs/ui'
+import { ArrowStepper } from '@lightningjs/ui'
 ```
 
 ### Initialize
 
-To use the ArrowRangeInput component you create an instance with the `type` ArrowRangeInput:
+To use the ArrowStepper component you create an instance with the `type` ArrowStepper:
 
 ```js
 class MyApp extends Lightning.Application {
     static _template() {
         return {
-            MyArrowRangeInput: {
-                type: ArrowRangeInput
+            MyArrowStepper: {
+                type: ArrowStepper
             },
         }
     }
@@ -30,13 +30,13 @@ This code will display the RangeInput with a label on the left and a value on th
 
 ## Customize
 
-You can view the [RangeInput](../index.md) component page to see more information about customizing.
+You can view the [Stepper](../index.md) component page to see more information about customizing.
 
 ### Patching Template
 You can always add / customize existing tags, to make this job a bit easier follow this template when altering the component:
 
 ```js
-this.tag('MyArrowRangeInput').patch({
+this.tag('MyArrowStepper').patch({
     Focus: {},
     Label: {},
     ValueWrapper: {

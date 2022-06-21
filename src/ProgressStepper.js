@@ -18,7 +18,7 @@
  */
 
 import ProgressBar from './ProgressBar.js';
-import RangeInput from './RangeInput.js';
+import RangeInput from './Stepper.js';
 
 export default class ProgressRangeInput extends RangeInput {
     static _template() {

@@ -21,9 +21,9 @@ import Lightning from '@lightningjs/core';
 
 import Carousel from './Carousel.js';
 import { defineProperties } from './helpers';
-import RangeInput from './RangeInput.js';
+import Stepper from './Stepper.js';
 
-export default class CarouselRangeInput extends RangeInput {
+export default class CarouselStepper extends Stepper {
     static _template() {
         return {
             ...super._template(),

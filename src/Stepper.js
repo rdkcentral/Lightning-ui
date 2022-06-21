@@ -32,7 +32,7 @@ const calcCarouselNavigation = (dir, current, min, max) => {
     return target;
 }
 
-export default class RangeInput extends Lightning.Component {
+export default class Stepper extends Lightning.Component {
     static _template() {
         return {
             h: 80, w: 574,

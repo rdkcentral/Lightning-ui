@@ -1,7 +1,7 @@
 import Lightning from '@lightningjs/core';
 import { List } from '@lightningjs/ui';
 
-import ArrowRangeInput from './ArrowRangeInput.js';
+import ArrowRangeInput from './ArrowStepper.js';
 import {
   defineProperties,
   findIndexOfObject,
@@ -69,9 +69,9 @@ export default class ColorShift extends Lightning.Component {
         }
 
         if(this._currentCorrection && this._settings.correction !== this._currentCorrection) {
-            const rangeInputs = listItems.slice(1);
-            rangeInputs.forEach((rangeInput) =>  {
-                rangeInput.value = 50;
+            const steppers = listItems.slice(1);
+            steppers.forEach((stepper) =>  {
+                stepper.value = 50;
             });
         }
 
@@ -82,7 +82,7 @@ export default class ColorShift extends Lightning.Component {
 
     _update() {
         const list = this.tag('List');
-        const rangeInputs = ['Brightness', 'Contrast', 'Gamma'];
+        const steppers = ['Brightness', 'Contrast', 'Gamma'];
         const options = this._options;
         const settings = this._settings;
         const colors = {
@@ -91,9 +91,9 @@ export default class ColorShift extends Lightning.Component {
             labelColorFocused: this._labelColorFocused
         }
         this._shiftColors();
-        const settingItems = rangeInputs.map((rangeInput) => {
-            const lowerC = rangeInput.toLocaleLowerCase();
-            return {type: this[`${lowerC}Component`], label: rangeInput, value: settings[lowerC], w: this.finalW, h: 80, ...colors}
+        const settingItems = steppers.map((stepper) => {
+            const lowerC = stepper.toLocaleLowerCase();
+            return {type: this[`${lowerC}Component`], label: stepper, value: settings[lowerC], w: this.finalW, h: 80, ...colors}
         });
         settingItems.unshift({type: this.correctionComponent, options, value: findIndexOfObject(options, settings.correction, 'type'), label: 'Color adjustment', w: this.finalW, h: 80, ...colors});
         list.clear();
@@ -147,12 +147,12 @@ export default class ColorShift extends Lightning.Component {
         return this.tag('List').items;
     }
 
-    set rangeInputComponent(component) {
-        this._rangeInputComponent = component;
+    set stepperComponent(component) {
+        this._stepperComponent = component;
     }
 
-    get rangeInputComponent() {
-        return this._rangeInputComponent || ArrowRangeInput;
+    get stepperComponent() {
+        return this._stepperComponent || ArrowRangeInput;
     }
 
     set correctionComponent(component) {
@@ -160,7 +160,7 @@ export default class ColorShift extends Lightning.Component {
     }
 
     get correctionComponent() {
-        return this._correctionComponent || this.rangeInputComponent;
+        return this._correctionComponent || this.stepperComponent;
     }
 
     set brightnessComponent(component) {
@@ -168,7 +168,7 @@ export default class ColorShift extends Lightning.Component {
     }
 
     get brightnessComponent() {
-        return this._brightnessComponent || this.rangeInputComponent;
+        return this._brightnessComponent || this.stepperComponent;
     }
 
     set contrastComponent(component) {
@@ -176,7 +176,7 @@ export default class ColorShift extends Lightning.Component {
     }
 
     get contrastComponent() {
-        return this._contrastComponent || this.rangeInputComponent;
+        return this._contrastComponent || this.stepperComponent;
     }
 
     set gammaComponent(component) {
@@ -184,6 +184,6 @@ export default class ColorShift extends Lightning.Component {
     }
 
     get gammaComponent() {
-        return this._gammaComponent || this.rangeInputComponent;
+        return this._gammaComponent || this.stepperComponent;
     }
 }

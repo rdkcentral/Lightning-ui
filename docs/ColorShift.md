@@ -1,12 +1,12 @@
-# Color Shift
+# ColorShift
 
-The Color Shift component allows you to apply a color correction to the app that is currently active via the [LightningJS SDK](https://github.com/rdkcentral/Lightning-SDK), or you can implement your own soultion when the values are changed in the color shift component.
+The ColorShift component allows you to apply a color correction to the app that is currently active via the [LightningJS SDK](https://github.com/rdkcentral/Lightning-SDK), or you can implement your own soultion when the values are changed in the colorshift component.
 
 The LightningJS SDK however supports color corrections for users that see colors differently than other users.
 
 ## Usage
 
-If you want to use the Color Shift component, import it from Lightning UI.
+If you want to use the ColorShift component, import it from Lightning UI.
 
 ```js
 import { ColorShift } from '@lightningjs/ui'
@@ -14,7 +14,7 @@ import { ColorShift } from '@lightningjs/ui'
 
 ### Initialize
 
-To use the Color Shift component you create an instance with the `type` ColorShift:
+To use the ColorShift component you create an instance with the `type` ColorShift:
 
 ```js
 class MyApp extends Lightning.Application {
@@ -32,7 +32,7 @@ This code example should display a menu with four range inputs. If you are using
 
 ## Customize
 
-You can customize the Color Shift component in multiple ways, from the selection of color correction to the components used for each type of setting.
+You can customize the ColorShift component in multiple ways, from the selection of color correction to the components used for each type of setting.
 
 ### Options
 
@@ -54,29 +54,29 @@ this.tag('MyColorShift').options = [
 Each option requires a `type` and a `label` property.
 
 
-### Adjusters
+### Steppers
 
-The Color Shift component can also change the components used for each range input in the component. Lightning-UI provides a few standard range input components for you to work with. For example for the correction adjuster you could use a `CarouselRangeInput` component that displays the options in row;
+The ColorShift component can also change the components used for each range input in the component. Lightning-UI provides a few standard range input components for you to work with. For example for the correction Stepper you could use a `CarouselStepper` component that displays the options in row;
 
 ```js
-import {ColorShift, CarouselRangeInput} from "@lightningjs/ui"
+import {ColorShift, CarouselStepper} from "@lightningjs/ui"
 class MyApp extends Lightning.Application {
     static _template() {
         return {
             MyColorShift: {
-                type: ColorShift, correctionComponent: CarouselAdjuster
+                type: ColorShift, correctionComponent: CarouselStepper
             },
         }
     }
 }
 ```
 
-When you run this code you will see that the correction component changed but the other remained in the same style. These range input components are by default `ArrowRangeInput` components.
+When you run this code you will see that the correction component changed but the other remained in the same style. These range input components are by default `ArrowStepper` components.
 
 
 ### Settings
 
-You can also set saved settings for the Color Shift component, in order for it to adjust the values to current settings;
+You can also set saved settings for the ColorShift component, in order for it to adjust the values to current settings;
 
 ```js
 this.tag('MyColorShift').options = {
@@ -88,7 +88,7 @@ this.tag('MyColorShift').options = {
 ```
 
 ## Signals
-The Color Shift component fires a signal every time a value has changed. This signal is called `onValueChanged`, to keep track of this signal you need add this signal to the tag in the template or code:
+The ColorShift component fires a signal every time a value has changed. This signal is called `onValueChanged`, to keep track of this signal you need add this signal to the tag in the template or code:
 
 ```js
 //in template
@@ -107,25 +107,25 @@ onValueChanged(eventData) {
 Sets new options for the correction tag to use. Expected input is an `array` of options, each `option` requires a `label` and a `type`.
 
 ### settings
-Sets new settings for the Color Shift component to change to. Expected input is an `object`.
+Sets new settings for the ColorShift component to change to. Expected input is an `object`.
 
 ### autoColorShift
 Sets if the component automatically tries to shift colors via the Lightning SDK colorshifter. Expected input is a `boolean`.
 
-### rangeInputComponent
-Sets a new component for the Color Shift component to use globally. Expected input is a `Component`, or `RangeInput` type component.
+### stepperComponent
+Sets a new component for the ColorShift component to use globally. Expected input is a `Component`, or `Stepper` type component.
 
 ### correctionComponent
-Sets a new component for the Color Shift component to use for the correction tag. Expected input is a `Component`, or `RangeInput` type component.
+Sets a new component for the ColorShift component to use for the correction tag. Expected input is a `Component`, or `Stepper` type component.
 
 ### brightnessComponent
-Sets a new component for the Color Shift component to use for the brightness tag. Expected input is a `Component`, or `RangeInput` type component.
+Sets a new component for the ColorShift component to use for the brightness tag. Expected input is a `Component`, or `Stepper` type component.
 
 ### contrastComponent
-Sets a new component for the Color Shift component to use for the contrast tag. Expected input is a `Component`, or `RangeInput` type component.
+Sets a new component for the ColorShift component to use for the contrast tag. Expected input is a `Component`, or `Stepper` type component.
 
 ### gammaComponent
-Sets a new component for the Color Shift component to use for the gamma tag. Expected input is a `Component`, or `RangeInput` type component.
+Sets a new component for the ColorShift component to use for the gamma tag. Expected input is a `Component`, or `Stepper` type component.
 
 ## Getters
 
@@ -133,28 +133,28 @@ Sets a new component for the Color Shift component to use for the gamma tag. Exp
 Returns the current options for the correction tag as an `array`.
 
 ### settings
-Returns the current settings of the Color Shift component as an `object`.
+Returns the current settings of the ColorShift component as an `object`.
 
 ### autoColorShift
 Returns the current value of the autoColorShift property.
 
-### rangeInputTags
-Returns the rangeInput `tags` that the Color Shift component is using. This returns an `array` of all the range input components the Color Shift component is using.
+### stepperTags
+Returns the Stepper `tags` that the ColorShift component is using. This returns an `array` of all the range input components the ColorShift component is using.
 
 ### correctionTag
-Returns the correction `tag` that the Color Shift component is using.
+Returns the correction `tag` that the ColorShift component is using.
 
 ### brightnessTag
-Returns the brightness `tag` that the Color Shift component is using.
+Returns the brightness `tag` that the ColorShift component is using.
 
 ### contrastTag
-Returns the contrast `tag` that the Color Shift component is using.
+Returns the contrast `tag` that the ColorShift component is using.
 
 ### gammaTag
-Returns the gamma `tag` that the Color Shift component is using.
+Returns the gamma `tag` that the ColorShift component is using.
 
-### rangeInputComponent
-Returns the rangeInput component `type` that is used.
+### StepperComponent
+Returns the Stepper component `type` that is used.
 
 ### correctionComponent
 Returns the correction component `type` that is used.

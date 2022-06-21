@@ -26,8 +26,8 @@ export { default as List } from './src/List.js';
 export { default as ScrollingLabel } from './src/ScrollingLabel.js';
 
 export { default as ColorShift } from './src/ColorShift.js';
-export { default as RangeInput } from './src/RangeInput.js';
-export { default as ArrowRangeInput } from './src/ArrowRangeInput.js';
-export { default as CarouselRangeInput } from './src/CarouselRangeInput.js';
-export { default as ProgressRangeInput } from './src/ProgressRangeInput.js';
+export { default as Stepper } from './src/Stepper.js';
+export { default as ArrowStepper } from './src/ArrowStepper.js';
+export { default as CarouselStepper } from './src/CarouselStepper.js';
+export { default as ProgressStepper } from './src/ProgressStepper.js';
 export { default as ProgressBar } from './src/ProgressBar.js';

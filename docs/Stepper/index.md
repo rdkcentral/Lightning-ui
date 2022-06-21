@@ -1,47 +1,47 @@
-# RangeInput
+# Stepper
 
-The RangeInput component is a component you can use to provide a range of option settings, for example on settings pages for volume, graphics, or accessibility.
+The Stepper component is a component you can use to provide a way to step through a range of option settings, for example on settings pages for volume, graphics, or accessibility.
 
 ## Usage
 
-If you want to use the RangeInput component, import it from Lightning UI.
+If you want to use the Stepper component, import it from Lightning UI.
 
 ```js
-import { RangeInput } from '@lightningjs/ui'
+import { Stepper } from '@lightningjs/ui'
 ```
 
 ### Initialize
 
-To use the RangeInput component you create an instance with the `type` RangeInput:
+To use the Stepper component you create an instance with the `type` Stepper:
 
 ```js
 class MyApp extends Lightning.Application {
     static _template() {
         return {
-            MyRangeInput: {
-                type: RangeInput
+            MyStepper: {
+                type: Stepper
             },
         }
     }
 }
 ```
 
-This code will display the RangeInput component with a label on the left and a value on the right in a row. With the value being displayed with the number 50.
+This code will display the Stepper component with a label on the left and a value on the right in a row. With the value being displayed with the number 50.
 
 ## Customize
 
 ### Options
 
-By default the RangeInput component works with values from 0 to 100. To change this you can make use of the `options` setter for example;
+By default the Stepper component works with values from 0 to 100. To change this you can make use of the `options` setter for example;
 
 ```js
-this.tag('MyRangeInput').options = ['low', 'medium', 'high'];
+this.tag('MyStepper').options = ['low', 'medium', 'high'];
 ```
 
-You can also set an `array` of `objects`. For example, when you set a `array` of `strings` the RangeInput component will translate this to an array like this;
+You can also set an `array` of `objects`. For example, when you set a `array` of `strings` the Stepper component will translate this to an array like this;
 
 ```js
-this.tag('MyRangeInput').options = [
+this.tag('MyStepper').options = [
     {
         label: 'low'
     }, 
@@ -56,14 +56,14 @@ this.tag('MyRangeInput').options = [
 
 ### Colors
 
-The RangeInput component has a couple of setters that can help quickly customize the component to match your app. 
+The Stepper component has a couple of setters that can help quickly customize the component to match your app. 
 
 ```js
 {
     focusColor, //the color of the background when focused
     labelColor, //the color of the label
     labelColorFocused, //the color of the value label when focused
-    padding //padding of the RangeInput component on the left and right
+    padding //padding of the Stepper component on the left and right
 }
 ```
 
@@ -72,7 +72,7 @@ The RangeInput component has a couple of setters that can help quickly customize
 You can always add / customize existing tags, to make this job a bit easier follow this template when alterning the component:
 
 ```js
-this.tag('MyRangeInput').patch({
+this.tag('MyStepper').patch({
     Focus: {},
     Label: {},
     ValueWrapper: {
@@ -105,13 +105,13 @@ With this setter you can set the focus color of the background. Expected input i
 With this setter you can set the color of all the labels. Expected input is an `argb`.
 
 ### labelColorFocused
-With this setter you can set the color of all the labels when the RangeInput is focused. Expected input is an `argb`.
+With this setter you can set the color of all the labels when the Stepper component is focused. Expected input is an `argb`.
 
 ### padding
-With this setter you can set the padding on the left and right side of the RangeInput component. Expected input is a `number`
+With this setter you can set the padding on the left and right side of the Stepper component. Expected input is a `number`
 
 ### focusAnimation
-With this setter you can set a animation for when the RangeInput is focused. Expected input is a `Lightning.Animation`
+With this setter you can set a animation for when the Stepper is focused. Expected input is a `Lightning.Animation`
 
 ## Getters
 

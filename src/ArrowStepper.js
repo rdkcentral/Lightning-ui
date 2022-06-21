@@ -17,9 +17,9 @@
  * limitations under the License.
  */
 
-import RangeInput from './RangeInput.js';
+import Stepper from './Stepper.js';
 
-export default class ArrowRangeInput extends RangeInput {
+export default class ArrowStepper extends Stepper {
     static _template() {
         return {
             ...super._template(),
