@@ -17,9 +17,9 @@
  * limitations under the License.
  */
 
-import Adjuster from './Adjuster';
+import RangeInput from './RangeInput.js';
 
-export default class ArrowAdjuster extends Adjuster {
+export default class ArrowRangeInput extends RangeInput {
     static _template() {
         return {
             ...super._template(),

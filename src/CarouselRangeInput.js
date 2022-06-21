@@ -19,11 +19,11 @@
 
 import Lightning from '@lightningjs/core';
 
-import Adjuster from './Adjuster';
-import Carousel from './Carousel';
+import Carousel from './Carousel.js';
 import { defineProperties } from './helpers';
+import RangeInput from './RangeInput.js';
 
-export default class CarouselAdjuster extends Adjuster {
+export default class CarouselRangeInput extends RangeInput {
     static _template() {
         return {
             ...super._template(),

@@ -1,6 +1,6 @@
 # Color Shift
 
-The Color Shift component allows you to apply a color adjustment to the app that is currently active via the [LightningJS SDK](https://github.com/rdkcentral/Lightning-SDK), or you can implement your own soultion when the values are changed in the color shift component.
+The Color Shift component allows you to apply a color correction to the app that is currently active via the [LightningJS SDK](https://github.com/rdkcentral/Lightning-SDK), or you can implement your own soultion when the values are changed in the color shift component.
 
 The LightningJS SDK however supports color corrections for users that see colors differently than other users.
 
@@ -28,7 +28,7 @@ class MyApp extends Lightning.Application {
 }
 ```
 
-This code example should display a menu with four adjusters. If you are using LightningJS SDK version 4.9.0 or higher you will notice the colors changing according to the new settings.
+This code example should display a menu with four range inputs. If you are using LightningJS SDK version 4.9.0 or higher you will notice the colors changing according to the new settings.
 
 ## Customize
 
@@ -56,10 +56,10 @@ Each option requires a `type` and a `label` property.
 
 ### Adjusters
 
-The Color Shift component can also change the components used for each adjuster in the component. Lightning-UI provides a few standard adjuster components for you to work with. For example for the correction adjuster you could use a `CarouselAdjuster` component that displays the options in row;
+The Color Shift component can also change the components used for each range input in the component. Lightning-UI provides a few standard range input components for you to work with. For example for the correction adjuster you could use a `CarouselRangeInput` component that displays the options in row;
 
 ```js
-import {ColorShift, CarouselAdjuster} from "@lightningjs/ui"
+import {ColorShift, CarouselRangeInput} from "@lightningjs/ui"
 class MyApp extends Lightning.Application {
     static _template() {
         return {
@@ -71,7 +71,7 @@ class MyApp extends Lightning.Application {
 }
 ```
 
-When you run this code you will see that the correction component changed but the other remained in the same style. These adjuster components are by default `ArrowAdjuster` components.
+When you run this code you will see that the correction component changed but the other remained in the same style. These range input components are by default `ArrowRangeInput` components.
 
 
 ### Settings
@@ -112,20 +112,20 @@ Sets new settings for the Color Shift component to change to. Expected input is 
 ### autoColorShift
 Sets if the component automatically tries to shift colors via the Lightning SDK colorshifter. Expected input is a `boolean`.
 
-### adjusterComponent
-Sets a new component for the Color Shift component to use globally. Expected input is a `Component`, or adjuster component.
+### rangeInputComponent
+Sets a new component for the Color Shift component to use globally. Expected input is a `Component`, or `RangeInput` type component.
 
 ### correctionComponent
-Sets a new component for the Color Shift component to use for the correction tag. Expected input is a `Component`, or adjuster component.
+Sets a new component for the Color Shift component to use for the correction tag. Expected input is a `Component`, or `RangeInput` type component.
 
 ### brightnessComponent
-Sets a new component for the Color Shift component to use for the brightness tag. Expected input is a `Component`, or adjuster component.
+Sets a new component for the Color Shift component to use for the brightness tag. Expected input is a `Component`, or `RangeInput` type component.
 
 ### contrastComponent
-Sets a new component for the Color Shift component to use for the contrast tag. Expected input is a `Component`, or adjuster component.
+Sets a new component for the Color Shift component to use for the contrast tag. Expected input is a `Component`, or `RangeInput` type component.
 
 ### gammaComponent
-Sets a new component for the Color Shift component to use for the gamma tag. Expected input is a `Component`, or adjuster component.
+Sets a new component for the Color Shift component to use for the gamma tag. Expected input is a `Component`, or `RangeInput` type component.
 
 ## Getters
 
@@ -138,8 +138,8 @@ Returns the current settings of the Color Shift component as an `object`.
 ### autoColorShift
 Returns the current value of the autoColorShift property.
 
-### adjusterTags
-Returns the adjuster `tags` that the Color Shift component is using. This returns an `array` of all the adjusters the Color Shift component is using.
+### rangeInputTags
+Returns the rangeInput `tags` that the Color Shift component is using. This returns an `array` of all the range input components the Color Shift component is using.
 
 ### correctionTag
 Returns the correction `tag` that the Color Shift component is using.
@@ -153,8 +153,8 @@ Returns the contrast `tag` that the Color Shift component is using.
 ### gammaTag
 Returns the gamma `tag` that the Color Shift component is using.
 
-### adjusterComponent
-Returns the adjuster component `type` that is used.
+### rangeInputComponent
+Returns the rangeInput component `type` that is used.
 
 ### correctionComponent
 Returns the correction component `type` that is used.

@@ -69,9 +69,9 @@ export default class ColorShift extends Lightning.Component {
         }
 
         if(this._currentCorrection && this._settings.correction !== this._currentCorrection) {
-            const adjusters = listItems.slice(1);
-            adjusters.forEach((adjuster) =>  {
-                adjuster.value = 50;
+            const rangeInputs = listItems.slice(1);
+            rangeInputs.forEach((rangeInput) =>  {
+                rangeInput.value = 50;
             });
         }
 
@@ -82,7 +82,7 @@ export default class ColorShift extends Lightning.Component {
 
     _update() {
         const list = this.tag('List');
-        const adjustments = ['Brightness', 'Contrast', 'Gamma'];
+        const rangeInputs = ['Brightness', 'Contrast', 'Gamma'];
         const options = this._options;
         const settings = this._settings;
         const colors = {
@@ -91,25 +91,13 @@ export default class ColorShift extends Lightning.Component {
             labelColorFocused: this._labelColorFocused
         }
         this._shiftColors();
-        const settingItems = adjustments.map((adjustment) => {
-            const lowerC = adjustment.toLocaleLowerCase();
-            return {type: this[`${lowerC}Component`], label: adjustment, value: settings[lowerC], w: this.finalW, h: 80, ...colors}
+        const settingItems = rangeInputs.map((rangeInput) => {
+            const lowerC = rangeInput.toLocaleLowerCase();
+            return {type: this[`${lowerC}Component`], label: rangeInput, value: settings[lowerC], w: this.finalW, h: 80, ...colors}
         });
         settingItems.unshift({type: this.correctionComponent, options, value: findIndexOfObject(options, settings.correction, 'type'), label: 'Color adjustment', w: this.finalW, h: 80, ...colors});
         list.clear();
         list.add(settingItems);
-        const listItems = list.items;
-        if(this._correctionTag) {
-            listItems[0].patch(this._colorCorrectionTag);
-            delete this._colorCorrectionTag;
-        }
-
-        if(this._adjustmentTag) {
-            for(let i = 1; i < listItems.length; i++) {
-                listItems[i].patch(this._adjustmentTag);
-            }
-            delete this._adjustmentTag;
-        }
     }
 
     _firstActive() {
@@ -159,12 +147,12 @@ export default class ColorShift extends Lightning.Component {
         return this.tag('List').items;
     }
 
-    set adjusterComponent(component) {
-        this._adjusterComponent = component;
+    set rangeInputComponent(component) {
+        this._rangeInputComponent = component;
     }
 
-    get adjusterComponent() {
-        return this._adjusterComponent || ArrowAdjuster;
+    get rangeInputComponent() {
+        return this._rangeInputComponent || ArrowAdjuster;
     }
 
     set correctionComponent(component) {
@@ -172,7 +160,7 @@ export default class ColorShift extends Lightning.Component {
     }
 
     get correctionComponent() {
-        return this._correctionComponent || this.adjusterComponent;
+        return this._correctionComponent || this.rangeInputComponent;
     }
 
     set brightnessComponent(component) {
@@ -180,7 +168,7 @@ export default class ColorShift extends Lightning.Component {
     }
 
     get brightnessComponent() {
-        return this._brightnessComponent || this.adjusterComponent;
+        return this._brightnessComponent || this.rangeInputComponent;
     }
 
     set contrastComponent(component) {
@@ -188,7 +176,7 @@ export default class ColorShift extends Lightning.Component {
     }
 
     get contrastComponent() {
-        return this._contrastComponent || this.adjusterComponent;
+        return this._contrastComponent || this.rangeInputComponent;
     }
 
     set gammaComponent(component) {
@@ -196,6 +184,6 @@ export default class ColorShift extends Lightning.Component {
     }
 
     get gammaComponent() {
-        return this._gammaComponent || this.adjusterComponent;
+        return this._gammaComponent || this.rangeInputComponent;
     }
 }

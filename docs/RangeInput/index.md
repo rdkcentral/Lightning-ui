@@ -1,47 +1,47 @@
-# Adjusters
+# RangeInput
 
-The Adjuster component is a component you can use to adjust option settings, for example on settings pages for volume, graphics, or accessibility.
+The RangeInput component is a component you can use to provide a range of option settings, for example on settings pages for volume, graphics, or accessibility.
 
 ## Usage
 
-If you want to use the Adjuster component, import it from Lightning UI.
+If you want to use the RangeInput component, import it from Lightning UI.
 
 ```js
-import { Adjuster } from '@lightningjs/ui'
+import { RangeInput } from '@lightningjs/ui'
 ```
 
 ### Initialize
 
-To use the Adjuster component you create an instance with the `type` Adjuster:
+To use the RangeInput component you create an instance with the `type` RangeInput:
 
 ```js
 class MyApp extends Lightning.Application {
     static _template() {
         return {
-            MyAdjuster: {
-                type: Adjuster
+            MyRangeInput: {
+                type: RangeInput
             },
         }
     }
 }
 ```
 
-This code will display the adjuster with a label on the left and a value on the right in a row. With the value being displayed with the number 50.
+This code will display the RangeInput component with a label on the left and a value on the right in a row. With the value being displayed with the number 50.
 
 ## Customize
 
 ### Options
 
-By default the Adjuster component works with values from 0 to 100. To change this you can make use of the `options` setter for example;
+By default the RangeInput component works with values from 0 to 100. To change this you can make use of the `options` setter for example;
 
 ```js
-this.tag('MyAdjuster').options = ['low', 'medium', 'high'];
+this.tag('MyRangeInput').options = ['low', 'medium', 'high'];
 ```
 
-You can also set an `array` of `objects`. For example, when you set a `array` of `strings` the Adjuster component will translate this to an array like this;
+You can also set an `array` of `objects`. For example, when you set a `array` of `strings` the RangeInput component will translate this to an array like this;
 
 ```js
-this.tag('MyAdjuster').options = [
+this.tag('MyRangeInput').options = [
     {
         label: 'low'
     }, 
@@ -56,14 +56,14 @@ this.tag('MyAdjuster').options = [
 
 ### Colors
 
-The Adjuster component has a couple of setters that can help quickly customize the component to match your app. 
+The RangeInput component has a couple of setters that can help quickly customize the component to match your app. 
 
 ```js
 {
     focusColor, //the color of the background when focused
     labelColor, //the color of the label
     labelColorFocused, //the color of the value label when focused
-    padding //padding of the adjuster component on the left and right
+    padding //padding of the RangeInput component on the left and right
 }
 ```
 
@@ -72,7 +72,7 @@ The Adjuster component has a couple of setters that can help quickly customize t
 You can always add / customize existing tags, to make this job a bit easier follow this template when alterning the component:
 
 ```js
-this.tag('MyAdjuster').patch({
+this.tag('MyRangeInput').patch({
     Focus: {},
     Label: {},
     ValueWrapper: {
@@ -93,10 +93,10 @@ With this setter you can add options instead of a range of numbers. Expected inp
 With this setter you can change the value of the Value tag. The value setter is also used as an index value when there are options available. Expected input is a `number` or `index`.
 
 ### max
-With this setter you can set the maximum value of the number scope used when no options are available. Expected input is a `number`.
+With this setter you can set the maximum value of the number range used when no options are available. Expected input is a `number`.
 
 ### min
-With this setter you can set the minimum value of the number scope used when no options are available. Expected input is a `number`.
+With this setter you can set the minimum value of the number range used when no options are available. Expected input is a `number`.
 
 ### focusColor
 With this setter you can set the focus color of the background. Expected input is an `argb`.
@@ -105,13 +105,13 @@ With this setter you can set the focus color of the background. Expected input i
 With this setter you can set the color of all the labels. Expected input is an `argb`.
 
 ### labelColorFocused
-With this setter you can set the color of all the labels when the adjuster is focused. Expected input is an `argb`.
+With this setter you can set the color of all the labels when the RangeInput is focused. Expected input is an `argb`.
 
 ### padding
-With this setter you can set the padding on the left and right side of the Adjuster component. Expected input is a `number`
+With this setter you can set the padding on the left and right side of the RangeInput component. Expected input is a `number`
 
 ### focusAnimation
-With this setter you can set a animation for when the adjuster is focused. Expected input is a `Lightning.Animation`
+With this setter you can set a animation for when the RangeInput is focused. Expected input is a `Lightning.Animation`
 
 ## Getters
 

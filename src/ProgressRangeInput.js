@@ -17,10 +17,10 @@
  * limitations under the License.
  */
 
-import Adjuster from './Adjuster';
-import ProgressBar from './ProgressBar';
+import ProgressBar from './ProgressBar.js';
+import RangeInput from './RangeInput.js';
 
-export default class ProgressAdjuster extends Adjuster {
+export default class ProgressAdjuster extends RangeInput {
     static _template() {
         return {
             ...super._template(),

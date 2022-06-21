@@ -1,42 +1,42 @@
-# ArrowAdjuster
+# ArrowRangeInput
 
-The ArrowAdjuster is an extension of the Adjuster component, this component has an arrow on both sides of the value.
+The ArrowRangeInput component is an extension of the RangeInput component, this component has an arrow on both sides of the value.
 
 ## Usage
 
-If you want to use the ArrowAdjuster component, import it from Lightning UI.
+If you want to use the ArrowRangeInput component, import it from Lightning UI.
 
 ```js
-import { ArrowAdjuster } from '@lightningjs/ui'
+import { ArrowRangeInput } from '@lightningjs/ui'
 ```
 
 ### Initialize
 
-To use the ArrowAdjuster component you create an instance with the `type` ArrowAdjuster:
+To use the ArrowRangeInput component you create an instance with the `type` ArrowRangeInput:
 
 ```js
 class MyApp extends Lightning.Application {
     static _template() {
         return {
-            MyArrowAdjuster: {
-                type: ArrowAdjuster
+            MyArrowRangeInput: {
+                type: ArrowRangeInput
             },
         }
     }
 }
 ```
 
-This code will display the adjuster with a label on the left and a value on the right in a row. With the value being displayed with the number 50.
+This code will display the RangeInput with a label on the left and a value on the right in a row. With the value being displayed with the number 50.
 
 ## Customize
 
-You can view the [Adjuster](../index.md) component page to see more information about customizing.
+You can view the [RangeInput](../index.md) component page to see more information about customizing.
 
 ### Patching Template
 You can always add / customize existing tags, to make this job a bit easier follow this template when altering the component:
 
 ```js
-this.tag('MyArrowAdjuster').patch({
+this.tag('MyArrowRangeInput').patch({
     Focus: {},
     Label: {},
     ValueWrapper: {
@@ -59,10 +59,10 @@ With this setter you can add options instead of a range of numbers. Expected inp
 With this setter you can change the value of the Value tag. The value setter is also used as an index value when there are options available. Expected input is a `number` or `index`.
 
 ### max
-With this setter you can set the maximum value of the number scope used when no options are available. Expected input is a `number`.
+With this setter you can set the maximum value of the number range used when no options are available. Expected input is a `number`.
 
 ### min
-With this setter you can set the minimum value of the number scope used when no options are available. Expected input is a `number`.
+With this setter you can set the minimum value of the number range used when no options are available. Expected input is a `number`.
 
 ### focusColor
 With this setter you can set the focus color of the background. Expected input is an `argb`.
@@ -74,10 +74,10 @@ With this setter you can set the color of all the labels. Expected input is an `
 With this setter you can set the color of the value label and arrows when focused. Expected input is an `argb`.
 
 ### padding
-With this setter you can set the padding on the left and right side of the Adjuster component. Expected input is a `number`
+With this setter you can set the padding on the left and right side of the RangeInput component. Expected input is a `number`
 
 ### focusAnimation
-With this setter you can set a animation for when the adjuster is focused. Expected input is a `Lightning.Animation`
+With this setter you can set a animation for when the RangeInput component is focused. Expected input is a `Lightning.Animation`
 
 ## Getters
 
@@ -105,5 +105,5 @@ This getter returns an `argb` of the labelColor property.
 ### labelColorFocused
 This getter returns an `argb` of the labelColorFocused property.
 
-### paddings
-This getter returns a `number` of the padding.
+### padding
+This getter returns a `number` of the padding property.
