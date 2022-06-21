@@ -1,7 +1,7 @@
 import Lightning from '@lightningjs/core';
 import { List } from '@lightningjs/ui';
 
-import ArrowAdjuster from './ArrowAdjuster';
+import ArrowRangeInput from './ArrowRangeInput.js';
 import {
   defineProperties,
   findIndexOfObject,
@@ -152,7 +152,7 @@ export default class ColorShift extends Lightning.Component {
     }
 
     get rangeInputComponent() {
-        return this._rangeInputComponent || ArrowAdjuster;
+        return this._rangeInputComponent || ArrowRangeInput;
     }
 
     set correctionComponent(component) {
