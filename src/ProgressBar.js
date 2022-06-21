@@ -69,7 +69,7 @@ export default class ProgressBar extends Lightning.Component {
                 }
             }
         });
-        this.setProgress(this._value);
+        this.progress(this._value);
         if(this.hasFocus()) {
             this._focus();
         }
