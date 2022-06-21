@@ -90,7 +90,7 @@ export default class ProgressBar extends Lightning.Component {
     set value(p) {
         this._value = p;
         if(this.active) {
-            this.setProgress(p);
+            this.progress(p);
         }
     }
 

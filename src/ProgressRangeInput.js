@@ -20,7 +20,7 @@
 import ProgressBar from './ProgressBar.js';
 import RangeInput from './RangeInput.js';
 
-export default class ProgressAdjuster extends RangeInput {
+export default class ProgressRangeInput extends RangeInput {
     static _template() {
         return {
             ...super._template(),
