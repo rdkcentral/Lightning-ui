@@ -61,10 +61,10 @@ export default class ScrollingLabel extends Lightning.Component {
 
     _update(label = this.tag('Label')) {
         const renderWidth = label.renderWidth;
-        const noScroll = renderWidth <= this.w;
+        const noScroll = renderWidth <= this.renderWidth;
         let labelPos = 0;
         if(noScroll && this._align !== 'left') {
-            labelPos = (this.w - renderWidth) * ScrollingLabel.ALIGN[this._align];
+            labelPos = (this.renderWidth - renderWidth) * ScrollingLabel.ALIGN[this._align];
         }
 
         this.tag('LabelClipper').patch({
@@ -88,7 +88,7 @@ export default class ScrollingLabel extends Lightning.Component {
         if(this._scrollAnimation) {
             this._scrollAnimation.stopNow();
         }
-        if(label.renderWidth > this.w) {
+        if(label.renderWidth > this.renderWidth) {
             if(!this._animationSettings.duration) {
                 this._animationSettings.duration = label.renderWidth / 50;
             }
