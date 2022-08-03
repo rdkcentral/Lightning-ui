@@ -96,6 +96,9 @@ export default class CollectionWrapper extends Lightning.Component {
         this._uids = [];
         this._items = [];
         this._index = 0;
+        if (this._scrollTransition) {
+            this._scrollTransition.reset(0, 1);
+        }
         if(this.wrapper) {
             const hadChildren = this.wrapper.children > 0;
             this.wrapper.patch({
