@@ -17,10 +17,10 @@
  * limitations under the License.
  */
 
-export {default as CollectionWrapper} from './CollectionWrapper.js';
-export {default as Cursor} from './Cursor.js';
-export {default as ItemWrapper} from './ItemWrapper.js';
-export {default as KeyWrapper} from './KeyWrapper.js';
+export { default as CollectionWrapper } from './CollectionWrapper.js';
+export { default as Cursor } from './Cursor.js';
+export { default as ItemWrapper } from './ItemWrapper.js';
+export { default as KeyWrapper } from './KeyWrapper.js';
 
 export const limitWithinRange = (num, min, max) => {
     return Math.min(Math.max(num, min), max)
@@ -40,4 +40,26 @@ export const isInteger = value => {
 
 export const isFloat = value => {
     return (isNumber(value) && (value % 1) !== 0);
+}
+
+export const defineProperties = (component, props) => {
+    props.forEach((prop) => {
+        Object.defineProperty(component, prop, {
+            set: function(value) {
+                component[`_${prop}`] = value;
+            },
+            get: function() {
+                return component[`_${prop}`]
+            }
+        });
+    });
+}
+
+export const findIndexOfObject = (array, search, targetProp) => {
+    for(let i = 0; i < array.length; i++) {
+        if(array[i][targetProp] === search) {
+            return i;
+        }
+    }
+    return -1;
 }
