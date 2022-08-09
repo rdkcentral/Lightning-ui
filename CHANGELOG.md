@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.3.0
+
+*date TBD*
+
+- Added Stepper component
+- Added ProgressBar component
+- Added ColorShift component for color accessibility
+
 ## v1.2.8
 
 *9 aug 2022*
