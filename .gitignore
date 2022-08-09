@@ -1,1 +1,5 @@
 node_modules
+.DS_store
+.idea
+support/lib
+support/polyfills
