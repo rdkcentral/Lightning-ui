@@ -1,6 +1,6 @@
 # ColorShift
 
-The ColorShift component allows you to apply a color correction to the app that is currently active via the [LightningJS SDK](https://github.com/rdkcentral/Lightning-SDK), or you can implement your own soultion when the values are changed in the colorshift component.
+The ColorShift component allows you to apply a color correction to the app that is currently active via the [LightningJS SDK](https://github.com/rdkcentral/Lightning-SDK) (version 5.x.x or above), or you can implement your own solution when the values are changed in the colorshift component.
 
 The LightningJS SDK however supports color corrections for users that see colors differently than other users.
 

@@ -2,7 +2,7 @@
 
 ## v1.3.0
 
-*date TBD*
+*22 aug 2022*
 
 - Added Stepper component
 - Added ProgressBar component
