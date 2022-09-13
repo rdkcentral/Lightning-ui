@@ -1,8 +1,8 @@
 # Grid
 
-The Grid component provides a Collection Wrapper to display Items in either Rows or Columns.
+The Grid component provides a Collection Wrapper to display items (which should be Lightning components) in either rows or columns. It also handles the navigation of arrow keys for you.
 
-## Usage
+## Basic usage
 
 If you want to use the Grid component, import it from Lightning UI.
 
@@ -10,7 +10,7 @@ If you want to use the Grid component, import it from Lightning UI.
 import { Grid } from '@lightningjs/ui'
 ```
 
-### Initialize
+### Initialisation
 
 To use the Grid component you create an instance with the `type` Grid:
 
@@ -24,50 +24,18 @@ class MyApp extends Lightning.Application {
 }
 ```
 
-You can pass additional parameters to your Grid, for example if you want your Grid to be displayed as 3 Rows:
+The most basic example is to setup a Grid that is showing it's items in rows or columns.
 
 ```js
 {
     MyGrid: {
         type: Grid,
-        rows: 3
-    }
-}
-```
-
-or if you want your Grid to be displayed as 3 Columns:
-```js
-{
-    MyGrid: {
-        type: Grid,
+        rows: 3 // OR, do NOT use both 'rows' and 'columns'
         columns: 3
     }
 }
 ```
-
-If you use the `rows` or `columns`. It will automatically change the build direction to `row` or `column` respectively. You can still set up your Grid like you do with a List, that functionality allows you to make a mosaic grid, its your job however to calculate the proper widths and height of the items to make it look good.
-
-Use the following code if you want something custom:
-
-```js
-{
-    MyGrid: {
-        type: Grid,
-        direction: 'row'
-    }
-}
-```
-
-```js
-{
-    MyGrid: {
-        type: Grid,
-        direction: 'column'
-    }
-}
-```
-
-Please check the Setters for all available options.
+__*\* Note that either `rows` or `columns` should be declared, declaring both properties can yield unexpected results*__
 
 ## Available methods
 
