@@ -42,6 +42,7 @@ export default class Grid extends CollectionWrapper {
         const {mainIndex, crossIndex} = this._findLocationOfIndex(targetIndex);
         this._mainIndex = mainIndex;
         this._crossIndex = crossIndex;
+        this._previous = {mainIndex, crossIndex, realIndex: previousIndex};
         this._index = targetIndex;
         this._indexChanged({previousIndex, index: targetIndex, mainIndex, previousMainIndex, crossIndex, previousCrossIndex, lines: this._lines.length, dataLength: this._items.length});
     }
@@ -218,14 +219,12 @@ export default class Grid extends CollectionWrapper {
                 targetIndex = this._lines[targetMainIndex][targetCrossIndex];
                 this._previous = undefined;
             }
-        }
-        else if (!overCross && targetMainIndex < this._lines.length && targetMainIndex > -1){
+        } else if (!overCross && targetMainIndex < this._lines.length && targetMainIndex > -1){
             const targetLine = this._lines[targetMainIndex];
             if(this._previous && this._previous.mainIndex === targetMainIndex) {
                 targetIndex = this._previous.realIndex;
                 targetCrossIndex = this._previous.crossIndex;
-            }
-            else if(targetLine){
+            } else if(targetLine){
                 const currentItem = this.currentItemWrapper;
                 const m = targetLine.map((item) => {
                     const targetItem = this.wrapper.children[item];
