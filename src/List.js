@@ -17,7 +17,10 @@
  * limitations under the License.
  */
 
-import { CollectionWrapper, ItemWrapper } from './helpers';
+import {
+  CollectionWrapper,
+  ItemWrapper,
+} from './helpers';
 
 export default class List extends CollectionWrapper {
     plotItems() {
@@ -29,7 +32,7 @@ export default class List extends CollectionWrapper {
 
         const viewboundMain = directionIsRow ? 1920 : 1080;
         const viewboundCross = directionIsRow ? 1080 : 1920;
-        const renderContext = this.core.renderContext
+        const renderContext = this.core.renderContext;
 
         const newChildren = items.map((item, index) => {
             const sizes = this._getItemSizes(item);

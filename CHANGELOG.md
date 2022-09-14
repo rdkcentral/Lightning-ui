@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3.1
+
+- Bug fixed where the Grid would navigation would go to the wrong index when you navigate after useing `setIndex`
+- Jest support added for development
+
 ## v1.3.0
 
 *22 aug 2022*
