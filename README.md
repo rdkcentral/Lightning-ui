@@ -11,10 +11,10 @@ Lightning-UI provides a set of components that are used very often when you are 
     * [InputField](docs/Keyboard/InputField.md)
 * [ScrollingLabel](docs/ScrollingLabel.md)
 * [Progress Bar](ProgressBar.md)
-* [Adjuster](Adjuster/index.md)
-    * [ArrowAdjuster](Adjuster/ArrowAdjuster.md)
-    * [CarouselAdjuster](Adjuster/CarouselAdjuster.md)
-    * [ProgressAdjuster](Adjuster/ProgressAdjuster.md)
+* [Stepper](docs/Stepper/index.md)
+    * [ArrowStepper](docs/Stepper/ArrowStepper.md)
+    * [CarouselStepper](docs/Stepper/CarouselStepper.md)
+    * [ProgressStepper](docs/Stepper/ProgressStepper.md)
 * [Color Shift](ColorShift.md)
 
 # Install
