@@ -1,25 +1,25 @@
-# CarouseRangeInput
+# CarouseStepper
 
-The CarouseRangeInput component is an extension of the RangeInput component, this component components shows all options in a carousel.
+The CarouseStepper component is an extension of the Stepper component, this component components shows all options in a carousel.
 
 ## Usage
 
-If you want to use the CarouseRangeInput component, import it from Lightning UI.
+If you want to use the CarouseStepper component, import it from Lightning UI.
 
 ```js
-import { CarouseRangeInput } from '@lightningjs/ui'
+import { CarouseStepper } from '@lightningjs/ui'
 ```
 
 ### Initialize
 
-To use the CarouseRangeInput component you create an instance with the `type` CarouseRangeInput:
+To use the CarouseStepper component you create an instance with the `type` CarouseStepper:
 
 ```js
 class MyApp extends Lightning.Application {
     static _template() {
         return {
-            MyCarouseRangeInput: {
-                type: CarouseRangeInput
+            MyCarouseStepper: {
+                type: CarouseStepper
             },
         }
     }
@@ -28,13 +28,13 @@ class MyApp extends Lightning.Application {
 
 ## Customize
 
-You can view the [RangeInput](../index.md) component page to see more information about customizing.
+You can view the [Stepper](../index.md) component page to see more information about customizing.
 
 ### Patching Template
 You can always add / customize existing tags, to make this job a bit easier follow this template when altering the component:
 
 ```js
-this.tag('MyCarouseRangeInput').patch({
+this.tag('MyCarouseStepper').patch({
     Focus: {},
     Label: {},
     ValueWrapper: {
@@ -64,10 +64,10 @@ With this setter you can set the color of all the labels. Expected input is an `
 With this setter you can set the color of all value label when focused. Expected input is an `argb`.
 
 ### padding
-With this setter you can set the padding on the left side of the RangeInput component. Expected input is a `number`
+With this setter you can set the padding on the left side of the Stepper component. Expected input is a `number`
 
 ### focusAnimation
-With this setter you can set a animation for when the RangeInput component is focused. Expected input is a `Lightning.Animation`
+With this setter you can set a animation for when the Stepper component is focused. Expected input is a `Lightning.Animation`
 
 ## Getters
 
