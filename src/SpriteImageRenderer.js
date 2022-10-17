@@ -56,25 +56,40 @@ export default class SpriteImageRenderer extends Lightning.Component {
   set spriteSheet(image) {
     this.tag('Sprite').src = Utils.asset(image)
   }
+  get spriteSheet() {
+    return this.tag('Sprite').src
+  }
 
   // totalColumns: total columns of spriteSheet
   set columns(columns) {
     this._totalColumns = columns
+  }
+  get columns() {
+    return this._totalColumns
   }
 
   // totalRows: total rows of spriteSheet
   set rows(rows) {
     this._totalRows = rows
   }
+  get rows() {
+    return this._totalRows
+  }
 
   // spriteAnimationSets: Object with animations {  start: startFrame, end: endFrame, repeat: (-1 equals infinite) }
   set spriteAnimationSets(spriteAnimationSets) {
     this._spriteAnimationSets = spriteAnimationSets
   }
+  get spriteAnimationSets() {
+    return this._spriteAnimationSets
+  }
 
   // fps: frames per second ( 0 to 60 )
   set fps(fps) {
     this._fps = Math.min(60, Math.max(0, fps))
+  }
+  get fps() {
+    return this._fps
   }
 
   // Stop sprite animation instantaneous
@@ -108,7 +123,6 @@ export default class SpriteImageRenderer extends Lightning.Component {
     if (this._fps == undefined) this._fps = 1
     if (this._spriteAnimationSets == undefined) this._spriteAnimationSets = {}
 
-    
     this.stop()
     this._totalLoops = this._spriteAnimationSets.repeat
     this._reset()
@@ -116,27 +130,27 @@ export default class SpriteImageRenderer extends Lightning.Component {
   }
 
 
-   /*
-  Emitters:
-    'spriteLoopCycleStart': every time a loop starts
-    'spriteLoopCycleEnd': every time a loop ends
-    'spriteLoopFinished': when reaching end of loops, and sprite animation ends
-   */
+  /*
+ signals:
+   'onLoopCycleStart': every time a loop starts
+   'onLoopCycleEnd': every time a loop ends
+   'onLoopCycleFinish': when reaching end of loops, and sprite animation ends
+  */
 
   _updateSpritePosition() {
     this._updateSpriteToIndex(this._index)
     if (this._index === 0)
-      this.application.emit('spriteLoopCycleStart')
+      this.signal('onLoopCycleStart')
 
     this._index++
     if (this._index > this._spriteAnimationSets.end) {
       if (this._totalLoops >= 0) this._totalLoopsDone++
       if (this._totalLoopsDone > this._totalLoops && this._totalLoops >= 0) {
-        this.emit('spriteLoopFinished')
+        this.signal('onLoopCycleFinish')
         this.stop()
       }
       this._index = this._spriteAnimationSets.start
-      this.emit('spriteLoopCycleEnd')
+      this.signal('onLoopCycleEnd')
     }
   }
 
