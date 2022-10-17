@@ -42,11 +42,10 @@ Sets number of rows for the spriteSheet.  Expected input is a `number`.
 ### spriteAnimationSets
 You can add startFrame, endFrame, repeat (-1 equals infinite) by using `spriteAnimationSets`  :
 ```js
-this.tag('MySprite').spriteAnimationSets(spriteAnimationSets)
-```
-The spriteAnimationSets will take object as parameter.
+// The spriteAnimationSets will take object as parameter.
 Ex:
 	this.tag('MySprite').spriteAnimationSets = { start: 0, end: 58, repeat: -1 }
+```
 
 ### fps
 Sets fps( frames per second ) for the spriteSheet.  Expected input is a `number`.
