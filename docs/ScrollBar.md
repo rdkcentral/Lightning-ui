@@ -33,6 +33,11 @@ class MyApp extends Lightning.Application {
 
 You can use a bunch of setters to customize your scroll bar listed below.
 
+## Signals
+
+###scrollTo
+This signal is fired when the scroller position has changed. This signal generally comes with a current scroller position.
+
 ## Setters
 
 ###colors
