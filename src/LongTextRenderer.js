@@ -91,13 +91,13 @@ export default class LongTextRenderer extends Lightning.Component {
     )._calculateRenderInfo()
 
     this._descriptionTotalHeight = height || this.h
-    let textItems = lines.map((line, idx) => {
+    let textItems = lines.map(line => {
       return {
         w: this.w ? this.w : 1000,
         h: lineHeight,
         type: TextComponent,
         item: {
-          ...this._textProps,
+          ...this.textProps,
           text: line,
         },
       }
@@ -120,13 +120,13 @@ export default class LongTextRenderer extends Lightning.Component {
   _createParagraph(text) {
     return {
       ...this._textTextureDefaults,
-      ...this._textProps,
+      ...this.textProps,
       text: text,
     }
   }
 
   _getFocused() {
-    if (this._isScrollBarEnabled) {
+    if (this.isScrollBarEnabled) {
       return this.tag('ScrollBar')
     }
     return this

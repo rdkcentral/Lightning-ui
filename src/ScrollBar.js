@@ -18,7 +18,7 @@ export default class ScrollBar extends Lightning.Component {
   }
 
   _construct() {
-    this._direction = 'vertical'
+    this._direction = ScrollBar.DIRECTION.vertical
     this._colors = {
       background: 0xffd8d8d8,
       scrollerFocused: 0xff00a7e3,
@@ -48,10 +48,10 @@ export default class ScrollBar extends Lightning.Component {
 
   /**
    * Set the scroll bar direction.
-   * @param v vertical or horizontal
+   * @param string vertical or horizontal
    */
-  set direction(v) {
-    this._direction = v
+  set direction(string) {
+    this._direction = ScrollBar.DIRECTION[string] || ScrollBar.DIRECTION.vertical;
   }
 
   get direction() {
@@ -155,7 +155,7 @@ export default class ScrollBar extends Lightning.Component {
   }
 
   _handleRight() {
-    if (this.direction !== 'vertical') {
+    if (this.direction === 'horizontal') {
       return this._handleNext()
     } else {
       return false
@@ -163,7 +163,7 @@ export default class ScrollBar extends Lightning.Component {
   }
 
   _handleLeft() {
-    if (this.direction !== 'vertical') {
+    if (this.direction === 'horizontal') {
       return this._handlePrevious()
     } else {
       return false
@@ -177,4 +177,9 @@ export default class ScrollBar extends Lightning.Component {
     this.tag('Scroller').patch({ smooth: { [axis]: scrollerStart } })
     this.signal('scrollTo', this._scrollerPosition)
   }
+}
+
+ScrollBar.DIRECTION = {
+  vertical: 'vertical',
+  horizontal: 'horizontal'
 }
