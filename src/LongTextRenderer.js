@@ -1,5 +1,5 @@
 import Lightning from '@lightningjs/core';
-import Scrollbar from './Scrollbar'
+import ScrollBar from './ScrollBar'
 import List from './List'
 
 export default class LongTextRenderer extends Lightning.Component {
@@ -17,60 +17,81 @@ export default class LongTextRenderer extends Lightning.Component {
           direction: 'column',
         },
       },
-      Scrollbar: {
+      ScrollBar: {
+        alpha: 0,
         w: 10,
         h: h => h,
-        type: Scrollbar,
+        type: ScrollBar,
         signals: { scrollTo: true },
       },
     }
   }
 
+  _init() {
+    this._descriptionVisibleHeight = this.h ? this.h : this.defaultTextAreaHeight
+    this._textTextureDefaults = new Lightning.textures.TextTexture(this.stage).cloneArgs()
+    this._isScrollBarEnabled = false
+  }
+
   set scrollBarProps(obj) {
-    this.tag('Scrollbar').patch({
+    this._scrollBarProps = obj
+    this.tag('ScrollBar').patch({
       ...obj,
     })
+  }
+
+  get scrollBarProps() {
+    return this._scrollBarProps
+  }
+
+  set scrollPercentage(val) {
+    this._scrollPercentage = val / 100
+  }
+
+  get scrollPercentage() {
+    //default scrolling of 80% of the view every time
+    return this._scrollPercentage ? this._scrollPercentage : 0.8
   }
 
   set textProps(obj) {
     this._textProps = obj
   }
 
-  get _defaultTextAreaHeight() {
-    return 900
+  get textProps() {
+    return this._textProps ? this._textProps : this.defaultTextProps
   }
 
-  get _defaultTextProps() {
+  get defaultTextAreaHeight() {
+    return 1000
+  }
+
+  get defaultTextProps() {
     return {
       textAlign: 'left',
       fontFace: 'Roboto',
       fontSize: 22,
       lineHeight: 40,
-      wordWrapWidth: 1500,
+      wordWrapWidth: 1000,
       textColor: 0xff606060,
     }
   }
 
-  _setScrollerSizes() {
-    this.tag('Scrollbar').sizes = {
-      visible: this._descriptionVisibleHeight,
-      total: this._descriptionTotalHeight,
-    }
+  get isScrollBarEnabled() {
+    return this._isScrollBarEnabled
   }
 
-  set setDescription(description) {
-    this._descriptionVisibleHeight = this.h ? this.h : this._defaultTextAreaHeight
-    this._textTextureDefaults = new Lightning.textures.TextTexture(this.stage).cloneArgs()
-    this._textProps = this._textProps ? this._textProps : this._defaultTextProps
-    let lineHeight = this._textProps.lineHeight || this._defaultTextProps.lineHeight
+  set description(description) {
+    this._description = description
+    let lineHeight = this.textProps.lineHeight
 
-    const info = Lightning.textures.TextTexture.renderer(
-      this.stage,
-      this.stage.platform.getDrawingCanvas(),
-      this._createParagraph(description)
+    const { lines, height } = Lightning.textures.TextTexture.renderer(
+        this.stage,
+        this.stage.platform.getDrawingCanvas(),
+        this._createParagraph(description)
     )._calculateRenderInfo()
 
-    let textItems = info.lines.map(line => {
+    this._descriptionTotalHeight = height || this.h
+    let textItems = lines.map((line, idx) => {
       return {
         w: this.w ? this.w : 1000,
         h: lineHeight,
@@ -82,13 +103,18 @@ export default class LongTextRenderer extends Lightning.Component {
       }
     })
 
-    this._descriptionTotalHeight = info.lines.length ? info.lines.length * lineHeight : this.h
     this.tag('Description').reload(textItems)
+    if (this._descriptionTotalHeight > this._descriptionVisibleHeight) {
+      this.tag('ScrollBar').setSmooth('alpha', 1)
+      this._isScrollBarEnabled = true
+      //number of scrolls possible with scrolling of scrollPercentage of the view every time
+      this._totalScrollBarSteps = this._descriptionTotalHeight / (this.scrollPercentage * this._descriptionVisibleHeight)
+      this.tag('ScrollBar').totalNumOfScrolls = this._totalScrollBarSteps
+    }
   }
 
-  _focus() {
-    this._setScrollerSizes()
-    this._setState('Active')
+  get description() {
+    return this._description
   }
 
   _createParagraph(text) {
@@ -99,18 +125,21 @@ export default class LongTextRenderer extends Lightning.Component {
     }
   }
 
-  static _states() {
-    return [
-      class Active extends this {
-        _getFocused() {
-          return this.tag('Scrollbar')
-        }
+  _getFocused() {
+    if (this._isScrollBarEnabled) {
+      return this.tag('ScrollBar')
+    }
+    return this
+  }
 
-        scrollTo(position) {
-          this.tag('Description').patch({ smooth: { y: position ? position : 0 } })
-        }
-      },
-    ]
+  scrollTo(scrollerPosition) {
+    const viewYPos = Math.floor(this._descriptionVisibleHeight / this._totalScrollBarSteps) * scrollerPosition * -1
+    this.tag('Description').patch({ smooth: { y: viewYPos ? viewYPos : 0 } })
+  }
+
+  reset() {
+    this.tag('Description').clear()
+    this._description = ""
   }
 }
 
