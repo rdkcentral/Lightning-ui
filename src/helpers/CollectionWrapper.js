@@ -360,12 +360,12 @@ export default class CollectionWrapper extends Lightning.Component {
             main: directionIsRow ? 'x' : 'y',
             mainDim: directionIsRow ? 'w' : 'h',
             mainMarginTo: directionIsRow ? 'marginRight' : 'marginBottom',
-            mainMarginFrom: directionIsRow ? 'marginLeft' : 'marginUp',
+            mainMarginFrom: directionIsRow ? 'marginLeft' : 'marginTop',
             crossDirection: !directionIsRow ? 'columns' : 'rows',
             cross: directionIsRow ? 'y' : 'x',
             crossDim: directionIsRow ? 'h' : 'w',
             crossMarginTo: directionIsRow ? 'marginBottom' : 'marginRight',
-            crossMarginFrom: directionIsRow ? 'marginUp' : 'marginLeft',
+            crossMarginFrom: directionIsRow ? 'marginTop' : 'marginLeft',
         }
     }
     
