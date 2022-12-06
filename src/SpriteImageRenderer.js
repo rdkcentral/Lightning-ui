@@ -17,10 +17,8 @@
  * limitations under the License.
  */
 
-
-
-import Lightning from '@lightningjs/core'
-import { Utils } from '@lightningjs/sdk'
+import Lightning from '@lightningjs/core';
+import { Utils } from '@lightningjs/sdk';
 
 export default class SpriteImageRenderer extends Lightning.Component {
   static _template() {
@@ -80,6 +78,7 @@ export default class SpriteImageRenderer extends Lightning.Component {
   set spriteAnimationSets(spriteAnimationSets) {
     this._spriteAnimationSets = spriteAnimationSets
   }
+  
   get spriteAnimationSets() {
     return this._spriteAnimationSets
   }
