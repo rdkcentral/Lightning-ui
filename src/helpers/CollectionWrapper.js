@@ -18,6 +18,7 @@
  */
 
 import Lightning from '@lightningjs/core';
+
 import { limitWithinRange } from './index.js';
 
 export default class CollectionWrapper extends Lightning.Component {
@@ -135,10 +136,15 @@ export default class CollectionWrapper extends Lightning.Component {
         }
     }
 
-    remove(item) {
-        if(this.hasItems && item.assignedID) {
-            for(let i = 0; i < this.wrapper.children.length; i++) {
-                if(this.wrapper.children[i].assignedID === item.assignedID) {
+    remove(target) {
+        if(this.hasItems && target.assignedID) {
+            const itemWrappers = this.itemWrappers;
+            for(let i = 0; i < this._items.length; i++) {
+                let item = this._items[i];
+                if(itemWrappers[i] && itemWrappers[i].component.isAlive) {
+                    item = itemWrappers[i].component;
+                }
+                if(target.assignedID === item.assignedID) {
                     return this.removeAt(i);
                 }
             }
@@ -154,7 +160,8 @@ export default class CollectionWrapper extends Lightning.Component {
         }
         const item = this._items[index];
         this._items.splice(index, amount);
-        this.plotItems();
+        this.wrapper.childList.removeAt(index);
+        this.reposition();
         return item;
     }
 

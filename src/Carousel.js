@@ -63,9 +63,14 @@ export default class Carousel extends CollectionWrapper {
         const scrollOffsetStart = 0;
         const positiveHalf = [];
         const negativeHalf = [];
-        const itemIndex = this._index;
+        const itemIndex = this._focusIndex;
         let index = itemIndex;
         let position = scrollOffsetStart;
+        let currentDataIndex = null;
+
+        if(this.currentItemWrapper) {
+            currentDataIndex = this.currentItemWrapper.componentIndex;
+        }
 
         while((viewBound - scrollOffsetStart) + this._tresholdEnd > position) {
             const item = items[index];
@@ -120,28 +125,29 @@ export default class Carousel extends CollectionWrapper {
             position -= (sizes[mainMarginFrom] || sizes.margin);
             index = this._normalizeDataIndex(index - 1, items);
         }
-        this._index = negativeHalf.length;
+        this._focusIndex = negativeHalf.length;
         wrapper.children = [...negativeHalf.reverse(), ...positiveHalf];
-        this._indexChanged({previousIndex: this._index, index: this._index, dataLength: this._items.length});
+        this._index = this.currentItemWrapper.componentIndex;
+        if(this._index !== currentDataIndex) {
+            this._indexChanged({previousIndex: currentDataIndex, index: this._index, dataLength: this._items.length});
+        }
     }
 
     repositionItems() {
         const children = this.wrapper.children;
-        const begin = children.slice(0, this._index);
-        const end = children.slice(this._index + 1);
+        const begin = children.slice(0, this._focusIndex);
+        const end = children.slice(this._focusIndex + 1);
 
         const {main, mainDim, mainMarginFrom, mainMarginTo, cross, crossDim} = this._getPlotProperties(this._direction);
-        const viewBound = this[mainDim];
         let crossPos = 0, crossSize = 0;
 
         const scroll = this.scrollTo;
         const scrollIsAnchored = !isNaN(scroll);
         const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? this._normalizePixelToPercentage(scroll) : scroll) : null;
 
-        const focusedItem = children[this._index];
+        const focusedItem = children[this._focusIndex];
         
         let position = focusedItem[main] + (focusedItem[mainDim]- focusedItem.component[mainDim]) * scrollAnchor;
-
 
         const focusedItemSizes = this._getItemSizes(focusedItem);
         focusedItem.patch({
@@ -195,7 +201,7 @@ export default class Carousel extends CollectionWrapper {
             return false;
         }
         this._cleanUp();
-        const targetIndex = this._index + shift;
+        const targetIndex = this._focusIndex + shift;
         const childList = this.wrapper.childList;
         const {main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
         const currentDataIndex = this.currentItemWrapper.componentIndex;
@@ -222,9 +228,12 @@ export default class Carousel extends CollectionWrapper {
 
         childList.addAt(child, shift > 0 ? childList.length : 0);
         if(shift > 0) {
-            this._index = targetIndex;
+            this._focusIndex = targetIndex;
         }
-        this._indexChanged({previousIndex: currentDataIndex, index: currentDataIndex + shift, dataLength: this._items.length});
+        if(currentDataIndex !== currentDataIndex + shift) {
+            this._index = currentDataIndex + shift
+            this._indexChanged({previousIndex: currentDataIndex, index: this._index, dataLength: this._items.length});
+        }
         return true;
     }
 
@@ -273,7 +282,7 @@ export default class Carousel extends CollectionWrapper {
                 if(rem[0] === 0) {
                     for(let i = 0; i < rem.length; i++) {
                         if(!rem[i + 1] || (rem[i+1] - rem[i] !== 1)) {
-                            this._index = this._index - (i + 1);
+                            this._focusIndex = this._focusIndex - (i + 1);
                             break;
                         }
                     }
@@ -288,6 +297,10 @@ export default class Carousel extends CollectionWrapper {
     _inactive() {
         this._cleanUp(0);
         super._inactive();
+    }
+
+    get currentItemWrapper() {
+        return this.wrapper.children[this._focusIndex];
     }
 
     set threshold(num) {

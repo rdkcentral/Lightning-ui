@@ -1,5 +1,6 @@
-import TestRenderer from '@lightningjs/ui-components/test/lightning-test-renderer'
-import { Component } from '@lightningjs/core'
+import { Component } from '@lightningjs/core';
+import TestRenderer
+  from '@lightningjs/ui-components/test/lightning-test-renderer';
 
 import Grid from './Grid';
 
