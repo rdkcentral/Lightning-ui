@@ -87,9 +87,15 @@ export default class CollectionWrapper extends Lightning.Component {
     setIndex(index) {
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
-        this._index = targetIndex;
-        this._indexChanged({previousIndex, index: targetIndex, dataLength: this._items.length});
-        return previousIndex !== targetIndex;
+        
+        if(previousIndex !== targetIndex) {
+            this._index = targetIndex;
+            this._indexChanged({previousIndex, index: targetIndex, dataLength: this._items.length});
+            
+            return true;
+        }
+        
+        return false;
     }
 
     clear() {
