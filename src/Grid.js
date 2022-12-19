@@ -17,7 +17,11 @@
  * limitations under the License.
  */
 
-import { CollectionWrapper, ItemWrapper, limitWithinRange } from "./helpers";
+import {
+  CollectionWrapper,
+  ItemWrapper,
+  limitWithinRange,
+} from './helpers';
 
 export default class Grid extends CollectionWrapper {
     _construct() {
@@ -158,6 +162,9 @@ export default class Grid extends CollectionWrapper {
         this.lines = [[]];
 
         wrapper.children.forEach((item, index) => {
+            if(!item.component.isAlive) {
+                item = this._items[index];
+            }
             const sizes = this._getItemSizes(item);
             const targetCrossFromMargin = (sizes[crossMarginFrom] || sizes.margin || 0);
 

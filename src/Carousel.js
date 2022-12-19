@@ -304,6 +304,16 @@ export default class Carousel extends CollectionWrapper {
         super._inactive();
     }
 
+    removeAt(index, amount = 1)  {
+        if(index < 0 && index >= this._items.length) {
+            throw new Error('removeAt: The index ' + index + ' is out of bounds ' + this._items.length);
+        }
+        const item = this._items[index];
+        this._items.splice(index, amount);
+        this.plotItems();
+        return item;
+    }
+
     get currentItemWrapper() {
         return this.wrapper.children[this._focusIndex];
     }

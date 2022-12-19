@@ -87,7 +87,10 @@ export default class List extends CollectionWrapper {
         }
         const {main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim} = this._getPlotProperties(this._direction);
         let crossPos = 0, crossSize = 0, position = 0;
-        wrapper.children.forEach((item) => {
+        wrapper.children.forEach((item, index) => {
+            if(!item.component.isAlive) {
+                item = this._items[index];
+            }
             const sizes = this._getItemSizes(item.component);
             position += sizes[mainMarginFrom] || sizes.margin || 0;
             crossPos = item[cross] || crossPos;

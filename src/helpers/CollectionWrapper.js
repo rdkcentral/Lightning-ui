@@ -96,7 +96,7 @@ export default class CollectionWrapper extends Lightning.Component {
             return true;
         }
         
-        return false;
+        return false;   
     }
 
     clear() {
