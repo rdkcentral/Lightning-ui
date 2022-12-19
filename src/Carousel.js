@@ -38,6 +38,11 @@ export default class Carousel extends CollectionWrapper {
         this._tresholdEnd = 400;
     }
 
+    clear() {
+        super.clear();
+        this._focusIndex = 0;
+    }
+
     _normalizeDataIndex(index, items = this._items) {
         if(index > items.length - 1) {
             return 0;
