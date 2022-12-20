@@ -160,8 +160,7 @@ export default class CollectionWrapper extends Lightning.Component {
         }
         const item = this._items[index];
         this._items.splice(index, amount);
-        this.wrapper.childList.removeAt(index);
-        this.reposition();
+        this.plotItems();
         return item;
     }
 
