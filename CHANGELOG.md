@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.3.3
+- CollectionWrapper now only fires onIndexChanged when the index has actually changed.
+- Fix bug where CollectionWrapper could not remove an item.
+- Fix Carousel where index does not represent actual index of the focused item.
+
+## v1.3.2
+
+- Fixed name error where code used marginUp instead of marginTop as indicated in documentation
+
 ## v1.3.1
 
 - Bug fixed where the Grid would navigation would go to the wrong index when you navigate after useing `setIndex`
