@@ -17,7 +17,11 @@
  * limitations under the License.
  */
 
-import { CollectionWrapper, ItemWrapper, limitWithinRange } from "./helpers";
+import {
+  CollectionWrapper,
+  ItemWrapper,
+  limitWithinRange,
+} from './helpers';
 
 export default class Grid extends CollectionWrapper {
     _construct() {

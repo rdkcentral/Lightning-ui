@@ -18,6 +18,7 @@
  */
 
 import Lightning from '@lightningjs/core';
+
 import { limitWithinRange } from './index.js';
 
 export default class CollectionWrapper extends Lightning.Component {
@@ -87,9 +88,15 @@ export default class CollectionWrapper extends Lightning.Component {
     setIndex(index) {
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
-        this._index = targetIndex;
-        this._indexChanged({previousIndex, index: targetIndex, dataLength: this._items.length});
-        return previousIndex !== targetIndex;
+        
+        if(previousIndex !== targetIndex) {
+            this._index = targetIndex;
+            this._indexChanged({previousIndex, index: targetIndex, dataLength: this._items.length});
+            
+            return true;
+        }
+        
+        return false;   
     }
 
     clear() {
@@ -129,10 +136,15 @@ export default class CollectionWrapper extends Lightning.Component {
         }
     }
 
-    remove(item) {
-        if(this.hasItems && item.assignedID) {
-            for(let i = 0; i < this.wrapper.children.length; i++) {
-                if(this.wrapper.children[i].assignedID === item.assignedID) {
+    remove(target) {
+        if(this.hasItems && target.assignedID) {
+            const itemWrappers = this.itemWrappers;
+            for(let i = 0; i < this._items.length; i++) {
+                let item = this._items[i];
+                if(itemWrappers[i] && itemWrappers[i].component.isAlive) {
+                    item = itemWrappers[i].component;
+                }
+                if(target.assignedID === item.assignedID) {
                     return this.removeAt(i);
                 }
             }
@@ -360,12 +372,12 @@ export default class CollectionWrapper extends Lightning.Component {
             main: directionIsRow ? 'x' : 'y',
             mainDim: directionIsRow ? 'w' : 'h',
             mainMarginTo: directionIsRow ? 'marginRight' : 'marginBottom',
-            mainMarginFrom: directionIsRow ? 'marginLeft' : 'marginUp',
+            mainMarginFrom: directionIsRow ? 'marginLeft' : 'marginTop',
             crossDirection: !directionIsRow ? 'columns' : 'rows',
             cross: directionIsRow ? 'y' : 'x',
             crossDim: directionIsRow ? 'h' : 'w',
             crossMarginTo: directionIsRow ? 'marginBottom' : 'marginRight',
-            crossMarginFrom: directionIsRow ? 'marginUp' : 'marginLeft',
+            crossMarginFrom: directionIsRow ? 'marginTop' : 'marginLeft',
         }
     }
     
