@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3.4
+- Fix initial scroll when scroll offset different than 0.
+- Fix progress value in ProgressStepper component.
+
 ## v1.3.3
 - CollectionWrapper now only fires onIndexChanged when the index has actually changed.
 - Fix bug where CollectionWrapper could not remove an item.
