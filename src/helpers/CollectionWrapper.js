@@ -57,22 +57,22 @@ export default class CollectionWrapper extends Lightning.Component {
     }
     
     _indexChanged(obj) {    
-        let {previousIndex:previous, index:target, dataLength:max, mainIndex, previousMainIndex, lines} = obj;
-        if(!isNaN(previousMainIndex) && !isNaN(mainIndex) && !isNaN(lines)) {
+        let { previousIndex: previous, index: target, dataLength: max, mainIndex, previousMainIndex, lines } = obj;
+        if (!isNaN(previousMainIndex) && !isNaN(mainIndex) && !isNaN(lines)) {
             previous = previousMainIndex;
             target = mainIndex;
             max = lines;
         }
-        if(this._requestsEnabled && !this._requestingItems) {
-            if(previous < target && target + this._requestThreshold >= max) {
+        if (this._requestsEnabled && !this._requestingItems) {
+            if (previous < target && target + this._requestThreshold >= max) {
                 this._requestingItems = true;
                 this.signal('onRequestItems', obj)
                     .then((response) => {
                         const type = typeof response;
-                        if(Array.isArray(response) || type === 'object' ||  type === 'string' || type === 'number') {
+                        if (Array.isArray(response) || type === 'object' ||  type === 'string' || type === 'number') {
                             this.add(response);
                         }
-                        if(response === false) {
+                        if (response === false) {
                             this.enableRequests = false;
                         }
                         this._requestingItems = false;
@@ -82,21 +82,18 @@ export default class CollectionWrapper extends Lightning.Component {
 
         this._refocus();
         this.scrollCollectionWrapper(obj);
-        this.signal('onIndexChanged', obj);
+
+        if (previous !== target) {
+            this.signal('onIndexChanged', obj);
+        }
     }
 
     setIndex(index) {
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
-        
-        if(previousIndex !== targetIndex) {
-            this._index = targetIndex;
-            this._indexChanged({previousIndex, index: targetIndex, dataLength: this._items.length});
-            
-            return true;
-        }
-        
-        return false;   
+        this._index = targetIndex;
+        this._indexChanged({ previousIndex, index: targetIndex, dataLength: this._items.length });
+        return previousIndex !== targetIndex;   
     }
 
     clear() {

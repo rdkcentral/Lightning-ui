@@ -50,7 +50,7 @@ export default class ProgressRangeInput extends RangeInput {
     set value(str) {
         this._value = str;
         if(this.active) {
-            this.tag('ProgressBar').value = this._value;
+            this.tag('ProgressBar').value = this._value / (this._max - this._min);
             this.tag('Value').text.text = this._value;
         }
     }
