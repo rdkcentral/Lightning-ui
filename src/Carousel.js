@@ -40,7 +40,7 @@ export default class Carousel extends CollectionWrapper {
 
     clear() {
         super.clear();
-        this._focusIndex = 0;
+        this._dataIndex = 0;
     }
 
     _normalizeDataIndex(index, items = this._items) {
@@ -60,7 +60,7 @@ export default class Carousel extends CollectionWrapper {
         const {main, mainDim, mainMarginFrom, mainMarginTo, cross, crossDim} = this._getPlotProperties(this._direction);
         const viewBound = this[mainDim];
         let crossPos = 0, crossSize = 0;
-        
+
         const scroll = this.scroll;
         const scrollIsAnchored = !isNaN(scroll);
         const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? this._normalizePixelToPercentage(scroll) : scroll) : null;
@@ -68,12 +68,12 @@ export default class Carousel extends CollectionWrapper {
         const scrollOffsetStart = 0;
         const positiveHalf = [];
         const negativeHalf = [];
-        const itemIndex = this._focusIndex;
+        const itemIndex = this._index;
         let index = itemIndex;
         let position = scrollOffsetStart;
         let currentDataIndex = null;
 
-        if(this.currentItemWrapper) {
+        if (this.currentItemWrapper) {
             currentDataIndex = this.currentItemWrapper.componentIndex;
         }
 
@@ -130,18 +130,16 @@ export default class Carousel extends CollectionWrapper {
             position -= (sizes[mainMarginFrom] || sizes.margin);
             index = this._normalizeDataIndex(index - 1, items);
         }
-        this._focusIndex = negativeHalf.length;
+        this._index = negativeHalf.length;
+        this._dataIndex = currentDataIndex || 0
         wrapper.children = [...negativeHalf.reverse(), ...positiveHalf];
-        this._index = this.currentItemWrapper.componentIndex;
-        if(this._index !== currentDataIndex) {
-            this._indexChanged({previousIndex: currentDataIndex, index: this._index, dataLength: this._items.length});
-        }
+        this._indexChanged({previousIndex: this._index, index: this._index, dataLength: this._items.length});
     }
 
     repositionItems() {
         const children = this.wrapper.children;
-        const begin = children.slice(0, this._focusIndex);
-        const end = children.slice(this._focusIndex + 1);
+        const begin = children.slice(0, this._index);
+        const end = children.slice(this._index + 1);
 
         const {main, mainDim, mainMarginFrom, mainMarginTo, cross, crossDim} = this._getPlotProperties(this._direction);
         let crossPos = 0, crossSize = 0;
@@ -150,8 +148,8 @@ export default class Carousel extends CollectionWrapper {
         const scrollIsAnchored = !isNaN(scroll);
         const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? this._normalizePixelToPercentage(scroll) : scroll) : null;
 
-        const focusedItem = children[this._focusIndex];
-        
+        const focusedItem = children[this._index];
+
         let position = focusedItem[main] + (focusedItem[mainDim]- focusedItem.component[mainDim]) * scrollAnchor;
 
         const focusedItemSizes = this._getItemSizes(focusedItem);
@@ -162,7 +160,7 @@ export default class Carousel extends CollectionWrapper {
             [main]: position,
             [cross]: crossPos
         });
-        
+
         position = focusedItem[main] - (focusedItem[mainMarginFrom] || focusedItem.margin);
 
         begin.reverse().forEach((item) => {
@@ -170,7 +168,7 @@ export default class Carousel extends CollectionWrapper {
             if(crossSize < sizes[crossDim]) {
                 crossSize = sizes[crossDim];
             }
-            
+
             position -= (sizes[mainDim] + (sizes[mainMarginTo] || sizes.margin || this._spacing));
             item.patch({
                 ...sizes,
@@ -206,21 +204,21 @@ export default class Carousel extends CollectionWrapper {
             return false;
         }
         this._cleanUp();
-        const targetIndex = this._focusIndex + shift;
+        const targetIndex = this._index + shift;
         const childList = this.wrapper.childList;
         const {main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
         const currentDataIndex = this.currentItemWrapper.componentIndex;
         let referenceItem = childList.last;
-        if(shift < 0) {
+        if (shift < 0) {
             referenceItem = childList.first;
         }
 
         const targetDataIndex = this._normalizeDataIndex(referenceItem.componentIndex + shift);
         const targetItem = this._items[targetDataIndex];
         const sizes = this._getItemSizes(targetItem);
-        
+
         let position = referenceItem[main] + (referenceItem[mainMarginFrom] || sizes.margin) + referenceItem[mainDim] + (sizes[mainMarginTo] || sizes.margin || this.spacing);
-        if(shift < 0) {
+        if (shift < 0) {
             position = referenceItem[main] - (referenceItem[mainMarginTo] || sizes.margin)  - (sizes[mainDim] + (sizes[mainMarginFrom] || sizes.margin || this._spacing));
         }
         const child = this.stage.c({
@@ -232,13 +230,23 @@ export default class Carousel extends CollectionWrapper {
         });
 
         childList.addAt(child, shift > 0 ? childList.length : 0);
-        if(shift > 0) {
-            this._focusIndex = targetIndex;
+
+        const newDataIndex = currentDataIndex + shift
+
+        if (shift > 0) {
+            this._index = targetIndex;
+
+            if (newDataIndex >= 0 && newDataIndex > this._items.length - 1) {
+            this._dataIndex = 0
+            } else {
+            this._dataIndex = newDataIndex
+            }
+        } else {
+            this._dataIndex = newDataIndex >= 0 ? newDataIndex : this._items.length - 1
         }
-        if(currentDataIndex !== currentDataIndex + shift) {
-            this._index = currentDataIndex + shift
-            this._indexChanged({previousIndex: currentDataIndex, index: this._index, dataLength: this._items.length});
-        }
+
+        this._indexChanged({ previousIndex: currentDataIndex, index: this._dataIndex, dataLength: this._items.length });
+
         return true;
     }
 
@@ -272,7 +280,7 @@ export default class Carousel extends CollectionWrapper {
             const bound = this[mainDim];
             const viewboundMain = directionIsRow ? 1920 : 1080;
             const offset = this._scrollTransition && this._scrollTransition.targetValue || 0;
-            
+
             const boundStart =  -viewboundMain * 0.66;
             const boundEnd = bound + viewboundMain * 0.66;
 
@@ -287,7 +295,7 @@ export default class Carousel extends CollectionWrapper {
                 if(rem[0] === 0) {
                     for(let i = 0; i < rem.length; i++) {
                         if(!rem[i + 1] || (rem[i+1] - rem[i] !== 1)) {
-                            this._focusIndex = this._focusIndex - (i + 1);
+                            this._index = this._index - (i + 1);
                             break;
                         }
                     }
@@ -304,8 +312,12 @@ export default class Carousel extends CollectionWrapper {
         super._inactive();
     }
 
-    get currentItemWrapper() {
-        return this.wrapper.children[this._focusIndex];
+    set index(index) {
+        this.setIndex(index);
+    }
+
+    get index() {
+        return this._dataIndex;
     }
 
     set threshold(num) {
