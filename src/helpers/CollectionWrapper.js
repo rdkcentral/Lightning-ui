@@ -83,7 +83,7 @@ export default class CollectionWrapper extends Lightning.Component {
         this._refocus();
         this.scrollCollectionWrapper(obj);
 
-        if (previous !== target) {
+        if (obj.previousIndex !== obj.index) {
             this.signal('onIndexChanged', obj);
         }
     }
