@@ -62,7 +62,7 @@ export default class Carousel extends CollectionWrapper {
         const viewBound = this[mainDim];
         let crossPos = 0, crossSize = 0;
 
-        const scroll = this.scroll;
+        const scroll = this._scroll;
         const scrollIsAnchored = !isNaN(scroll);
         const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? this._normalizePixelToPercentage(scroll) : scroll) : null;
 
