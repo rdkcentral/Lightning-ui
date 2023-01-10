@@ -31,7 +31,7 @@ export default class Carousel extends CollectionWrapper {
 
     _construct() {
         super._construct();
-        this._scrollAnchor = 0.5;
+        this._scroll = 0.5;
         this._scrollOffsetStart = 0;
         this._scrollOffsetEnd = 0;
         this._tresholdStart = 400;
@@ -146,7 +146,7 @@ export default class Carousel extends CollectionWrapper {
         const {main, mainDim, mainMarginFrom, mainMarginTo, cross, crossDim} = this._getPlotProperties(this._direction);
         let crossPos = 0, crossSize = 0;
 
-        const scroll = this.scrollTo;
+        const scroll = this._scroll;
         const scrollIsAnchored = !isNaN(scroll);
         const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? this._normalizePixelToPercentage(scroll) : scroll) : null;
 

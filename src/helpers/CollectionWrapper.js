@@ -573,7 +573,7 @@ export default class CollectionWrapper extends Lightning.Component {
         this._scroll = value;
     }
 
-    get scrollTo() {
+    get scroll() {
         return this._scroll;
     }
 
