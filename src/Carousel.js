@@ -36,11 +36,12 @@ export default class Carousel extends CollectionWrapper {
         this._scrollOffsetEnd = 0;
         this._tresholdStart = 400;
         this._tresholdEnd = 400;
+        this._dataIndex = -1;
     }
 
     clear() {
         super.clear();
-        this._dataIndex = 0;
+        this._dataIndex = -1;
     }
 
     _normalizeDataIndex(index, items = this._items) {
@@ -131,9 +132,10 @@ export default class Carousel extends CollectionWrapper {
             index = this._normalizeDataIndex(index - 1, items);
         }
         this._index = negativeHalf.length;
-        this._dataIndex = currentDataIndex || 0
+        const previousDataIndex = this._dataIndex;
+        this._dataIndex = currentDataIndex || 0;
         wrapper.children = [...negativeHalf.reverse(), ...positiveHalf];
-        this._indexChanged({previousIndex: this._index, index: this._index, dataLength: this._items.length});
+        this._indexChanged({previousIndex: previousDataIndex, index: _dataIndex, dataLength: this._items.length});
     }
 
     repositionItems() {
