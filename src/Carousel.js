@@ -135,7 +135,7 @@ export default class Carousel extends CollectionWrapper {
         const previousDataIndex = this._dataIndex;
         this._dataIndex = currentDataIndex || 0;
         wrapper.children = [...negativeHalf.reverse(), ...positiveHalf];
-        this._indexChanged({previousIndex: previousDataIndex, index: _dataIndex, dataLength: this._items.length});
+        this._indexChanged({previousIndex: previousDataIndex, index: this._dataIndex, dataLength: this._items.length});
     }
 
     repositionItems() {
