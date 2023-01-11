@@ -1,4 +1,11 @@
 # Changelog
+
+## v1.3.6
+*11 jan 2023*
+- Fix Carousel initial scroll
+- Fix Carousel infinite loop issue when dataset too small
+- Fix Grid indexchanged
+
 ## v1.3.5
 *3 jan 2023*
 - Fix Carousel index issue introduced in v1.3.3. Refactored the code to correctly use internal index to maintain the correct focus and output the data index instead of the internal index.
