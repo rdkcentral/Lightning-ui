@@ -70,6 +70,7 @@ export default class Carousel extends CollectionWrapper {
         const positiveHalf = [];
         const negativeHalf = [];
         const itemIndex = this._index;
+        let isFirst = itemIndex === 0;
         let index = itemIndex;
         let position = scrollOffsetStart;
         let currentDataIndex = null;
@@ -82,7 +83,8 @@ export default class Carousel extends CollectionWrapper {
             const item = items[index];
             const sizes = this._getItemSizes(item);
 
-            if(index === 0 && scrollIsAnchored) {
+            if(isFirst && scrollIsAnchored) {
+                isFirst = false;
                 position = (viewBound - sizes[mainDim]) * scrollAnchor;
             }
             else {
