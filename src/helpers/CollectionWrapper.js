@@ -83,7 +83,7 @@ export default class CollectionWrapper extends Lightning.Component {
         this._refocus();
         this.scrollCollectionWrapper(obj);
 
-        if (previous !== target) {
+        if (obj.previousIndex !== obj.index) {
             this.signal('onIndexChanged', obj);
         }
     }
@@ -516,7 +516,7 @@ export default class CollectionWrapper extends Lightning.Component {
     }
 
     get currentItem() {
-        return this.currentItemWrapper.component;
+        return this.currentItemWrapper && this.currentItemWrapper.component || undefined;
     }
 
     set direction(string) {
@@ -573,7 +573,7 @@ export default class CollectionWrapper extends Lightning.Component {
         this._scroll = value;
     }
 
-    get scrollTo() {
+    get scroll() {
         return this._scroll;
     }
 
