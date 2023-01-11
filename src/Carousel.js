@@ -70,7 +70,7 @@ export default class Carousel extends CollectionWrapper {
         const positiveHalf = [];
         const negativeHalf = [];
         const itemIndex = this._index;
-        let isFirst = itemIndex === 0;
+        let isFirst = true;
         let index = itemIndex;
         let position = scrollOffsetStart;
         let currentDataIndex = null;
