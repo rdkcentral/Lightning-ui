@@ -41,7 +41,7 @@ export default class Carousel extends CollectionWrapper {
 
     clear() {
         super.clear();
-        this._dataIndex = -1;
+        this._dataIndex = 0;
     }
 
     _normalizeDataIndex(index, items = this._items) {
