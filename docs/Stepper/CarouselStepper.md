@@ -1,25 +1,25 @@
-# CarouseStepper
+# CarouselStepper
 
-The CarouseStepper component is an extension of the Stepper component, this component components shows all options in a carousel.
+The CarouselStepper component is an extension of the Stepper component, this component components shows all options in a carousel.
 
 ## Usage
 
-If you want to use the CarouseStepper component, import it from Lightning UI.
+If you want to use the CarouselStepper component, import it from Lightning UI.
 
 ```js
-import { CarouseStepper } from '@lightningjs/ui'
+import { CarouselStepper } from '@lightningjs/ui'
 ```
 
 ### Initialize
 
-To use the CarouseStepper component you create an instance with the `type` CarouseStepper:
+To use the CarouselStepper component you create an instance with the `type` CarouselStepper:
 
 ```js
 class MyApp extends Lightning.Application {
     static _template() {
         return {
-            MyCarouseStepper: {
-                type: CarouseStepper
+            MyCarouselStepper: {
+                type: CarouselStepper
             },
         }
     }
@@ -34,7 +34,7 @@ You can view the [Stepper](../index.md) component page to see more information a
 You can always add / customize existing tags, to make this job a bit easier follow this template when altering the component:
 
 ```js
-this.tag('MyCarouseStepper').patch({
+this.tag('MyCarouselStepper').patch({
     Focus: {},
     Label: {},
     ValueWrapper: {
