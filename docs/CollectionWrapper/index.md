@@ -273,6 +273,25 @@ class MyApp extends Lightning.Application {
 }
 ```
 
+If you use an API call that can consists of variables or properties you can call the `requestItems` function;
+
+```js
+onRequestItems(indexData) {
+    return MyApiCall(this._filter)
+        .then((response) => {
+            //return an array of Items or a single item.
+            return reponse.items
+        });
+}
+
+set filter (v) {
+    this._filter = v;
+    this.tag('MyGrid').requestItems(true);
+}
+```
+
+This forces the CollectionWrapper to signal the onRequestItems function to provide data.
+
 ## Signals
 The Collection Wrapper makes use of signals if you want to respond to certain actions:
 ```js
@@ -368,6 +387,22 @@ The parameter `item` should be a component that exists in the dataset of the Col
 You can clear al existing items in the Collection Wrapper by using the `clear` method:
 ```js
 this.tag('MyGrid').clear()
+```
+
+### requestItems
+You can force the CollectionWrapper to signal the configured onRequestItems function by using the `requestItems` method:
+```js
+this.tag('MyGrid').requestItems(reload, indexData)
+```
+The parameter `reload` determines if the CollectionWrapper should call the `clear` method. Expected input is a boolean. This property is optional. Default value is false.
+
+The parameter `indexData` is an object with index data. Expected input is an object. This property is optional. Default value is:
+```js
+{
+    previous: 0,
+    index: 0,
+    max: 0
+}
 ```
 
 ### reposition

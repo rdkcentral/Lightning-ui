@@ -1,23 +1,31 @@
 # Changelog
-## v1.3.5
-*3 jan 2023*
-- Fix Carousel index issue introduced in v1.3.3. Refactored the code to correctly use internal index to maintain the correct focus and output the data index instead of the internal index.
+## v1.3.7
+
+*3 feb 2023*
+
+- Improved Requests/Paging functionality
 
 ## v1.3.6
+
 *11 jan 2023*
+
 - Fix Carousel initial scroll
 - Fix Carousel infinite loop issue when dataset too small
 - Fix Grid indexchanged
 
 ## v1.3.5
+
 *3 jan 2023*
+
 - Fix Carousel index issue introduced in v1.3.3. Refactored the code to correctly use internal index to maintain the correct focus and output the data index instead of the internal index.
 
 ## v1.3.4
+
 - Fix initial scroll when scroll offset different than 0.
 - Fix progress value in ProgressStepper component.
 
 ## v1.3.3
+
 - CollectionWrapper now only fires onIndexChanged when the index has actually changed.
 - Fix bug where CollectionWrapper could not remove an item.
 - Fix Carousel where index does not represent actual index of the focused item.
