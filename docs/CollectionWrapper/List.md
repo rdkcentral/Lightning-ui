@@ -83,6 +83,22 @@ You can clear al existing items in the List by using the `clear` method:
 this.tag('MyList').clear()
 ```
 
+### requestItems
+You can force the List to signal the configured onRequestItems function by using the `requestItems` method:
+```js
+this.tag('MyList').requestItems(reload, indexData)
+```
+The parameter `reload` determines if the List should call the `clear` method. Expected input is a boolean. This property is optional. Default value is false.
+
+The parameter `indexData` is an object with index data. Expected input is an object. This property is optional. Default value is:
+```js
+{
+    previous: 0,
+    index: 0,
+    max: 0
+}
+```
+
 ### reposition
 You can reposition the itemWrappers when the items have been resized.
 ```js
