@@ -64,7 +64,7 @@ export default class CollectionWrapper extends Lightning.Component {
             max = lines;
         }
         if (this._requestsEnabled && !this._requestingItems) {
-            if (previous < target && target + this._requestThreshold >= max) {
+            if (target + this._requestThreshold >= max) {
                 this._requestingItems = true;
                 this.signal('onRequestItems', obj)
                     .then((response) => {
