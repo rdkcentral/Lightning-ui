@@ -88,6 +88,10 @@ export default class CollectionWrapper extends Lightning.Component {
         this._requestingItems = true;
         this.signal('onRequestItems', obj)
             .then((response) => {
+                if (response === false) {
+                    this.enableRequests = false;
+                }
+                this._requestingItems = false;
                 if(reload) {
                     this.clear();
                 }
@@ -95,10 +99,6 @@ export default class CollectionWrapper extends Lightning.Component {
                 if (Array.isArray(response) || type === 'object' ||  type === 'string' || type === 'number') {
                     this.add(response);
                 }
-                if (response === false) {
-                    this.enableRequests = false;
-                }
-                this._requestingItems = false;
             })
     }
  
