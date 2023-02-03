@@ -65,18 +65,7 @@ export default class CollectionWrapper extends Lightning.Component {
         }
         if (this._requestsEnabled && !this._requestingItems) {
             if (target + this._requestThreshold >= max) {
-                this._requestingItems = true;
-                this.signal('onRequestItems', obj)
-                    .then((response) => {
-                        const type = typeof response;
-                        if (Array.isArray(response) || type === 'object' ||  type === 'string' || type === 'number') {
-                            this.add(response);
-                        }
-                        if (response === false) {
-                            this.enableRequests = false;
-                        }
-                        this._requestingItems = false;
-                    })
+                this.requestItems(false, obj);
             }
         }
 
@@ -88,6 +77,31 @@ export default class CollectionWrapper extends Lightning.Component {
         }
     }
 
+    requestItems(reload = false, obj = undefined) {
+        if(obj === undefined) {
+            obj = {
+                previous: 0,
+                index: 0,
+                max: 0
+            }
+        }
+        this._requestingItems = true;
+        this.signal('onRequestItems', obj)
+            .then((response) => {
+                if(reload) {
+                    this.clear();
+                }
+                const type = typeof response;
+                if (Array.isArray(response) || type === 'object' ||  type === 'string' || type === 'number') {
+                    this.add(response);
+                }
+                if (response === false) {
+                    this.enableRequests = false;
+                }
+                this._requestingItems = false;
+            })
+    }
+ 
     setIndex(index) {
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
