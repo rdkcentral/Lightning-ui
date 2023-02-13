@@ -1,9 +1,9 @@
 {
     "extends": "./tsconfig.json",
-    "include": ["**/*.d.ts"],
+    "include": ["**/*.d.ts", "**/*.ts"],
     "exclude": ["types"],
     "typedocOptions": {
-      "entryPoints": ["index.d.ts"],
+      "entryPoints": ["index.ts"],
       "out": "typedocs",
       "entryPointStrategy": "expand",
       "intentionallyNotExported": [
