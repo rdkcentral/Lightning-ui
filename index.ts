@@ -17,8 +17,6 @@
  * limitations under the License.
  */
 
-export { default as lightning } from '@lightningjs/core/src/lightning.mjs';
-
 // export const Carousel: any; //export { default as Carousel } from './src/Carousel.js';
 // export const Grid: any; //export { default as Grid } from './src/Grid.js';
 // export const InputField: any; //export { default as InputField } from './src/InputField.js';
