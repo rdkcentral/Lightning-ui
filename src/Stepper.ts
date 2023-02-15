@@ -1,6 +1,6 @@
 import Lightning from '@lightningjs/core';
 
-interface StepperTemplateSpec extends Lightning.Component.TemplateSpec{
+export interface StepperTemplateSpec extends Lightning.Component.TemplateSpec{
     focusColor?: any,
     labelColor?: any,
     labelColorFocused?: any,

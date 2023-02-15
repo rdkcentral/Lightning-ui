@@ -28,5 +28,5 @@
 export { default as Stepper } from './src/Stepper.js';
 // export const ArrowStepper: any; //export { default as ArrowStepper } from './src/ArrowStepper.js';
 // export const CarouselStepper: any; //export { default as CarouselStepper } from './src/CarouselStepper.js';
-// export const ProgressStepper: any; //export { default as ProgressStepper } from './src/ProgressStepper.js';
-// export const ProgressBar: any; //export { default as ProgressBar } from './src/ProgressBar.js';
+export { default as ProgressStepper } from './src/ProgressStepper.js';
+export { default as ProgressBar } from './src/ProgressBar.js';
