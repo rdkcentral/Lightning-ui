@@ -1,7 +1,6 @@
-import { Component } from '@lightningjs/core';
-import TestRenderer
-  from '@lightningjs/ui-components/test/lightning-test-renderer';
-
+import { describe, it, expect } from 'vitest';
+import Lightning from '@lightningjs/core';
+import TestRenderer from '@lightningjs/ui-components/test/lightning-test-renderer';
 import List from './List.js';
 
 const render = () => {
@@ -22,7 +21,7 @@ const render = () => {
     }
 }
 
-class Item extends Component {
+class Item extends Lightning.Component {
     static get width() {
         return 60
     }

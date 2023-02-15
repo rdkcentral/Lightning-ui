@@ -1,14 +1,26 @@
 {
-    "include": [
-      "**/*.d.ts", "**/*.ts"
-    ],
-    "compilerOptions": {
-      "outDir": "build",
-      "target": "ES2018",
-      "lib": ["ES2015", "DOM"],
-      "moduleResolution": "node",
-      "strict": true,
-      "noUncheckedIndexedAccess": true,
-      "noImplicitOverride": true,
-    }
+  "include": [
+    "./index.ts", "./src/**/*.ts"
+  ],
+  "exclude": [
+    "dist", "types"
+  ],
+  "compilerOptions": {
+    "outDir": "types",
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    // These properties enforce `import type` syntax
+    "isolatedModules": true,
+    "preserveValueImports": true,
+    "importsNotUsedAsValues": "error",
   }
+}
