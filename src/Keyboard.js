@@ -34,6 +34,7 @@ export default class Keyboard extends Lightning.Component {
         this._inputField = undefined;
         this._maxCharacters = 56;
         this.navigationWrapAround = false;
+        this.alwaysNextRow = false;
         this.resetFocus();
     }
 
@@ -335,9 +336,15 @@ export default class Keyboard extends Lightning.Component {
                     this._rowIndex = targetIndex;
                     this._columnIndex = t;
                 } // if no next row found and wraparound is on, loop back to first row
-                else if(this.navigationWrapAround){
+                else if(this.navigationWrapAround && !this.alwaysNextRow){
                     this._columnIndex = Math.min(this.rows[0].children.length-1, this._columnIndex)
                     return this._rowIndex = 0;
+                }
+                else if(this.alwaysNextRow) {
+                    // jump to last or first element in next row depending on shortest distance from current index
+                    let jumpToLast = Math.abs(0-currentColumnIndex) > Math.abs(targetRow.children.length - currentColumnIndex)
+                    this._columnIndex = jumpToLast ? targetRow.children.length-1 : 0;
+                    return this._rowIndex = targetIndex;
                 }
             }
             if(this._rowIndex !== currentRowIndex) {
