@@ -97,14 +97,14 @@ export default class ProgressBar extends Lightning.Component<ProgressBarTemplate
     set backgroundRadius(v: number) {
         this._backgroundRadius = v;
         if(this.active) {
-            this.tag('Background').shader.radius = v;
+            this.tag('Background')!.shader!.radius = v;
         }
     }
 
     set progressRadius(v: number) {
         this._progressRadius = v;
         if(this.active) {
-            this.tag('Progress').shader.radius = v;
+            this.tag('Background.Progress')!.shader!.radius = v;
         }
     }
 
