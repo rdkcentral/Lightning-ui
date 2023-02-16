@@ -1,6 +1,7 @@
 import Lightning from '@lightningjs/core';
 
 interface ProgressBarTemplateSpec extends Lightning.Component.TemplateSpec {
+    value?: number;
     progressColor?: any;
     progressColorFocused?: any;
     backgroundColor?: any;
@@ -16,8 +17,8 @@ interface ProgressBarTemplateSpec extends Lightning.Component.TemplateSpec {
 export default class ProgressBar extends Lightning.Component<ProgressBarTemplateSpec>
     implements Lightning.Component.ImplementTemplateSpec<ProgressBarTemplateSpec> {
 
-    Background = this.getByRef('Background');
-    Progress = this.Background.getByRef('Progress');
+    Background = this.getByRef('Background')!;
+    Progress = this.Background.getByRef('Progress')!;
 
     private _progressColor = 0xff009245;
     private _progressColorFocused = undefined;
