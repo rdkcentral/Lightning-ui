@@ -15,7 +15,7 @@ interface ProgressBarTemplateSpec extends Lightning.Component.TemplateSpec {
 
 export default class ProgressBar extends Lightning.Component<ProgressBarTemplateSpec>
     implements Lightning.Component.ImplementTemplateSpec<ProgressBarTemplateSpec> {
-    
+
     Background = this.getByRef('Background');
     Progress = this.Background.getByRef('Progress');
 
@@ -54,7 +54,7 @@ export default class ProgressBar extends Lightning.Component<ProgressBarTemplate
             this._focus();
         }
     }
-    
+
     override _focus() {
         if(this._focusAnimation) {
             this._focusAnimation.start();
@@ -99,7 +99,7 @@ export default class ProgressBar extends Lightning.Component<ProgressBarTemplate
             this.tag('Background').shader.radius = v;
         }
     }
-    
+
     set progressRadius(v: number) {
         this._progressRadius = v;
         if(this.active) {

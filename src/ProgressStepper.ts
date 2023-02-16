@@ -1,7 +1,7 @@
-import Lightning from '@lightningjs/core';
+import type Lightning from '@lightningjs/core';
 
 import ProgressBar from './ProgressBar.js';
-import Stepper, { StepperTemplateSpec } from './Stepper.js';
+import Stepper, { type StepperTemplateSpec } from './Stepper.js';
 
 interface ProgressStepperTemplateSpec extends StepperTemplateSpec {
     ValueWrapper: {
@@ -10,7 +10,7 @@ interface ProgressStepperTemplateSpec extends StepperTemplateSpec {
     }
 }
 
-export default class ProgressStepper 
+export default class ProgressStepper
     extends Stepper
     implements Lightning.Component.ImplementTemplateSpec<ProgressStepperTemplateSpec>
 {

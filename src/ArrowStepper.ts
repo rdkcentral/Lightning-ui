@@ -1,6 +1,6 @@
-import Lightning from '@lightningjs/core';
+import type Lightning from '@lightningjs/core';
 
-import Stepper, { StepperTemplateSpec } from './Stepper.js';
+import Stepper, { type StepperTemplateSpec } from './Stepper.js';
 
 interface ArrowStepperTemplateSpec extends StepperTemplateSpec {
     ValueWrapper: {
