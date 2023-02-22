@@ -11,7 +11,7 @@ interface ProgressStepperTemplateSpec extends StepperTemplateSpec {
 }
 
 export default class ProgressStepper
-    extends Stepper
+    extends Stepper<ProgressStepperTemplateSpec>
     implements Lightning.Component.ImplementTemplateSpec<ProgressStepperTemplateSpec>
 {
     ProgressBar = this.ValueWrapper.getByRef('ProgressBar')!;
@@ -33,7 +33,7 @@ export default class ProgressStepper
             Label: {x: this._padding, color: this._labelColor, text: {text: this._label}},
             ValueWrapper: {x: w => w - this._padding,
                 ProgressBar: {progressColor: this._focusColor, backgroundColor: this._labelColor, value: this._value},
-                Value: {color: this._labelColor, text: {text: this._value}},
+                Value: {color: this._labelColor, text: {text: ''+this._value}},
             }
         });
 
@@ -42,11 +42,11 @@ export default class ProgressStepper
         }
     }
 
-    override set value(v: string) {
+    override set value(v: number) {
         this._value = v;
         if(this.active) {
             this.ProgressBar.value = this._value / (this._max - this._min);
-            this.Value.text.text = this._value;
+            this.Value.text!.text = ''+this._value;
         }
     }
 

@@ -1,6 +1,7 @@
 import Lightning from '@lightningjs/core';
 
 interface ProgressBarTemplateSpec extends Lightning.Component.TemplateSpec {
+    value?: number;
     progressColor?: any;
     progressColorFocused?: any;
     backgroundColor?: any;
@@ -16,8 +17,8 @@ interface ProgressBarTemplateSpec extends Lightning.Component.TemplateSpec {
 export default class ProgressBar extends Lightning.Component<ProgressBarTemplateSpec>
     implements Lightning.Component.ImplementTemplateSpec<ProgressBarTemplateSpec> {
 
-    Background = this.getByRef('Background');
-    Progress = this.Background.getByRef('Progress');
+    Background = this.getByRef('Background')!;
+    Progress = this.Background.getByRef('Progress')!;
 
     private _progressColor = 0xff009245;
     private _progressColorFocused = undefined;
@@ -96,14 +97,14 @@ export default class ProgressBar extends Lightning.Component<ProgressBarTemplate
     set backgroundRadius(v: number) {
         this._backgroundRadius = v;
         if(this.active) {
-            this.tag('Background').shader.radius = v;
+            this.tag('Background')!.shader!.radius = v;
         }
     }
 
     set progressRadius(v: number) {
         this._progressRadius = v;
         if(this.active) {
-            this.tag('Progress').shader.radius = v;
+            this.tag('Background.Progress')!.shader!.radius = v;
         }
     }
 

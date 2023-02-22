@@ -11,7 +11,7 @@ interface ArrowStepperTemplateSpec extends StepperTemplateSpec {
 }
 
 export default class ArrowStepper
-    extends Stepper
+    extends Stepper<ArrowStepperTemplateSpec>
     implements Lightning.Component.ImplementTemplateSpec<ArrowStepperTemplateSpec>
 {
     ArrowLeft = this.ValueWrapper.getByRef('ArrowLeft')!;
@@ -44,7 +44,7 @@ export default class ArrowStepper
         this._update();
     }
 
-    private override _createFocusAnimation() {
+    protected override _createFocusAnimation() {
         this._focusAnimation = this.animation({duration: 0.2, stopMethod: 'reverse', actions: [
             {t: 'Focus', p: 'alpha', v: {0: 0, 1: 1}},
             {t: 'ValueWrapper.ArrowLeft', p: 'color', v: {0: this._labelColor, 1: this._labelColorFocused}},
@@ -59,7 +59,7 @@ export default class ArrowStepper
             Label: {x: this._padding, color: this._labelColor, text: {text: this._label}},
             ValueWrapper: {x: w => w - this._padding,
                 ArrowLeft: {color: this._labelColor},
-                Value: {color: this._labelColor, text: {text: this.optionValue || this.value}},
+                Value: {color: this._labelColor, text: {text: this.optionValue || ''+this.value}},
                 ArrowRight: {color: this._labelColor},
             }
         });

@@ -1,15 +1,16 @@
 import Lightning from '@lightningjs/core';
+import type { InlineElement } from '@lightningjs/core/src/tree/Element.mjs';
 
-export interface StepperTemplateSpec extends Lightning.Component.TemplateSpec{
-    focusColor?: any,
-    labelColor?: any,
-    labelColorFocused?: any,
+export interface StepperTemplateSpec extends Lightning.Component.TemplateSpec {
+    focusColor?: number,
+    labelColor?: number,
+    labelColorFocused?: number,
     padding?: number,
     max?: number,
     min?: number,
     value?: number,
-    options?: Array<any>,
-    focusAnimation?: any,
+    options?: (string | StepperOption)[],
+    focusAnimation?: Lightning.types.Animation | null,
 
     Focus: object,
     Label: object,
@@ -18,30 +19,60 @@ export interface StepperTemplateSpec extends Lightning.Component.TemplateSpec{
     }
 }
 
-interface StepperEvent {
-    value: number,
-    options?: object
+interface StepperOption {
+    label: string
 }
 
-export default class Stepper
-    extends Lightning.Component<StepperTemplateSpec>
+
+export interface StepperEvent {
+    value: number,
+    options?: StepperOption[]
+}
+
+export interface StepperSignalMap extends Lightning.Component.SignalMap {
+    onValueChanged(event: StepperEvent): void
+}
+
+
+export interface StepperTypeConfig extends Lightning.Component.TypeConfig {
+    SignalMapType: StepperSignalMap
+}
+
+
+export default class Stepper<
+    TemplateSpec extends StepperTemplateSpec = StepperTemplateSpec,
+    TypeConfig extends StepperTypeConfig = StepperTypeConfig
+>
+    extends Lightning.Component<TemplateSpec, TypeConfig>
     implements Lightning.Component.ImplementTemplateSpec<StepperTemplateSpec>
 {
-    Focus = this.getByRef('Focus')!;
-    Label = this.getByRef('Label')!;
-    ValueWrapper = this.getByRef('ValueWrapper')!;
-    Value = this.ValueWrapper.getByRef('Value')!;
+    Focus: Lightning.Element = (this as Stepper).getByRef('Focus')!;
+    Label = (this as Stepper).getByRef('Label')!;
+    /**
+     * @privateRemarks
+     * We explicitly allow ValueWrapper to be extended by subclasses, so we need to make this intention known
+     * to the TypeScript compiler so that when subclasses access ValueWrapper, they can access the extended
+     * version of ValueWrapper.
+     */
+    ValueWrapper = (this as Stepper).getByRef('ValueWrapper')! as Lightning.Element<InlineElement<TemplateSpec['ValueWrapper']>>;
+    /**
+     * @privateRemarks
+     * Normally we wouldn't have to explicity assert the type of Value in this case, but there seems to be a bug in the
+     * TypeScript compiler where if we don't do that here it causes VSCode to show inconsistent errors throughout the
+     * project.
+     */
+    Value = (this as Stepper).ValueWrapper.getByRef('Value')! as Lightning.Element;
 
-    private _focusColor = 0xff009245;
-    private _labelColor = 0xff9d9d9d;
-    private _labelColorFocused = 0xffffffff;
-    private _padding = 30;
-    private _max = 100;
-    private _min = 0;
-    private _value = 50;
-    private _options = undefined;
-    private _label = "label";
-    private _focusAnimation: any = null;
+    protected _focusColor = 0xff009245;
+    protected _labelColor = 0xff9d9d9d;
+    protected _labelColorFocused = 0xffffffff;
+    protected _padding = 30;
+    protected _max = 100;
+    protected _min = 0;
+    protected _value = 50;
+    protected _options: StepperOption[] = [];
+    protected _label = "label";
+    protected _focusAnimation: Lightning.types.Animation | null = null;
 
     static override _template(): Lightning.Component.Template<StepperTemplateSpec> {
         return {
@@ -81,8 +112,8 @@ export default class Stepper
         this.navigate(1);
     }
 
-    private _createFocusAnimation() {
-        this._focusAnimation = this.animation({duration: 0.2, stopMethod: 'reverse', actions: [
+    protected _createFocusAnimation() {
+        this._focusAnimation = (this as Stepper).animation({duration: 0.2, stopMethod: 'reverse', actions: [
             {t: 'Focus', p: 'alpha', v: {0: 0, 1: 1}},
             {t: 'Label', p: 'color', v: {0: this._labelColor, 1: this._labelColorFocused}},
             {t: 'ValueWrapper.Value', p: 'color', v: {0: this._labelColor, 1: this._labelColorFocused}},
@@ -98,7 +129,7 @@ export default class Stepper
             event.options = this._options
         }
         this.fireAncestors('$onValueChanged', event);
-        this.signal('onValueChanged', event);
+        (this as Stepper).signal('onValueChanged', event);
     }
 
     private calcCarouselNavigation(dir: number, current: number, min: number, max: number) {
@@ -113,7 +144,7 @@ export default class Stepper
     }
 
     _update() {
-        this.patch({
+        (this as Stepper).patch({
             Focus: {color: this._focusColor},
             Label: {x: this._padding, color: this._labelColor, text: {text: this._label}},
             ValueWrapper: {x: w => w - this._padding,
@@ -128,7 +159,7 @@ export default class Stepper
     set label(v: string) {
         this._label = v;
         if(this.active) {
-            this.Label.text.text = v;
+            this.Label.text!.text = v;
         }
     }
 
@@ -139,7 +170,7 @@ export default class Stepper
     set value(v: number) {
         this._value = v;
         if(this.active) {
-            this.Value.text.text = v.toString();
+            this.Value.text!.text = v.toString();
         }
     }
 
@@ -148,11 +179,12 @@ export default class Stepper
     }
 
     get optionValue() {
-        return this._options && this._options[this._value] && this._options[this._value]['label' as string] || undefined;
+        const option = this._options[this._value];
+        return option && option.label || undefined;
     }
 
-    set options(v: any) {
-        const refactor = v.map((option: any) => {
+    set options(v: Array<StepperOption | string>) {
+        const refactor = v.map((option) => {
             if(typeof option === 'string') {
                 return {label: option};
             }
@@ -165,11 +197,11 @@ export default class Stepper
         this._update();
     }
 
-    get options() {
+    get options(): StepperOption[] {
         return this._options;
     }
 
-    set focusColor(v: any) {
+    set focusColor(v: number) {
         this._focusColor = v;
     }
 
@@ -177,7 +209,7 @@ export default class Stepper
         return this._focusColor;
     }
 
-    set labelColor(v: any) {
+    set labelColor(v: number) {
         this._labelColor = v;
     }
 
@@ -185,7 +217,7 @@ export default class Stepper
         return this._labelColor;
     }
 
-    set labelColorFocused(v: any) {
+    set labelColorFocused(v: number) {
         this._labelColorFocused = v;
     }
 
@@ -217,7 +249,7 @@ export default class Stepper
         return this._min;
     }
 
-    set focusAnimation(v: any) {
+    set focusAnimation(v: Lightning.types.Animation | null) {
         this._focusAnimation = v;
     }
 
