@@ -2,7 +2,7 @@ import Lightning from '@lightningjs/core';
 
 export interface CursorTemplateSpec extends Lightning.Component.TemplateSpec {
     blink?: boolean,
-    blinkAnimation?: Animation
+    blinkAnimation?: Lightning.types.Animation | null
 }
 
 export default class Cursor

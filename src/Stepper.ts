@@ -23,7 +23,6 @@ interface StepperOption {
     label: string
 }
 
-
 export interface StepperEvent {
     value: number,
     options?: StepperOption[]
