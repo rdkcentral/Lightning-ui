@@ -40,6 +40,18 @@ export interface GetChildComponentEvent {
     index: number
 }
 
+export interface ItemType {
+    [key: string]: any,
+    assignedID: string,
+    type: any,
+    collectionWrapper: CollectionWrapper,
+    isAlive: boolean
+}
+
+export interface Items {
+    [key: number]: ItemType 
+}
+
 export interface ItemSizes {
     [key: string]: number | undefined,
     w: number,
@@ -49,6 +61,13 @@ export interface ItemSizes {
     marginRight?: number,
     marginTop?: number,
     marginBottom?: number,
+}
+
+export interface ScrollOptions {
+    jump?: number,
+    after?: number,
+    backward?: number,
+    forward?: number
 }
 
 export interface Direction {
@@ -80,21 +99,21 @@ export default class CollectionWrapper<
 
     protected _scrollTransitionSettings: Lightning.types.TransitionSettings | null = null
 
-    protected _spacing = 0;
-    protected _autoResize = false;
+    protected _spacing: number = 0;
+    protected _autoResize: boolean = false;
 
-    protected _requestingItems = false;
-    protected _requestThreshold = 1;
-    protected _requestsEnabled = false;
+    protected _requestingItems: boolean = false;
+    protected _requestThreshold: number = 1;
+    protected _requestsEnabled: boolean = false;
 
-    protected _gcThreshold = 5;
-    protected _gcIncrement = 0;
-    protected _forceLoad = false;
+    protected _gcThreshold: number = 5;
+    protected _gcIncrement: number = 0;
+    protected _forceLoad: boolean = false;
 
     protected _uids: UniqueIDs = {};
-    protected _items: object[] = [];
-    protected _index = 0;
-    protected _scroll: any = undefined;
+    protected _items: Items[] = [];
+    protected _index: number = 0;
+    protected _scroll: number | object | Function | undefined = undefined;
     
     protected _scrollTransition: Lightning.types.Transition | null = null;
     protected _repositionDebounce: number | null = null;
@@ -239,7 +258,7 @@ export default class CollectionWrapper<
             if(!Array.isArray(item)) {
                 item = [item];
             }
-            const items: any[] = this._normalizeDataItems(item);
+            const items = this._normalizeDataItems(item);
             this._items.splice(index, 0, ...items);
             this.plotItems();
             this.setIndex(this._index);
@@ -328,7 +347,7 @@ export default class CollectionWrapper<
 
         let scroll = this._scroll;
 
-        if(!isNaN(scroll)) {
+        if(typeof scroll === 'number') {
             if(scroll >= 0 && scroll <= 1) {
                 scroll = bound * scroll - (cw[main] + cw[mainDim] * scroll);
             }
@@ -340,7 +359,7 @@ export default class CollectionWrapper<
             scroll = scroll.apply(this, [cw, obj]);
         }
         else if(typeof scroll === 'object') {
-            const {jump = false, after = false, backward = 0.0, forward = 1.0} = scroll;
+            const {jump = 0, after = 0, backward = 0.0, forward = 1.0} = scroll as ScrollOptions;
             if(jump) {
                 let mod = target % jump;
                 if(mod === 0) {
@@ -375,7 +394,7 @@ export default class CollectionWrapper<
                 }
             }
         }
-        else if(isNaN(scroll)){
+        else if(scroll === undefined){
             if(previous < target && offset + cw[main] + cw[mainDim] > bound) {
                 scroll = bound - (cw[main] + cw[mainDim])
             }
@@ -384,7 +403,7 @@ export default class CollectionWrapper<
             }
         }
 
-        if(this.active && !isNaN(scroll) && this._scrollTransition) {
+        if(this.active && typeof scroll === 'number' && this._scrollTransition) {
             if(this._scrollTransition.isRunning()) {
                 this._scrollTransition.reset(scroll, 0.05);
             }
@@ -392,7 +411,7 @@ export default class CollectionWrapper<
                 this._scrollTransition.start(scroll);
             }
         }
-        else if(!isNaN(scroll)) {
+        else if(typeof scroll === 'number') {
             this.wrapper[main] = scroll
         }
     }
@@ -461,27 +480,34 @@ export default class CollectionWrapper<
     }
 
     _normalizeDataItems(array: object[]) {
-        return array.map((item, index) => {
+        const results = array.map((item, index) => {
             return this._normalizeDataItem(item) || index;
         })
         .filter((item) => {
-            if(!isNaN(item)) {
+            if(typeof item === 'number') {
                 console.warn(`Item at index: ${item}, is not a valid item. Removing it from dataset`);
                 return false;
             }
             return true;
         });
+        return results as Items[]
     }
 
-    _normalizeDataItem(item: string | number | object, index?: number) {
+    _normalizeDataItem(item: string | number | object): undefined | ItemType {
         if(typeof item === 'string' || typeof item === 'number') {
             item = {label: item.toString()}
         }
         if(typeof item === 'object') {
             let id = this._generateUniqueID();
-            return {assignedID: id, type: this.itemType, collectionWrapper: this, isAlive: false, ...item}
+            const itemType: ItemType = {
+                assignedID: id,
+                type: this.itemType,
+                collectionWrapper: this,
+                isAlive: false, ...item
+            }
+            return itemType
         }
-        return index;
+        return undefined;
     }
 
     _getPlotProperties(direction: number) {

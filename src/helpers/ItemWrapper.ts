@@ -9,7 +9,7 @@ export interface ItemWrapperTemplateSpec extends Lightning.Component.TemplateSpe
     marginRight?: number,
     marginLeft?: number,
 
-    componentIndex?: number,
+    componentIndex: number,
     forceLoad?: boolean
 }
 
@@ -18,6 +18,7 @@ export default class ItemWrapper
     implements Lightning.Component.ImplementTemplateSpec<ItemWrapperTemplateSpec>
 {
     forceLoad = false;
+    componentIndex = -1;
 
     static override _template(): Lightning.Component.Template<ItemWrapperTemplateSpec> {
         return {
@@ -53,10 +54,14 @@ export default class ItemWrapper
         }
         const component = this.fireAncestors('$getChildComponent', {index: this.componentIndex});
         component.isAlive = true;
-        const {w, h, margin, marginTop, marginBottom, marginRight, marginLeft} = this;
+        const {w, h, margin, marginTop, marginBottom, marginRight, marginLeft} = this as ItemWrapperTemplateSpec;
         this.children = [{...component, w, h, margin, marginTop, marginRight, marginLeft, marginBottom}];
         if(this.hasFocus()) {
             this._refocus();
         }
+    }
+
+    get component() {
+        return this.children[0] || this.fireAncestors('$getChildComponent', {index: this.componentIndex});
     }
 }
