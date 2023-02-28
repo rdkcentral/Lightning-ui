@@ -1,6 +1,7 @@
 import Lightning from '@lightningjs/core';
 
 export interface ItemWrapperTemplateSpec extends Lightning.Component.TemplateSpec {
+    [key: string]: any,
     w?: number,
     h?: number,
     margin?: number,

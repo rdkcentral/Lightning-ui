@@ -43,13 +43,16 @@ export interface GetChildComponentEvent {
 export interface ItemType {
     [key: string]: any,
     assignedID: string,
-    type: any,
+    type: Lightning.Component,
     collectionWrapper: CollectionWrapper,
     isAlive: boolean
 }
 
-export interface Items {
-    [key: number]: ItemType 
+export interface Items<T> {
+    [key: number]: T 
+    length: number;
+    map(callbackfn: (value: T, index: number, array: T[]) => any) : any[];
+    splice(start: number, deleteCount?: number, ...items: T[]): T[];
 }
 
 export interface ItemSizes {
@@ -111,7 +114,7 @@ export default class CollectionWrapper<
     protected _forceLoad: boolean = false;
 
     protected _uids: UniqueIDs = {};
-    protected _items: Items[] = [];
+    protected _items: Items<ItemType> = [];
     protected _index: number = 0;
     protected _scroll: number | object | Function | undefined = undefined;
     
@@ -174,6 +177,22 @@ export default class CollectionWrapper<
         const axis = this._direction === 1 ? 'y' : 'x';
         this.Wrapper.transition(axis, this._scrollTransitionSettings);
         this._scrollTransition = this.Wrapper.transition(axis);
+    }
+
+    _resizeWrapper(crossSize: object | number) {
+        let obj = crossSize;
+        if(typeof crossSize === 'number') {
+            const {main, mainDim, crossDim} = this._getPlotProperties(this._direction);
+            const lastItem = this.wrapper.childList.last;
+            obj = {
+                [mainDim]: lastItem[main] + lastItem[mainDim],
+                [crossDim]: crossSize
+            }
+        }
+        this.wrapper.patch(obj);
+        if(this._autoResize) {
+            this.patch(obj);
+        }
     }
 
     protected _indexChanged(obj: IndexChangedEvent) {
@@ -302,7 +321,7 @@ export default class CollectionWrapper<
         this.add(items);
     }
 
-    plotItems(items?: object[], options?: object) {
+    plotItems() {
         //placeholder
     }
 
@@ -603,15 +622,15 @@ export default class CollectionWrapper<
         return this.Wrapper;
     }
 
-    get hasItems() {
+    get hasItems() : boolean {
         return this.wrapper && this.wrapper.children && this.wrapper.children.length > 0;
     }
 
-    get currentItemWrapper() {
+    get currentItemWrapper() : Lightning.Component {
         return this.wrapper.children[this._index];
     }
 
-    get currentItem() {
+    get currentItem() : Lightning.Component {
         return this.currentItemWrapper && this.currentItemWrapper.component || undefined;
     }
 
@@ -619,7 +638,7 @@ export default class CollectionWrapper<
         this._direction = this.DIRECTION[str] ?? this.DIRECTION.row;
     }
 
-    get direction() {
+    get direction() : string {
         return Object.keys(this.DIRECTION)[this._direction];
     }
 
@@ -638,7 +657,7 @@ export default class CollectionWrapper<
         });
     }
 
-    get length() {
+    get length() : number {
         return this._items.length;
     }
 
@@ -646,11 +665,11 @@ export default class CollectionWrapper<
         this.setIndex(index);
     }
 
-    get itemWrappers() {
+    get itemWrappers() : any {
         return this.wrapper.children;
     }
 
-    get index() {
+    get index() : number{
         return this._index;
     }
 
@@ -661,7 +680,7 @@ export default class CollectionWrapper<
         }
     }
 
-    get scrollTransition() {
+    get scrollTransition() : Lightning.types.TransitionSettings | null{
         return this._scrollTransition;
     }
 
@@ -669,7 +688,7 @@ export default class CollectionWrapper<
         this._scroll = value;
     }
 
-    get scroll() {
+    get scroll() : number | object | Function | undefined {
         return this._scroll;
     }
 
@@ -677,7 +696,7 @@ export default class CollectionWrapper<
         this._autoResize = bool;
     }
 
-    get autoResize() {
+    get autoResize() : boolean {
         return this._autoResize;
     }
 
@@ -685,7 +704,7 @@ export default class CollectionWrapper<
         this._spacing = num;
     }
 
-    get spacing() {
+    get spacing() : number {
         return this._spacing;
     }
 }
