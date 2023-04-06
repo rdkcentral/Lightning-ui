@@ -345,7 +345,6 @@ export default class CollectionWrapper<
     
         const {directionIsRow, main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
         const cw = this.currentItemWrapper;
-        type StringIndex = Extract<keyof ItemSizes, string>
         let bound = this[mainDim];
         if(bound === 0) {
             bound = directionIsRow ? 1920 : 1080;
