@@ -2,14 +2,14 @@ import Lightning from '@lightningjs/core';
 
 export interface ItemWrapperTemplateSpec extends Lightning.Component.TemplateSpec {
     [key: string]: any,
-    w?: number,
-    h?: number,
     margin?: number,
     marginTop?: number,
     marginBottom?: number,
     marginRight?: number,
     marginLeft?: number,
 
+    assignedX?: number,
+    assignedY?: number,
     componentIndex: number,
     forceLoad?: boolean
 }
@@ -39,7 +39,7 @@ export default class ItemWrapper
 
     override _inactive() {
         if(!this.forceLoad) {
-            this.children[0].isAlive = false;
+            this.children[0]!.isAlive = false;
             this.fireAncestors('$childInactive', {child: this});
             this.childList.clear();
         }

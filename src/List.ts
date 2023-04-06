@@ -1,7 +1,11 @@
+
 import CollectionWrapper from './helpers/CollectionWrapper.js';
 import ItemWrapper, {
   type ItemWrapperTemplateSpec,
 } from './helpers/ItemWrapper.js';
+
+
+import type Lightning from '@lightningjs/core';
 
 export default class List extends CollectionWrapper {
     override plotItems() {
@@ -55,7 +59,7 @@ export default class List extends CollectionWrapper {
         });
         wrapper.children = newChildren;
         animateItems.forEach((index) => {
-            const item = wrapper.children[index];
+            const item = wrapper.children[index] as Lightning.Component;
             item.patch({
                 smooth: {x: item.assignedX, y: item.assignedY}
             });

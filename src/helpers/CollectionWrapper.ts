@@ -1,12 +1,15 @@
 import Lightning from '@lightningjs/core';
 
 import {
-  ItemWrapper,
-  limitWithinRange,
+    Direction,
+    getDirection,
+    getDirectionByValue,
+    ItemWrapper,
+    limitWithinRange,
 } from './index.js';
 
 export interface CollectionWrapperTemplateSpec extends Lightning.Component.TemplateSpec {
-    direction?: 'row' | 'column',
+    direction?: string,
     spacing?: number,
     autoResize?: boolean,
     requestThreshold?: number,
@@ -43,16 +46,13 @@ export interface GetChildComponentEvent {
 export interface ItemType {
     [key: string]: any,
     assignedID: string,
-    type: Lightning.Component,
+    type?: Lightning.Component,
     collectionWrapper: CollectionWrapper,
     isAlive: boolean
 }
 
-export interface Items<T> {
-    [key: number]: T 
-    length: number;
-    map(callbackfn: (value: T, index: number, array: T[]) => any) : any[];
-    splice(start: number, deleteCount?: number, ...items: T[]): T[];
+export interface Items<T> extends Array<T> {
+    [key: number]: T
 }
 
 export interface ItemSizes {
@@ -71,10 +71,6 @@ export interface ScrollOptions {
     after?: number,
     backward?: number,
     forward?: number
-}
-
-export interface Direction {
-    [key: string]: number;
 }
 
 interface UniqueIDs {
@@ -99,9 +95,7 @@ export default class CollectionWrapper<
     implements Lightning.Component.ImplementTemplateSpec<CollectionWrapperTemplateSpec>
 {
     Wrapper = (this as CollectionWrapper)!.getByRef('Wrapper')!;
-
-    protected _scrollTransitionSettings: Lightning.types.TransitionSettings | null = null
-
+    protected _scrollTransitionSettings = this.stage.transitions.createSettings({});
     protected _spacing: number = 0;
     protected _autoResize: boolean = false;
 
@@ -118,15 +112,11 @@ export default class CollectionWrapper<
     protected _index: number = 0;
     protected _scroll: number | object | Function | undefined = undefined;
     
+    protected _itemType: Lightning.Component | undefined = undefined;
     protected _scrollTransition: Lightning.types.Transition | null = null;
     protected _repositionDebounce: number | null = null;
 
-    protected DIRECTION: Direction = {
-        row: 0,
-        column: 1
-    }
-
-    protected _direction = this.DIRECTION.row;
+    protected _direction = Direction.row;
 
     static override _template(): Lightning.Component.Template<CollectionWrapperTemplateSpec> {
         return {
@@ -189,6 +179,7 @@ export default class CollectionWrapper<
                 [crossDim]: crossSize
             }
         }
+        obj = obj as object;
         this.wrapper.patch(obj);
         if(this._autoResize) {
             this.patch(obj);
@@ -257,7 +248,7 @@ export default class CollectionWrapper<
             this._scrollTransition.reset(0, 1);
         }
         if(this.Wrapper) {
-            const hadChildren = this.Wrapper.children > 0;
+            const hadChildren = this.Wrapper.children.length > 0;
             this.Wrapper.patch({
                 x: 0, y: 0, children: []
             });
@@ -354,6 +345,7 @@ export default class CollectionWrapper<
     
         const {directionIsRow, main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
         const cw = this.currentItemWrapper;
+        type StringIndex = Extract<keyof ItemSizes, string>
         let bound = this[mainDim];
         if(bound === 0) {
             bound = directionIsRow ? 1920 : 1080;
@@ -440,7 +432,7 @@ export default class CollectionWrapper<
         const index = child.componentIndex;
         for(let key in this._items[index]) {
             if(child.component[key] !== undefined) {
-                this._items[index][key] = child.component[key];
+                this._items[index]![key] = child.component[key];
             }
         }
         this._collectGarbage();
@@ -509,7 +501,7 @@ export default class CollectionWrapper<
             }
             return true;
         });
-        return results as Items[]
+        return results as Items<ItemType>
     }
 
     _normalizeDataItem(item: string | number | object): undefined | ItemType {
@@ -520,9 +512,11 @@ export default class CollectionWrapper<
             let id = this._generateUniqueID();
             const itemType: ItemType = {
                 assignedID: id,
-                type: this.itemType,
                 collectionWrapper: this,
                 isAlive: false, ...item
+            }
+            if(this._itemType) {
+                itemType.type = this._itemType;
             }
             return itemType
         }
@@ -626,20 +620,20 @@ export default class CollectionWrapper<
         return this.wrapper && this.wrapper.children && this.wrapper.children.length > 0;
     }
 
-    get currentItemWrapper() : Lightning.Component {
-        return this.wrapper.children[this._index];
+    get currentItemWrapper() : ItemWrapper {
+        return this.wrapper.children[this._index] as ItemWrapper;
     }
 
     get currentItem() : Lightning.Component {
-        return this.currentItemWrapper && this.currentItemWrapper.component || undefined;
+        return this.currentItemWrapper && this.currentItemWrapper.component as Lightning.Component;
     }
 
     set direction(str: string) {
-        this._direction = this.DIRECTION[str] ?? this.DIRECTION.row;
+        this._direction = getDirection(str) as number;
     }
 
     get direction() : string {
-        return Object.keys(this.DIRECTION)[this._direction];
+        return getDirectionByValue(this._direction);
     }
 
     set items(array) {
@@ -673,15 +667,15 @@ export default class CollectionWrapper<
         return this._index;
     }
 
-    set scrollTransition(obj) {
-        this._scrollTransitionSettings.patch(obj);
+    set scrollTransition(obj: Lightning.types.TransitionSettings) {
+        this._scrollTransitionSettings!.patch(obj);
         if(this.active) {
             this._updateScrollTransition();
         }
     }
 
-    get scrollTransition() : Lightning.types.TransitionSettings | null{
-        return this._scrollTransition;
+    get scrollTransition() : Lightning.types.TransitionSettings{
+        return this._scrollTransitionSettings;
     }
 
     set scroll(value) {
@@ -707,4 +701,13 @@ export default class CollectionWrapper<
     get spacing() : number {
         return this._spacing;
     }
+
+    set itemType(comp: Lightning.Component | undefined) {
+        this._itemType = comp;
+    }
+
+    get itemType() : Lightning.Component | undefined {
+        return this._itemType;
+    }
+    
 }
