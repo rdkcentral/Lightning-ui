@@ -1,4 +1,5 @@
 import Lightning from '@lightningjs/core';
+import type { InlineElement } from '@lightningjs/core/src/tree/Element.mjs';
 
 import {
     Direction,
@@ -80,7 +81,7 @@ interface UniqueIDs {
 export interface CollectionWrapperSignalMap extends Lightning.Component.SignalMap {
     onIndexChanged(event: IndexChangedEvent): void,
     onRequestItems(event: RequestItemsEvent): void,
-    onItemsRepositioned: void
+    onItemsRepositioned(): void
 }
 
 export interface CollectionWrapperTypeConfig extends Lightning.Component.TypeConfig {
@@ -94,7 +95,8 @@ export default class CollectionWrapper<
     extends Lightning.Component<TemplateSpec, TypeConfig>
     implements Lightning.Component.ImplementTemplateSpec<CollectionWrapperTemplateSpec>
 {
-    Wrapper = (this as CollectionWrapper)!.getByRef('Wrapper')!;
+    Wrapper = (this as CollectionWrapper)!.getByRef('Wrapper')! as Lightning.Element;
+    
     protected _scrollTransitionSettings = this.stage.transitions.createSettings({});
     protected _spacing: number = 0;
     protected _autoResize: boolean = false;

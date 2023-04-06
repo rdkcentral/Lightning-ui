@@ -7,7 +7,6 @@ export interface ItemWrapperTemplateSpec extends Lightning.Component.TemplateSpe
     marginBottom?: number,
     marginRight?: number,
     marginLeft?: number,
-
     assignedX?: number,
     assignedY?: number,
     componentIndex: number,
