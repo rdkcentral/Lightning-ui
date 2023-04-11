@@ -1,5 +1,4 @@
 import Lightning from '@lightningjs/core';
-import type { InlineElement } from '@lightningjs/core/src/tree/Element.mjs';
 
 import {
     Direction,
@@ -65,6 +64,20 @@ export interface ItemSizes {
     marginRight?: number,
     marginTop?: number,
     marginBottom?: number,
+}
+
+export interface PlotProperties {
+    directionIsRow: boolean,
+    mainDirection: 'rows' | 'columns',
+    main: 'x' | 'y',
+    mainDim: 'w' | 'h',
+    mainMarginTo: 'marginRight' | 'marginBottom',
+    mainMarginFrom: 'marginLeft' | 'marginTop',
+    crossDirection: 'columns' | 'rows',
+    cross: 'y' | 'x',
+    crossDim: 'h' | 'w',
+    crossMarginTo: 'marginBottom' | 'marginRight',
+    crossMarginFrom: 'marginTop' | 'marginLeft',
 }
 
 export interface ScrollOptions {
@@ -524,20 +537,35 @@ export default class CollectionWrapper<
         return undefined;
     }
 
-    _getPlotProperties(direction: number) {
+    _getPlotProperties(direction: number) : PlotProperties {
         const directionIsRow = direction === 0;
+        if(directionIsRow) {
+            return {
+                directionIsRow: true,
+                mainDirection: 'rows',
+                main: 'x',
+                mainDim: 'w',
+                mainMarginTo: 'marginRight',
+                mainMarginFrom: 'marginLeft',
+                crossDirection: 'columns',
+                cross: 'y',
+                crossDim: 'h',
+                crossMarginTo: 'marginBottom',
+                crossMarginFrom: 'marginTop'
+            }
+        }
         return {
-            directionIsRow: directionIsRow ? true : false,
-            mainDirection: directionIsRow ? 'rows' : 'columns',
-            main: directionIsRow ? 'x' : 'y',
-            mainDim: directionIsRow ? 'w' : 'h',
-            mainMarginTo: directionIsRow ? 'marginRight' : 'marginBottom',
-            mainMarginFrom: directionIsRow ? 'marginLeft' : 'marginTop',
-            crossDirection: !directionIsRow ? 'columns' : 'rows',
-            cross: directionIsRow ? 'y' : 'x',
-            crossDim: directionIsRow ? 'h' : 'w',
-            crossMarginTo: directionIsRow ? 'marginBottom' : 'marginRight',
-            crossMarginFrom: directionIsRow ? 'marginTop' : 'marginLeft',
+            directionIsRow: true,
+            mainDirection: 'columns',
+            main: 'y',
+            mainDim: 'h',
+            mainMarginTo: 'marginBottom',
+            mainMarginFrom: 'marginTop',
+            crossDirection: 'rows',
+            cross: 'x',
+            crossDim: 'w',
+            crossMarginTo: 'marginRight',
+            crossMarginFrom: 'marginLeft'
         }
     }
 
