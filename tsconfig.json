@@ -18,9 +18,7 @@
     "noImplicitOverride": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    // These properties enforce `import type` syntax
-    "isolatedModules": true,
-    "preserveValueImports": true,
-    "importsNotUsedAsValues": "error",
+    // This property enforces `import type` syntax
+    "verbatimModuleSyntax": true,
   }
 }

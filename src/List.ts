@@ -33,9 +33,9 @@ export default class List extends CollectionWrapper {
             let tmp = mainPos;
             let tcp = crossPos;
 
-            const existingItemWrapper = wrapper.children.getByRef(ref);
+            const existingItemWrapper = wrapper.getByRef(ref) as ItemWrapper | undefined;
 
-            if(existingItemWrapper && 
+            if(existingItemWrapper &&
                 ((existingItemWrapper.active && (crossPos !== existingItemWrapper[cross] || mainPos !== existingItemWrapper[main])) ||
                 (!existingItemWrapper.active && ((renderContext[`p${main}`] + wrapper[main] + mainPos <= viewboundMain) || (renderContext[`p${cross}`] + wrapper[cross] + crossPos <= viewboundCross))))){
                 tmp = existingItemWrapper[main];
@@ -43,8 +43,8 @@ export default class List extends CollectionWrapper {
                 animateItems.push(index);
             }
             position += sizes[mainDim] + (sizes[mainMarginTo] || sizes.margin || this._spacing);
-            
-            const type: ItemWrapperTemplateSpec = {
+
+            const type: Lightning.Component.NewPatchTemplate<Lightning.Component.Constructor<ItemWrapper>> = {
                 ref,
                 type: ItemWrapper,
                 componentIndex: index,
@@ -59,7 +59,7 @@ export default class List extends CollectionWrapper {
         });
         wrapper.children = newChildren;
         animateItems.forEach((index) => {
-            const item = wrapper.children[index] as Lightning.Component;
+            const item = wrapper.children[index] as ItemWrapper;
             item.patch({
                 smooth: {x: item.assignedX, y: item.assignedY}
             });
@@ -69,12 +69,12 @@ export default class List extends CollectionWrapper {
 
     override repositionItems() {
         const wrapper = this.wrapper;
-        if(!wrapper && wrapper.children.length) {
+        if(!wrapper || wrapper.children.length === 0) { // !!! Is this what was meant? - Frank
             return true;
         }
         const {main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim} = this._getPlotProperties(this._direction);
         let crossPos = 0, crossSize = 0, position = 0;
-        wrapper.children.forEach((item: ItemWrapperTemplateSpec) => {
+        (wrapper.children as ItemWrapper[]).forEach((item) => {
             const sizes = this._getItemSizes(item);
             position += sizes[mainMarginFrom] || sizes.margin || 0;
             crossPos = item[cross] || crossPos;
