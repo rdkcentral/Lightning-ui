@@ -1,5 +1,5 @@
 import Lightning from '@lightningjs/core';
-import type { ItemType } from './CollectionWrapper';
+import type { ItemSizes, ItemType } from './CollectionWrapper';
 
 export interface ItemWrapperTemplateSpec extends Lightning.Component.TemplateSpec {
     [key: string]: any,
@@ -12,6 +12,7 @@ export interface ItemWrapperTemplateSpec extends Lightning.Component.TemplateSpe
     assignedY?: number,
     componentIndex: number,
     forceLoad?: boolean
+    component: Lightning.Component
 }
 
 export default class ItemWrapper
@@ -56,9 +57,9 @@ export default class ItemWrapper
         if(this.children.length > 0) {
             return;
         }
-        const component = this.fireAncestors('$getChildComponent', {index: this.componentIndex});
+        const component = this.fireAncestors('$getChildComponent', {index: this.componentIndex}) as unknown as ItemType;
         component.isAlive = true;
-        const {w, h, margin, marginTop, marginBottom, marginRight, marginLeft} = this as ItemWrapperTemplateSpec;
+        const {w, h, margin, marginTop, marginBottom, marginRight, marginLeft} = this as unknown as ItemSizes;
         this.children = [{...component, w, h, margin, marginTop, marginRight, marginLeft, marginBottom}];
         if(this.hasFocus()) {
             this._refocus();
@@ -66,6 +67,6 @@ export default class ItemWrapper
     }
 
     get component() {
-        return this.children[0] || this.fireAncestors('$getChildComponent', {index: this.componentIndex});
+        return (this.children[0] || this.fireAncestors('$getChildComponent', {index: this.componentIndex})) as Lightning.Component;
     }
 }

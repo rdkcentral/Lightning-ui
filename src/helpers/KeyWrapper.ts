@@ -1,5 +1,5 @@
 import Lightning from '@lightningjs/core';
-import type { default as Key, KeyData } from '../Key';
+import type { default as Key } from '../Key';
 
 export interface KeyWrapperTemplateSpec extends Lightning.Component.TemplateSpec {
     key: Lightning.Component.NewPatchTemplate<typeof Key> | undefined

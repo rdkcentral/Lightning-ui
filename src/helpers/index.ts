@@ -1,6 +1,7 @@
 export { default as ItemWrapper } from './ItemWrapper.js';
 export { default as KeyWrapper } from './KeyWrapper.js';
 export { default as Cursor } from './Cursor.js';
+export { default as CollectionWrapper } from './CollectionWrapper.js';
 
 export function limitWithinRange(num: number, min: number, max: number) : number {
     return Math.min(Math.max(num, min), max);

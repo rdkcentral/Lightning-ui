@@ -1,8 +1,6 @@
 
 import CollectionWrapper from './helpers/CollectionWrapper.js';
-import ItemWrapper, {
-  type ItemWrapperTemplateSpec,
-} from './helpers/ItemWrapper.js';
+import ItemWrapper from './helpers/ItemWrapper.js';
 
 
 import type Lightning from '@lightningjs/core';
@@ -69,7 +67,7 @@ export default class List extends CollectionWrapper {
 
     override repositionItems() {
         const wrapper = this.wrapper;
-        if(!wrapper || wrapper.children.length === 0) { // !!! Is this what was meant? - Frank
+        if(!wrapper || wrapper.children.length === 0) {
             return true;
         }
         const {main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim} = this._getPlotProperties(this._direction);

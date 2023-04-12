@@ -9,6 +9,7 @@ import {
 } from './index.js';
 
 export interface CollectionWrapperTemplateSpec extends Lightning.Component.TemplateSpec {
+    [key: string]: any,
     direction?: string,
     spacing?: number,
     autoResize?: boolean,
@@ -25,7 +26,9 @@ export interface IndexChangedEvent {
     index: number,
     dataLength: number,
     mainIndex?: number,
+    crossIndex?: number,
     previousMainIndex?: number,
+    previousCrossIndex?: number,
     lines?: number
 }
 
@@ -67,6 +70,7 @@ export interface ItemSizes {
 }
 
 export interface PlotProperties {
+    [key: string]: string | boolean,
     directionIsRow: boolean,
     mainDirection: 'rows' | 'columns',
     main: 'x' | 'y',
@@ -149,10 +153,7 @@ export default class CollectionWrapper<
     }
 
     override _getFocused() {
-        if(this.hasItems) {
-            return this.currentItemWrapper;
-        }
-        return this;
+        return (this.hasItems && this.currentItemWrapper || this) as Lightning.Component;
     }
 
     override _handleRight() {
@@ -231,7 +232,7 @@ export default class CollectionWrapper<
             max: 0
         }
         this._requestingItems = true;
-        this.signal('onRequestItems', obj)
+        (this.signal('onRequestItems', obj) as Promise<Array<object> | object | string | number>)
             .then((response: any) => {
                 if (response === false) {
                     this._requestsEnabled = false;
@@ -337,7 +338,7 @@ export default class CollectionWrapper<
         }
         this._repositionDebounce = setTimeout(() => {
             this.repositionItems();
-        }, time);
+        }, time) as unknown as number;
     }
 
     repositionItems() {
@@ -526,7 +527,7 @@ export default class CollectionWrapper<
             let id = this._generateUniqueID();
             const itemType: ItemType = {
                 assignedID: id,
-                collectionWrapper: this,
+                collectionWrapper: this as CollectionWrapper,
                 isAlive: false, ...item
             }
             if(this._itemType) {

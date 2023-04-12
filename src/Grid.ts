@@ -1,45 +1,55 @@
-/*
- * If not stated otherwise in this file or this component's LICENSE file the
- * following copyright and licenses apply:
- *
- * Copyright 2021 Metrological
- *
- * Licensed under the Apache License, Version 2.0 (the License);
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+import CollectionWrapper, { type CollectionWrapperTemplateSpec } from './helpers/CollectionWrapper.js';
+import { Direction, limitWithinRange } from './helpers/index.js';
+import ItemWrapper from './helpers/ItemWrapper.js';
+import type Lightning from '@lightningjs/core';
 
-import {
-  CollectionWrapper,
-  ItemWrapper,
-  limitWithinRange,
-} from './helpers';
+interface GridTemplateSpec extends CollectionWrapperTemplateSpec {
+    rows?: number,
+    columns?: number,
+    crossSpacing?: number,
+    mainSpacing?: number
+}
 
-export default class Grid extends CollectionWrapper {
-    _construct() {
-        this._crossSpacing = 5;
-        this._mainSpacing = 5;
-        this._rows = 0;
-        this._columns = 0;
-        super._construct();
-    }
+interface GridIndex {
+    mainIndex: number,
+    crossIndex: number
+}
 
-    clear() {
+interface Biggest {
+    y?: number,
+    x?: number,
+    w?: number,
+    h?: number,
+    marginRight?: number,
+    marginBottom?: number,
+    margin?: number
+}
+
+interface PreviousIndex {
+    mainIndex: number, 
+    crossIndex: number, 
+    realIndex: number
+}
+
+export default class Grid extends CollectionWrapper<GridTemplateSpec> {
+    private _crossSpacing : number = 5;
+    private _mainSpacing : number = 5;
+    private _rows : number = 0;
+    private _columns : number = 0;
+    private _mainIndex : number = 0;
+    private _crossIndex : number = 0;
+    private _previous : PreviousIndex | undefined = undefined;
+    private _lines : Array<Array<number>> = [[]];
+
+    override clear(){
         super.clear();
         this._mainIndex = 0;
         this._crossIndex = 0;
         this._previous = undefined;
+        this._lines = [[]];
     }
 
-    setIndex(index) {
+    override setIndex(index: number) {
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
         const {mainIndex:previousMainIndex, crossIndex:previousCrossIndex} = this._findLocationOfIndex(this._index);
@@ -49,18 +59,10 @@ export default class Grid extends CollectionWrapper {
         this._previous = {mainIndex, crossIndex, realIndex: previousIndex};
         this._index = targetIndex;
         this._indexChanged({previousIndex, index: targetIndex, mainIndex, previousMainIndex, crossIndex, previousCrossIndex, lines: this._lines.length, dataLength: this._items.length});
+        return previousIndex !== targetIndex;
     }
 
-    _findLocationOfIndex(index) {
-        for(let i = 0; i < this._lines.length; i++) {
-            if(this._lines[i].includes(index)) {
-                return {mainIndex: i, crossIndex: this._lines[i].indexOf(index)};
-            }
-        }
-        return {mainIndex: -1, crossIndex: -1};
-    }
-
-    plotItems() {
+    override plotItems() {
         const items = this._items;
         const wrapper = this.wrapper;
 
@@ -68,7 +70,7 @@ export default class Grid extends CollectionWrapper {
         const crossSize = this[crossDim];
         let mainPos = 0, crossPos = 0, lineIndex = 0;
 
-        const animateItems = [];
+        const animateItems : number[] = [];
 
         const viewboundMain = directionIsRow ? 1920 : 1080;
         const viewboundCross = directionIsRow ? 1080 : 1920;
@@ -76,7 +78,7 @@ export default class Grid extends CollectionWrapper {
 
         this._lines = [[]];
         //create empty line array
-        let cl = [];
+        let cl : ItemWrapper[] = [];
 
         const newChildren = items.map((item, index) => {
             const sizes = this._getItemSizes(item);
@@ -88,7 +90,7 @@ export default class Grid extends CollectionWrapper {
 
             if(cl.length > 0 && ((this[mainDirection] > 0 && this[mainDirection] === cl.length) || (this[mainDirection] === 0 && crossPos + targetCrossFromMargin + sizes[crossDim] > crossSize))) {
                 const bil = this._getBiggestInLine(cl);
-                mainPos = bil[main] + bil[mainDim] + (bil[mainMarginTo] || bil.margin || this._mainSpacing);
+                mainPos = bil[main]! + bil[mainDim]! + (bil[mainMarginTo] || bil.margin || this._mainSpacing);
                 crossPos = targetCrossFromMargin;
                 this._lines.push([]);
                 cl = [];
@@ -112,7 +114,7 @@ export default class Grid extends CollectionWrapper {
                 animateItems.push(index);
             }
             
-            const newItem = {
+            const newItem: Lightning.Component.NewPatchTemplate<Lightning.Component.Constructor<ItemWrapper>> = {
                 ref,
                 type: ItemWrapper,
                 componentIndex: index,
@@ -125,15 +127,15 @@ export default class Grid extends CollectionWrapper {
             }
             
             crossPos += sizes[crossDim] + (sizes[crossMarginTo] || sizes.margin || this._crossSpacing);
-            this._lines[lineIndex].push(index);
-            cl.push(newItem);
+            this._lines[lineIndex]!.push(index);
+            cl.push(newItem as unknown as ItemWrapper);
             return newItem; 
         });
         
         wrapper.children = newChildren;
 
         animateItems.forEach((index) => {
-            const item = wrapper.children[index];
+            const item = wrapper.children[index] as ItemWrapper;
             item.patch({
                 smooth: {x: item.assignedX, y: item.assignedY}
             });
@@ -141,36 +143,36 @@ export default class Grid extends CollectionWrapper {
 
         const biggestInLastLine = this._getBiggestInLine(cl);
         this._resizeWrapper({
-            [mainDim]: biggestInLastLine[main] + biggestInLastLine[mainDim],
+            [mainDim]: biggestInLastLine[main]! + biggestInLastLine[mainDim]!,
             [crossDim]: crossSize
         });
     }
 
-    repositionItems() {
+    override repositionItems() {
         const wrapper = this.wrapper;
-        if(!wrapper && wrapper.children.length) {
+        if(!wrapper || wrapper.children.length === 0) {
             return true;
         }
 
-        const {main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim, crossMarginTo, crossMarginFrom} = this._getPlotProperties(this._direction);
+        const {main, mainDirection, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim, crossMarginTo, crossMarginFrom} = this._getPlotProperties(this._direction);
         const crossSize = this[crossDim];
         let mainPos = 0, crossPos = 0, lineIndex = 0;
 
         //create empty line array
-        let cl = [];
+        let cl: ItemWrapper[] = [];
 
-        this.lines = [[]];
+        this._lines = [[]];
 
-        wrapper.children.forEach((item, index) => {
+        (wrapper.children as ItemWrapper[]).forEach((item, index) => {
             const sizes = this._getItemSizes(item);
             const targetCrossFromMargin = (sizes[crossMarginFrom] || sizes.margin || 0);
 
             if(index === 0) {
                 mainPos += (sizes[mainMarginFrom] || sizes.margin || 0);
             }
-            if(cl.length > 0 && ((this[mainDirection] > 0 && this[mainDirection] === cl.length) || (this[mainDirection] === 0 && crossPos + targetCrossFromMargin + sizes[crossDim] > crossSize))) {
+            if(cl.length > 0 && ((this[mainDirection]! > 0 && this[mainDirection] === cl.length) || (this[mainDirection] === 0 && crossPos + targetCrossFromMargin + sizes[crossDim] > crossSize))) {
                 const bil = this._getBiggestInLine(cl);
-                mainPos = bil[main] + bil[mainDim] + (bil[mainMarginTo] || bil.margin || this._mainSpacing);
+                mainPos = bil[main]! + bil[mainDim]! + (bil[mainMarginTo] || bil.margin || this._mainSpacing);
                 crossPos = targetCrossFromMargin;
                 this._lines.push([]);
                 cl = [];
@@ -187,40 +189,30 @@ export default class Grid extends CollectionWrapper {
                 [cross]: crossPos
             });
             crossPos += sizes[crossDim] + (sizes[crossMarginTo] || sizes.margin || this._crossSpacing)
-            this._lines[lineIndex].push(index);
-            cl.push(newItem);
+            this._lines[lineIndex]!.push(index);
+            cl.push(item);
         });
 
         const biggestInLastLine = this._getBiggestInLine(cl);
         this._resizeWrapper({
-            [mainDim]: biggestInLastLine[main] + biggestInLastLine[mainDim],
+            [mainDim]: biggestInLastLine[main]! + biggestInLastLine[mainDim]!,
             [crossDim]: crossSize
         });
         super.repositionItems();
     }
 
-    _getBiggestInLine(line) {
-        const {mainDim} = this._getPlotProperties(this._direction);
-        return line.reduce((biggestItem, newItem) => {
-            if(newItem[mainDim] > biggestItem[mainDim]) {
-                return newItem;
-            }
-            return biggestItem;
-        });
-    }
-
-    navigate(shift, direction) {
+    override navigate(shift: number, direction: Direction) {
         const {directionIsRow, cross, crossDim} = this._getPlotProperties(this._direction);
-        const overCross = ((directionIsRow && direction === CollectionWrapper.DIRECTION.column) 
-                            || (!directionIsRow && direction === CollectionWrapper.DIRECTION.row));
+        const overCross : boolean = ((directionIsRow && direction === Direction.column) 
+                            || (!directionIsRow && direction === Direction.row));
 
-        let targetMainIndex = this._mainIndex + !!(!overCross) * shift;
-        let targetCrossIndex = this._crossIndex + !!overCross * shift;
-        let targetIndex = this._index;
+        let targetMainIndex: number = this._mainIndex + +!!(!overCross) * shift;
+        let targetCrossIndex: number = this._crossIndex + +!!overCross * shift;
+        let targetIndex: number = this._index;
         
-        if(overCross && targetCrossIndex > -1 && targetCrossIndex <= this._lines[targetMainIndex].length) {
-            if(this._lines[targetMainIndex][targetCrossIndex] !== undefined) {
-                targetIndex = this._lines[targetMainIndex][targetCrossIndex];
+        if(overCross && targetCrossIndex > -1 && targetCrossIndex <= this._lines[targetMainIndex]!.length) {
+            if(this._lines[targetMainIndex]![targetCrossIndex] !== undefined) {
+                targetIndex = this._lines[targetMainIndex]![targetCrossIndex]!;
                 this._previous = undefined;
             }
         } else if (!overCross && targetMainIndex < this._lines.length && targetMainIndex > -1){
@@ -231,7 +223,7 @@ export default class Grid extends CollectionWrapper {
             } else if(targetLine){
                 const currentItem = this.currentItemWrapper;
                 const m = targetLine.map((item) => {
-                    const targetItem = this.wrapper.children[item];
+                    const targetItem = this.wrapper.children[item] as ItemWrapper;
                     if(targetItem[cross] <= currentItem[cross] && currentItem[cross] <= targetItem[cross] + targetItem[crossDim]) {
                         return targetItem[cross] + targetItem[crossDim] - currentItem[cross];
                     }
@@ -247,14 +239,14 @@ export default class Grid extends CollectionWrapper {
                     if(m[i] === -1 && acc > -1) {
                         break;
                     }
-                    if(m[i] > acc) {
-                        acc = m[i];
+                    if(m[i]! > acc) {
+                        acc = m[i]!;
                         t = i;
                     }
                 }
                 if(t > -1) {
                     targetCrossIndex = t;
-                    targetIndex = targetLine[t];
+                    targetIndex = targetLine[t]!;
                 }
             }
             this._previous = {mainIndex: this._mainIndex, crossIndex: this._crossIndex, realIndex: this._index};
@@ -265,6 +257,25 @@ export default class Grid extends CollectionWrapper {
             return true;
         }
         return false;
+    }
+
+    _findLocationOfIndex(index: number) : GridIndex {
+        for(let i = 0; i < this._lines.length; i++) {
+            if(this._lines![i]!.includes(index)) {
+                return {mainIndex: i, crossIndex: this._lines![i]!.indexOf(index)};
+            }
+        }
+        return {mainIndex: -1, crossIndex: -1};
+    }
+
+    _getBiggestInLine(line: ItemWrapper[]) : Biggest {
+        const {mainDim} = this._getPlotProperties(this._direction);
+        return line.reduce((biggestItem: ItemWrapper, newItem: ItemWrapper) => {
+            if(newItem[mainDim] > biggestItem[mainDim]) {
+                return newItem;
+            }
+            return biggestItem;
+        });
     }
 
     set rows(num) {
@@ -301,7 +312,7 @@ export default class Grid extends CollectionWrapper {
         return this._mainSpacing;
     }
 
-    set spacing(num) {
+    override set spacing(num: number) {
         this._spacing = num;
         this._mainSpacing = num;
         this._crossSpacing = num;
