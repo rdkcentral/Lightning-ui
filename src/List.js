@@ -37,7 +37,7 @@ export default class List extends CollectionWrapper {
         const newChildren = items.map((item, index) => {
             const sizes = this._getItemSizes(item);
             position += (sizes[mainMarginFrom] || sizes.margin || 0);
-            
+
             if(crossSize < sizes[crossDim]) {
                 crossSize = sizes[crossDim];
             }
@@ -50,7 +50,7 @@ export default class List extends CollectionWrapper {
 
             const existingItemWrapper = wrapper.tag(ref);
 
-            if(existingItemWrapper && 
+            if(existingItemWrapper &&
                 ((existingItemWrapper.active && (crossPos !== existingItemWrapper[cross] || mainPos !== existingItemWrapper[main])) ||
                 (!existingItemWrapper.active && ((renderContext[`p${main}`] + wrapper[main] + mainPos <= viewboundMain) || (renderContext[`p${cross}`] + wrapper[cross] + crossPos <= viewboundCross))))){
                 tmp = existingItemWrapper[main];

@@ -1,9 +1,9 @@
 import Lightning from '@lightningjs/core';
 
-interface KeyData {
-    origin?: string, 
-    key?: string, 
-    label?: string, 
+export interface KeyData {
+    origin?: string,
+    key?: string,
+    label?: string,
     action?: string
 }
 
@@ -30,11 +30,12 @@ interface KeyTemplateSpec extends Lightning.Component.TemplateSpec {
     Label: object
 }
 
-export default class Key extends Lightning.Component<KeyTemplateSpec> 
+export default class Key extends Lightning.Component<KeyTemplateSpec>
     implements Lightning.Component.ImplementTemplateSpec<KeyTemplateSpec> {
 
     private _data : KeyData = {};
     private _labelText = {};
+    private _action: string = '';
 
     private _backgroundColors : FocusColors = {
         focused: 0xff000000,
@@ -67,7 +68,7 @@ export default class Key extends Lightning.Component<KeyTemplateSpec>
 
         let {focused, unfocused = 0xff000000} = this._backgroundColors;
         let {focused: labelFocused, unfocused: labelUnfocused = 0xffffffff} = this._labelColors;
-        
+
         this.patch({
             Background: {color: hasFocus && focused ? focused : unfocused},
             Label: {text: {text: label}, color: hasFocus && labelFocused ? labelFocused : labelUnfocused}
@@ -80,6 +81,14 @@ export default class Key extends Lightning.Component<KeyTemplateSpec>
 
     static get height() {
         return 80;
+    }
+
+    set action(v: string) {
+        this._action = v;
+    }
+
+    get action(): string {
+        return this._action;
     }
 
     set data(obj) {

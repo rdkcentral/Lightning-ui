@@ -10,7 +10,8 @@ export default class Cursor
     implements Lightning.Component.ImplementTemplateSpec<CursorTemplateSpec>
 {
     private _blink = true;
-    
+    blinkAnimation: Lightning.types.Animation | null = null;
+
     static override _template(): Lightning.Component.Template<CursorTemplateSpec> {
         return {
             alpha: 0
@@ -26,7 +27,7 @@ export default class Cursor
     }
 
     show() {
-        if(this.blink) {
+        if(this.blink && this.blinkAnimation) {
             this.blinkAnimation.start();
         }
         else {
@@ -35,7 +36,7 @@ export default class Cursor
     }
 
     hide() {
-        if(this.blink) {
+        if(this.blink && this.blinkAnimation) {
             this.blinkAnimation.start();
         }
         else {

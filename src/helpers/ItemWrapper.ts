@@ -1,4 +1,5 @@
 import Lightning from '@lightningjs/core';
+import type { ItemType } from './CollectionWrapper';
 
 export interface ItemWrapperTemplateSpec extends Lightning.Component.TemplateSpec {
     [key: string]: any,
@@ -20,6 +21,9 @@ export default class ItemWrapper
     forceLoad = false;
     componentIndex = -1;
 
+    assignedX = 0;
+    assignedY = 0;
+
     static override _template(): Lightning.Component.Template<ItemWrapperTemplateSpec> {
         return {
             clipbox: true
@@ -38,14 +42,14 @@ export default class ItemWrapper
 
     override _inactive() {
         if(!this.forceLoad) {
-            this.children[0]!.isAlive = false;
+            (this.children[0] as unknown as ItemType)!.isAlive = false;
             this.fireAncestors('$childInactive', {child: this});
             this.childList.clear();
         }
     }
 
     override _getFocused() {
-        return (this.children && this.children[0] || this)
+        return (this.children && this.children[0] || this) as Lightning.Component;
     }
 
     private create() {

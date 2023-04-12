@@ -109,7 +109,7 @@ export default class CollectionWrapper<
     implements Lightning.Component.ImplementTemplateSpec<CollectionWrapperTemplateSpec>
 {
     Wrapper = (this as CollectionWrapper)!.getByRef('Wrapper')! as Lightning.Element;
-    
+
     protected _scrollTransitionSettings = this.stage.transitions.createSettings({});
     protected _spacing: number = 0;
     protected _autoResize: boolean = false;
@@ -126,7 +126,7 @@ export default class CollectionWrapper<
     protected _items: Items<ItemType> = [];
     protected _index: number = 0;
     protected _scroll: number | object | Function | undefined = undefined;
-    
+
     protected _itemType: Lightning.Component | undefined = undefined;
     protected _scrollTransition: Lightning.types.Transition | null = null;
     protected _repositionDebounce: number | null = null;
@@ -205,7 +205,7 @@ export default class CollectionWrapper<
         let previous = obj.previousMainIndex ?? obj.previousIndex;
         let target = obj.mainIndex ?? obj.index;
         let max = obj.lines ?? obj.dataLength;
-        
+
         if (this._requestsEnabled && !this._requestingItems) {
             if (target + this._requestThreshold >= max) {
                 this.requestItems(false, {
@@ -252,7 +252,7 @@ export default class CollectionWrapper<
         const previousIndex = this._index;
         this._index = targetIndex;
         this._indexChanged({ previousIndex, index: targetIndex, dataLength: this._items.length });
-        return previousIndex !== targetIndex;  
+        return previousIndex !== targetIndex;
     }
 
     protected clear() {
@@ -273,7 +273,7 @@ export default class CollectionWrapper<
         }
     }
 
-    protected add(item: any) {
+    protected override add(item: any) {
         this.addAt(item);
     }
 
@@ -357,7 +357,7 @@ export default class CollectionWrapper<
         let previous = obj.previousMainIndex ?? obj.previousIndex;
         let target = obj.mainIndex ?? obj.index;
         let max = obj.lines ?? obj.dataLength;
-    
+
         const {directionIsRow, main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
         const cw = this.currentItemWrapper;
         let bound = this[mainDim];
@@ -392,7 +392,7 @@ export default class CollectionWrapper<
                 }
                 if(mod === jump - 1) {
                     const actualSize = marginFrom + cw[mainDim] + marginTo;
-                    scroll = (mod * actualSize) + marginFrom - cw[main]; 
+                    scroll = (mod * actualSize) + marginFrom - cw[main];
                 }
             }
             else if(after) {
@@ -611,7 +611,7 @@ export default class CollectionWrapper<
 
     get forceLoad() {
         return this._forceLoad;
-    }    
+    }
 
     get requestingItems() {
         return this._requestingItems;
@@ -738,5 +738,5 @@ export default class CollectionWrapper<
     get itemType() : Lightning.Component | undefined {
         return this._itemType;
     }
-    
+
 }
