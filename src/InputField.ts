@@ -1,28 +1,46 @@
-/*
- * If not stated otherwise in this file or this component's LICENSE file the
- * following copyright and licenses apply:
- *
- * Copyright 2021 Metrological
- *
- * Licensed under the Apache License, Version 2.0 (the License);
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import Lightning from '@lightningjs/core';
-
 import Cursor from './helpers/Cursor.js';
 
-export default class InputField extends Lightning.Component {
-    static _template () {
+interface InputFieldTemplateSpec extends Lightning.Component.TemplateSpec {
+    input?: string;
+    previousInput?: string;
+    description?: string;
+    //cursor?: CursorPatch;
+    cursorX?: number;
+    passwordMask?: string;
+    passwordMode?: boolean;
+    autoHideCursor?: boolean;
+    labelPositionStatic?: boolean;
+    maxLabelWidth?: number;
+    PreLabel: Lightning.Element;
+    PostLabel: Lightning.Element;
+    Cursor: typeof Cursor;
+}
+
+interface CursorPatch {
+    x?: number;
+}
+
+export default class InputField extends Lightning.Component<InputFieldTemplateSpec>
+    implements Lightning.Component.ImplementTemplateSpec<InputFieldTemplateSpec> {
+    
+    private _input: string = '';
+    private _description: string = '';
+    private _cursorX: number = 0;
+    private _cursorIndex: number = 0;
+    private _passwordMask: string = '*';
+    private _passwordMode: boolean = false;
+    private _autoHideCursor: boolean = true;
+    private _labelPositionStatic: boolean = true;
+    private _maxLabelWidth: number = 0;
+    private _cursorVisible: boolean = false;
+    private _inputText: object = {};
+
+    PreLabel = (this as InputField).getByRef('PreLabel')!;
+    PostLabel = (this as InputField).getByRef('PostLabel')!;
+    Cursor = (this as InputField).getByRef('Cursor')!;
+
+    static override _template(): Lightning.Component.Template<InputFieldTemplateSpec> {
         return {
             PreLabel: {renderOffscreen: true},
             PostLabel: {renderOffscreen: true},
@@ -30,24 +48,11 @@ export default class InputField extends Lightning.Component {
         }
     }
 
-    _construct() {
-        this._input = '';
-        this._previousInput = '';
-        this._description = '';
-        this._cursorX = 0;
-        this._cursorIndex = 0;
-        this._passwordMask = '*';
-        this._passwordMode = false;
-        this._autoHideCursor = true;
-        this._labelPositionStatic = true;
-        this._maxLabelWidth = 0;
-    }
-
-    _init() {
-        this.tag('PreLabel').on('txLoaded', () => {
+    override _init() {
+        this.PreLabel.on('txLoaded', () => {
             this._labelTxLoaded();
         });
-        this.tag('PostLabel').on('txLoaded', () => {
+        this.PostLabel.on('txLoaded', () => {
             this._labelTxLoaded
         });
     }
@@ -60,13 +65,13 @@ export default class InputField extends Lightning.Component {
 
     toggleCursor(bool = !this._cursorVisible) {
         this._cursorVisible = bool;
-        this.cursor[bool ? 'show' : 'hide']();
+        this.Cursor[bool ? 'show' : 'hide']();
     }
 
     _labelTxLoaded() {
-        const preLabel = this.tag('PreLabel');
-        const cursor = this.tag('Cursor');
-        const postLabel = this.tag('PostLabel');
+        const preLabel = this.PreLabel;
+        const cursor = this.Cursor;
+        const postLabel = this.PostLabel;
         this.h = preLabel.renderHeight || postLabel.renderHeight;
         cursor.x = preLabel.renderWidth + this._cursorX;
         postLabel.x = cursor.x + cursor.w * (1 - cursor.mountX);
@@ -100,23 +105,30 @@ export default class InputField extends Lightning.Component {
         });
 
         if(this.h === 0) {
-            this.tag('PreLabel').loadTexture();
-            this.h = this.tag('PreLabel').renderHeight;
+            this.PreLabel.loadTexture();
+            this.h = this.PreLabel.renderHeight;
         }
         this._cursorIndex = index;
     }
 
-    _handleRight() {
+    override _handleRight() {
         this._update(Math.min(this._input.length, this._cursorIndex + 1));
     }
 
-    _handleLeft() {
+    override _handleLeft() {
         this._update(Math.max(0, this._cursorIndex - 1));
     }
 
-    _firstActive() {
+    override _firstActive() {
         this._labelTxLoaded();
         this._update();
+    }
+
+    set input(str: string) {
+        this._input = str
+        if(this.active) {
+            this._update(str.length);
+        }
     }
 
     get input() {
@@ -133,8 +145,8 @@ export default class InputField extends Lightning.Component {
 
     set inputText (obj) {
         this._inputText = obj;
-        this.tag('PreLabel').patch({text: obj});
-        this.tag('PostLabel').patch({text: obj});
+        this.PreLabel.patch({text: obj});
+        this.PostLabel.patch({text: obj});
     }
 
     get inputText() {
@@ -149,16 +161,16 @@ export default class InputField extends Lightning.Component {
         return this._description;
     }
 
-    set cursor(obj) {
+    override set cursor(obj: CursorPatch) {
         if(obj.x) {
-            this._cursorX = obj.x;
+            this._cursorX = obj.x as number;
             delete obj.x;
         }
-        this.tag('Cursor').patch(obj);
+        this.Cursor.patch(obj);
     }
 
-    get cursor() {
-        return this.tag('Cursor');
+    override get cursor() {
+        return this.Cursor as CursorPatch;
     }
 
     get cursorVisible() {
@@ -181,7 +193,7 @@ export default class InputField extends Lightning.Component {
         return this._passwordMode;
     }
 
-    set passwordMask(str) {
+    set passwordMask(str: string) {
         this._passwordMask = str;
     }
 
@@ -208,7 +220,7 @@ export default class InputField extends Lightning.Component {
 
     get _labelOffset() {
         if (this._labelPositionStatic) return 0;
-        let offset = this.maxLabelWidth - this.tag('Cursor').x;
+        let offset = this.maxLabelWidth - this.Cursor.x;
         return offset < 0 ? offset : 0;
     }
 }

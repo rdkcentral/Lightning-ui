@@ -42,3 +42,21 @@ export function getDirectionByValue(value: number): keyof typeof Direction {
 export function getDirection(value: string): number {
     return Direction[value as keyof typeof Direction] ?? Direction.row;
 }
+
+export interface AnimationAttributes {
+    duration?: number;
+    delay?: number;
+    repeat?: number;
+    repeatDelay?: number;
+    repeatOffset?: number;
+    stopMethod?: 'fade' | 'reverse' | 'forward' | 'immediate' | 'onetotwo';
+    stopDuration?: number;
+    stopDelay?: number;
+    autoStop?: number;
+}
+
+export enum TextAlign {
+    left = 0,
+    center = 0.5,
+    right = 1
+}

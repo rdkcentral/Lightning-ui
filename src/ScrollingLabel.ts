@@ -1,26 +1,44 @@
-/*
- * If not stated otherwise in this file or this component's LICENSE file the
- * following copyright and licenses apply:
- *
- * Copyright 2021 Metrological
- *
- * Licensed under the Apache License, Version 2.0 (the License);
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import Lightning from '@lightningjs/core';
 
-export default class ScrollingLabel extends Lightning.Component {
-    static _template() {
+import {TextAlign, type AnimationAttributes} from './helpers/index.js'
+
+interface ScrollingLabelTemplateSpec extends Lightning.Component.TemplateSpec {
+    autoStart?: boolean;
+    fade?: number;
+    spacing?: number;
+    label?: object;
+    align?: 'left' | 'center' | 'right',
+
+    LabelClipper: {
+        LabelWrapper: {
+            Label: Lightning.Element,
+            LabelCopy: Lightning.Element
+        }
+    }
+}
+
+export default class ScrollingLabel extends Lightning.Component<ScrollingLabelTemplateSpec>
+    implements Lightning.Component.ImplementTemplateSpec<ScrollingLabelTemplateSpec> {
+    
+    private _autoStart: boolean = false;
+    private _scrollAnimation: Lightning.types.Animation | false = false;
+    private _fade: number = 30;
+    private _spacing: number = 30;
+    private _label: object = {};
+    private _align: 'left' | 'center' | 'right' = 'left';
+
+    private _animationSettings : AnimationAttributes = {
+        delay: 0.7,
+        duration: 1,
+        repeat: -1,
+        stopMethod: 'immediate'
+    }
+
+    LabelClipper: Lightning.Element = (this as ScrollingLabel).getByRef('LabelClipper')!
+    Label: Lightning.Element = this.LabelClipper.getByRef('LabelWrapper')!.getByRef('Label')!;
+    LabelCopy: Lightning.Element = this.LabelClipper.getByRef('LabelWrapper')!.getByRef('LabelCopy')!;
+
+    static override _template(): Lightning.Component.Template<ScrollingLabelTemplateSpec> {
         return {
             LabelClipper: {
                 w: w => w,
@@ -33,23 +51,8 @@ export default class ScrollingLabel extends Lightning.Component {
         }
     }
 
-    _construct() {
-        this._autoStart = true;
-        this._scrollAnimation = false;
-        this._fade = 30;
-        this._spacing = 30;
-        this._label = {};
-        this._align = 'left';
-
-        this._animationSettings = {
-            delay: 0.7,
-            repeat: -1,
-            stopMethod: 'immediate'
-        };
-    }
-
-    _init() {
-        const label = this.tag('Label');
+    override _init() {
+        const label = this.Label;
         label.on('txLoaded', () => {
             this._update(label);
             this._updateAnimation(label);
@@ -59,15 +62,15 @@ export default class ScrollingLabel extends Lightning.Component {
         })
     }
 
-    _update(label = this.tag('Label')) {
+    _update(label = this.Label) {
         const renderWidth = label.renderWidth;
         const noScroll = renderWidth <= this.renderWidth;
         let labelPos = 0;
         if(noScroll && this._align !== 'left') {
-            labelPos = (this.renderWidth - renderWidth) * ScrollingLabel.ALIGN[this._align];
+            labelPos = (this.renderWidth - renderWidth) * TextAlign[this._align];
         }
 
-        this.tag('LabelClipper').patch({
+        this.LabelClipper.patch({
             h: label.renderHeight,
             shader: {
                 right: noScroll ? 0 : this._fade
@@ -84,7 +87,7 @@ export default class ScrollingLabel extends Lightning.Component {
         });
     }
 
-    _updateAnimation(label = this.tag('Label')) {
+    _updateAnimation(label = this.Label) {
         if(this._scrollAnimation) {
             this._scrollAnimation.stopNow();
         }
@@ -105,7 +108,7 @@ export default class ScrollingLabel extends Lightning.Component {
     start() {
         if(this._scrollAnimation) {
             this._scrollAnimation.stopNow();
-            this.tag('LabelCopy').patch({
+            this.LabelCopy.patch({
                 text: this._label
             });
             this._scrollAnimation.start();
@@ -115,22 +118,22 @@ export default class ScrollingLabel extends Lightning.Component {
     stop() {
         if(this._scrollAnimation) {
             this._scrollAnimation.stopNow();
-            this.tag('LabelCopy').text = '';
+            this.LabelCopy.text = '';
         }
     }
 
-    set label(obj) {
+    set label(obj: object) {
         if(typeof obj === 'string') {
             obj = {text: obj};
         }
         this._label = {...this._label, ...obj};
-        this.tag('Label').patch({
+        this.Label.patch({
             text: obj
         });
     }
 
     get label() {
-        return this.tag('Label');
+        return this.Label as object;
     }
 
     set align(pos) {
@@ -183,10 +186,4 @@ export default class ScrollingLabel extends Lightning.Component {
     get animationSettings() {
         return this._animationSettings;
     }
-}
-
-ScrollingLabel.ALIGN = {
-    left: 0,
-    center: 0.5,
-    right: 1
 }
