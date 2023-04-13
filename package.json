@@ -18,7 +18,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@lightningjs/core": "^2.8.1"
+    "@lightningjs/core": "git@github.com:frank-weindel/Lightning.git#ts-add-loosetypeconfig-2"
   },
   "repository": {
     "type": "git",

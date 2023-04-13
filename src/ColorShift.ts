@@ -2,11 +2,22 @@ import Lightning from '@lightningjs/core';
 import List from './List.js';
 
 import { findIndexOfObject } from './helpers/index.js';
+import type Stepper from './Stepper.js';
 import ArrowStepper from './ArrowStepper.js';
 
 interface ColorShiftTemplateSpec extends Lightning.Component.TemplateSpec {
     [key: string]: any;
     List: typeof List;
+    autoColorShift: boolean;
+    focusColor: number;
+    labelColor: number;
+    labelColorFocused: number;
+
+    stepperComponent: Lightning.Component;
+    correctionComponent: Lightning.Component;
+    brightnessComponent: Lightning.Component;
+    contrastComponent: Lightning.Component;
+    gammaComponent: Lightning.Component;
 }
 
 interface ColorBlindType {
@@ -100,7 +111,7 @@ export default class ColorShift extends Lightning.Component<ColorShiftTemplateSp
         }
 
         if(this._currentCorrection && this._settings.correction !== this._currentCorrection) {
-            const steppers = listItems.slice(1);
+            const steppers = listItems.slice(1) as Stepper[];
             steppers.forEach((stepper) =>  {
                 stepper.value = 50;
             });
@@ -133,6 +144,38 @@ export default class ColorShift extends Lightning.Component<ColorShiftTemplateSp
 
     override _firstActive() {
         this._update();
+    }
+
+    set autoColorShift(bool: boolean) {
+        this._autoColorShift = bool;
+    }
+
+    get autoColorShift() {
+        return this._autoColorShift;
+    }
+
+    set focusColor(color: number) {
+        this._focusColor = color;
+    }
+
+    get focusColor() {
+        return this._focusColor;
+    }
+
+    set labelColor(color: number) {
+        this._labelColor = color;
+    }
+
+    get labelColor() {
+        return this._labelColor;
+    }
+
+    set labelColorFocused(color: number) {
+        this._labelColorFocused = color;
+    }
+
+    get labelColorFocused() {
+        return this._labelColorFocused;
     }
 
     set settings(obj) {
