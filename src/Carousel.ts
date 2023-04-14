@@ -1,50 +1,38 @@
-/*
- * If not stated otherwise in this file or this component's LICENSE file the
- * following copyright and licenses apply:
- *
- * Copyright 2021 Metrological
- *
- * Licensed under the Apache License, Version 2.0 (the License);
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import {
-  CollectionWrapper,
-  ItemWrapper,
+    CollectionWrapper,
+    ItemWrapper,
 } from './helpers';
+import type Lightning from '@lightningjs/core';
+import type { CollectionWrapperTemplateSpec, ItemType } from './helpers/CollectionWrapper.js';
 
-export default class Carousel extends CollectionWrapper {
-    static _template() {
-        return {
-            Wrapper: {}
-        }
-    }
+interface CarouselTemplateSpec extends CollectionWrapperTemplateSpec {
+    Wrapper: object
+}
 
-    _construct() {
-        super._construct();
-        this._scroll = 0.5;
-        this._scrollOffsetStart = 0;
-        this._scrollOffsetEnd = 0;
-        this._tresholdStart = 400;
-        this._tresholdEnd = 400;
-        this._dataIndex = -1;
-    }
+interface CarouselArray extends Array<Lightning.Component.NewPatchTemplate<Lightning.Component.Constructor<ItemWrapper>>> {
+    [key: number]: Lightning.Component.NewPatchTemplate<Lightning.Component.Constructor<ItemWrapper>>
+}
+export default class Carousel extends CollectionWrapper<CarouselTemplateSpec>
+    implements Lightning.Component.ImplementTemplateSpec<CarouselTemplateSpec>
+{
+    protected override _scroll = 0.5;
+    protected _scrollOffsetStart = 0;
+    protected _scrollOffsetEnd = 0;
+    protected _tresholdStart = 400;
+    protected _tresholdEnd = 400;
+    protected _dataIndex = -1;
+    protected _cleanUpDebounce: number | null = null;
 
-    clear() {
+    protected _threshold: number = 0;
+    protected _thresholdStart: number = 0;
+    protected _thresholdEnd: number = 0;
+
+    override clear() {
         super.clear();
         this._dataIndex = 0;
     }
 
-    _normalizeDataIndex(index, items = this._items) {
+    _normalizeDataIndex(index: number, items = this._items) {
         if(index > items.length - 1) {
             return 0;
         }
@@ -54,7 +42,7 @@ export default class Carousel extends CollectionWrapper {
         return index;
     }
 
-    plotItems() {
+    override plotItems() {
         const items = this._items;
         const wrapper = this.wrapper;
 
@@ -64,11 +52,11 @@ export default class Carousel extends CollectionWrapper {
 
         const scroll = this._scroll;
         const scrollIsAnchored = !isNaN(scroll);
-        const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? this._normalizePixelToPercentage(scroll) : scroll) : null;
+        const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? this._normalizePixelToPercentage(scroll, viewBound) : scroll) : 0;
 
         const scrollOffsetStart = 0;
-        const positiveHalf = [];
-        const negativeHalf = [];
+        const positiveHalf: CarouselArray = [];
+        const negativeHalf: CarouselArray = [];
         const itemIndex = this._index;
         let isFirst = true;
         let index = itemIndex;
@@ -94,7 +82,6 @@ export default class Carousel extends CollectionWrapper {
             if(crossSize < sizes[crossDim]) {
                 crossSize = sizes[crossDim];
             }
-
             positiveHalf.push({
                 type: ItemWrapper,
                 componentIndex: index,
@@ -108,7 +95,8 @@ export default class Carousel extends CollectionWrapper {
             position += sizes[mainDim] + (sizes[mainMarginTo] || sizes.margin || this._spacing);
             index = this._normalizeDataIndex(index + 1, items);
         }
-        position = positiveHalf[0][main] - (positiveHalf[0][mainMarginFrom] || positiveHalf[0].margin);
+        const posHalf = positiveHalf[0] as unknown as ItemType;
+        position = posHalf[main] - (posHalf[mainMarginFrom] || posHalf.margin);
         index = itemIndex > 0 ? itemIndex - 1 : items.length - 1;
         let lastWidth = 0;
         while(-(scrollOffsetStart + this._tresholdStart) < position + lastWidth) {
@@ -140,7 +128,7 @@ export default class Carousel extends CollectionWrapper {
         this._indexChanged({previousIndex: previousDataIndex, index: this._dataIndex, dataLength: this._items.length});
     }
 
-    repositionItems() {
+    override repositionItems() {
         const children = this.wrapper.children;
         const begin = children.slice(0, this._index);
         const end = children.slice(this._index + 1);
@@ -148,11 +136,13 @@ export default class Carousel extends CollectionWrapper {
         const {main, mainDim, mainMarginFrom, mainMarginTo, cross, crossDim} = this._getPlotProperties(this._direction);
         let crossPos = 0, crossSize = 0;
 
+        const viewBound = this[mainDim];
+
         const scroll = this._scroll;
         const scrollIsAnchored = !isNaN(scroll);
-        const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? this._normalizePixelToPercentage(scroll) : scroll) : null;
+        const scrollAnchor = scrollIsAnchored ? (scroll > 1 ? this._normalizePixelToPercentage(scroll, viewBound) : scroll) : 0;
 
-        const focusedItem = children[this._index];
+        const focusedItem = children[this._index]! as unknown as ItemType;
 
         let position = focusedItem[main] + (focusedItem[mainDim]- focusedItem.component[mainDim]) * scrollAnchor;
 
@@ -203,7 +193,7 @@ export default class Carousel extends CollectionWrapper {
         });
     }
 
-    navigate(shift, orientation = this._direction) {
+    override navigate(shift: number, orientation = this._direction) {
         if(orientation !== this._direction) {
             return false;
         }
@@ -212,7 +202,7 @@ export default class Carousel extends CollectionWrapper {
         const childList = this.wrapper.childList;
         const {main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
         const currentDataIndex = this.currentItemWrapper.componentIndex;
-        let referenceItem = childList.last;
+        let referenceItem = childList.last
         if (shift < 0) {
             referenceItem = childList.first;
         }
@@ -254,13 +244,13 @@ export default class Carousel extends CollectionWrapper {
         return true;
     }
 
-    setIndex(index) {
+    override setIndex(index: number) {
         this._index = index;
         this.plotItems();
         return true;
     }
 
-    addAt(item, index = this._items.length) {
+    override addAt(item: any, index = this._items.length) {
         if(index >= 0 && index <= this._items.length) {
             if(!Array.isArray(item)) {
                 item = [item];
@@ -288,7 +278,7 @@ export default class Carousel extends CollectionWrapper {
             const boundStart =  -viewboundMain * 0.66;
             const boundEnd = bound + viewboundMain * 0.66;
 
-            let rem = children.reduce((acc, child, index) => {
+            let rem = children.reduce((acc: number[], child, index: number) => {
                 if(((offset + child[main]) + child[mainDim] < boundStart) || (offset + child[main] > boundEnd)) {
                     acc.push(index)
                 }
@@ -298,7 +288,7 @@ export default class Carousel extends CollectionWrapper {
             if(rem.length > 0) {
                 if(rem[0] === 0) {
                     for(let i = 0; i < rem.length; i++) {
-                        if(!rem[i + 1] || (rem[i+1] - rem[i] !== 1)) {
+                        if(!rem[i + 1] || (rem[i+1]! - rem[i]! !== 1)) {
                             this._index = this._index - (i + 1);
                             break;
                         }
@@ -308,19 +298,19 @@ export default class Carousel extends CollectionWrapper {
                     this.wrapper.childList.removeAt(index);
                 });
             }
-        }, time);
+        }, time)  as unknown as number;
     }
 
-    _inactive() {
+    override _inactive() {
         this._cleanUp(0);
         super._inactive();
     }
 
-    set index(index) {
+    override set index(index) {
         this.setIndex(index);
     }
 
-    get index() {
+    override get index() {
         return this._dataIndex;
     }
 
