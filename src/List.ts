@@ -1,11 +1,8 @@
-
 import CollectionWrapper from './helpers/CollectionWrapper.js';
 import ItemWrapper from './helpers/ItemWrapper.js';
-
-
 import type Lightning from '@lightningjs/core';
 
-export default class List extends CollectionWrapper {
+export default class List extends CollectionWrapper{
     override plotItems() {
         const items = this._items;
         const wrapper = this.wrapper;

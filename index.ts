@@ -26,7 +26,7 @@
 // export const ScrollingLabel: any; //export { default as ScrollingLabel } from './src/ScrollingLabel.js';
 // export const ColorShift: any;//export { default as ColorShift } from './src/ColorShift.js';
 export { default as Stepper } from './src/Stepper.js';
-// export const ArrowStepper: any; //export { default as ArrowStepper } from './src/ArrowStepper.js';
+export { default as ArrowStepper } from './src/ArrowStepper.js';
 // export const CarouselStepper: any; //export { default as CarouselStepper } from './src/CarouselStepper.js';
 export { default as ProgressStepper } from './src/ProgressStepper.js';
 export { default as ProgressBar } from './src/ProgressBar.js';

@@ -1,13 +1,10 @@
 import Lightning from '@lightningjs/core';
-import List from './List.js';
-
 import { findIndexOfObject } from './helpers/index.js';
 import type Stepper from './Stepper.js';
-import ArrowStepper from './ArrowStepper.js';
+import List from './List.js';
+
 
 interface ColorShiftTemplateSpec extends Lightning.Component.TemplateSpec {
-    [key: string]: any;
-    List: typeof List;
     autoColorShift: boolean;
     focusColor: number;
     labelColor: number;
@@ -18,6 +15,8 @@ interface ColorShiftTemplateSpec extends Lightning.Component.TemplateSpec {
     brightnessComponent: Lightning.Component;
     contrastComponent: Lightning.Component;
     gammaComponent: Lightning.Component;
+
+    List: typeof List
 }
 
 interface ColorBlindType {

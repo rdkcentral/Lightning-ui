@@ -1,60 +1,111 @@
-/*
- * If not stated otherwise in this file or this component's LICENSE file the
- * following copyright and licenses apply:
- *
- * Copyright 2021 Metrological
- *
- * Licensed under the Apache License, Version 2.0 (the License);
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+import Lightning from "@lightningjs/core";
+import Key, { type KeyData } from "./Key.js";
+import KeyWrapper from "./helpers/KeyWrapper.js";
+import type InputField from "./InputField.js";
 
-import Lightning from '@lightningjs/core';
+export interface KeyboardTemplateSpec extends Lightning.Component.TemplateSpecLoose {
+    config?: object,
+    currentInputField?: Lightning.Component
+    currentLayout?: string,
+    maxCharacters?: number,
+    Keys: object
+}
 
-import KeyWrapper from './helpers/KeyWrapper.js';
-import Key from './Key.js';
+interface InputChangedEvent {
+    previousInput: string,
+    input: string
+}
 
-export default class Keyboard extends Lightning.Component {
-    static _template() {
+interface PreviousKeyData {
+    column: number,
+    row: number
+}
+
+interface HandleEnterEvent {
+    index: number,
+    key: string
+}
+
+interface ConfigSpec {
+    layouts: LayoutSpec,
+    buttonTypes?: ButtonTypesSpec,
+    styling?: StylingSpec
+}
+
+interface LayoutSpec {
+    [key: string]: Array<string[]>
+}
+
+interface StylingSpec {
+    [key: string]: any,
+    x: number,
+    margin: number,
+    marginRight: number,
+    marginLeft: number,
+    marginTop: number,
+    marginBottom: number,
+    spacing: number,
+    horizontalSpacing: number,
+    verticalSpacing: number, 
+    align: 'left' | 'center' | 'right'
+}
+
+interface ButtonTypesSpec {
+    [key: string]: any
+}
+
+export interface KeyboardSignalMap extends Lightning.Component.SignalMap {
+    onInputChanged(event: InputChangedEvent): void,
+}
+
+export interface KeyboardTypeConfig extends Lightning.Component.TypeConfig {
+    SignalMapType: KeyboardSignalMap
+}
+
+export default class Keyboard<
+    TemplateSpec extends KeyboardTemplateSpec = KeyboardTemplateSpec,
+    TypeConfig extends KeyboardTypeConfig = KeyboardTypeConfig
+>
+    extends Lightning.Component<TemplateSpec, TypeConfig>
+    implements Lightning.Component.ImplementTemplateSpec<KeyboardTemplateSpec>
+{
+    Keys = (this as Keyboard).getByRef('Keys')! as Lightning.Element;
+
+    private _input: string = '';
+    private _inputField: undefined | Lightning.Component = undefined;
+    private _maxCharacters: number = 56;
+    private _navigationWrapAround: boolean = false;
+    private _columnIndex: number = 0;
+    private _rowIndex: number = 0;
+    private _previous: null | PreviousKeyData = null;
+    private _layout: string = '';
+    private _config: ConfigSpec = {
+        layouts: {}
+    };
+
+    static override _template(): Lightning.Component.Template<KeyboardTemplateSpec> {
         return {
             Keys: {w: w => w}
         }
     }
 
-    _construct() {
-        this._input = '';
-        this._inputField = undefined;
-        this._maxCharacters = 56;
-        this.navigationWrapAround = false;
-        this.resetFocus();
-    }
-
     resetFocus() {
         this._columnIndex = 0;
         this._rowIndex = 0;
-        this._previousKey = null;
+        this._previous = null;
     }
 
-    _setup() {
-        this._keys = this.tag('Keys');
+    override _setup() {
         this._update();
     }
 
     _update() {
-        const {layouts, buttonTypes = {}, styling = {}} = this._config;
+        const {layouts = {}, buttonTypes = {}, styling = {}} = this._config;
         if(!this._layout || (this._layout && layouts[this._layout] === undefined)) {
             console.error(`Configured layout "${this._layout}" does not exist. Picking first available: "${Object.keys(layouts)[0]}"`);
-            this._layout = Object.keys(layouts)[0];
+            this._layout = Object.keys(layouts)[0]!;
         }
-        const {horizontalSpacing = 0, verticalSpacing = 0, align = 'left'} = styling;
+        const {horizontalSpacing = 0, verticalSpacing = 0, align = 'left'} = styling as StylingSpec;
         let rowPosition = 0;
         const isEvent = /^[A-Z][A-Za-z0-9]{1}/;
         const hasLabel = /\:/;
@@ -63,7 +114,8 @@ export default class Keyboard extends Lightning.Component {
             buttonTypes.default = Key;
         }
 
-        this._keys.children = layouts[this._layout].map((row, rowIndex) => {
+        this.Keys.children = layouts[this._layout]!.map((row: string[], rowIndex: number) => {
+            const style = styling as StylingSpec;
             const {
                 x = 0,
                 margin = 0,
@@ -73,7 +125,7 @@ export default class Keyboard extends Lightning.Component {
                 marginBottom,
                 spacing: rowHorizontalSpacing = horizontalSpacing || 0,
                 align: rowAlign = align
-            } = styling[`Row${rowIndex+1}`] || {};
+            } = style[`Row${rowIndex+1}`] || {};
 
             let keyPosition = 0;
             let rowHeight = 0;
@@ -85,13 +137,13 @@ export default class Keyboard extends Lightning.Component {
 
                 if(isEvent.test(key)) {
                     if(hasLabel.test(key)) {
-                        key = key.split(':');
-                        label = key[1].toString();
-                        key = key[0];
+                        const split : string[] = key.split(':');
+                        label = split[1]!.toString();
+                        key = split[0]!;
                     }
                     if(buttonTypes[key]) {
                         keyType = buttonTypes[key];
-                        action = key.action || key;
+                        action = (key as KeyData).action || key;
                     }
                 }
 
@@ -136,27 +188,29 @@ export default class Keyboard extends Lightning.Component {
         this._refocus();
     }
 
-    _getFocused() {
+    override _getFocused() {
         return this.currentKeyWrapper || this;
     }
 
-    _handleRight() {
+    override _handleRight() {
         return this.navigate('row', 1);
     }
 
-    _handleLeft() {
+    override _handleLeft() {
         return this.navigate('row', -1);
     }
 
-    _handleUp() {
+    override _handleUp() {
         return this.navigate('column', -1);
     }
 
-    _handleDown() {
+    override _handleDown() {
         return this.navigate('column', 1);
     }
 
-    _handleKey({key, code = 'CustomKey'}) {
+    override _handleKey(event: any) {
+        let key = event.key ?? '';
+        const code = event.code ?? 'CustomKey';
         if(code === 'Backspace' && this._input.length === 0) {
             return false;
         }
@@ -170,12 +224,12 @@ export default class Keyboard extends Lightning.Component {
         return targetFound;
     }
 
-    _findKey(str) {
-        const rows = this._config.layouts[this._layout];
+    _findKey(str: string) {
+        const rows = this._config.layouts[this._layout]!;
         let i = 0, j = 0;
         for(; i < rows.length; i++) {
-            for (j = 0; j < rows[i].length; j++) {
-                let key = rows[i][j];
+            for (j = 0; j < rows[i]!.length; j++) {
+                let key = rows[i]![j]!;
                 if((str.length > 1 && key.indexOf(str) > -1) || key.toUpperCase() === str.toUpperCase()) {
                     this._rowIndex = i;
                     this._columnIndex = j;
@@ -186,31 +240,32 @@ export default class Keyboard extends Lightning.Component {
         return false;
     }
 
-    _handleEnter() {
-        const {origin, action} = this.currentKey.data;
-        const event = {
+    override _handleEnter() {
+        const {origin, action} = this.currentKey.data as KeyData;
+        const event : HandleEnterEvent = {
             index: this._input.length,
-            key: origin
+            key: origin ?? ''
         };
-        if(this._inputField && this._inputField.cursorIndex) {
-            event.index = this._inputField.cursorIndex;
+        const inputField = this._inputField as unknown as InputField;
+        if(inputField && inputField.cursorIndex) {
+            event.index = inputField.cursorIndex;
         }
         if(action !== 'Input') {
-            const split = event.key.split(':')
+            const split = event.key!.split(':')
             const call = `on${split[0]}`;
             const eventFunction = this[call];
-            event.key = split[1];
+            event.key = split[1]!;
             if(eventFunction && eventFunction.apply && eventFunction.call) {
                 eventFunction.call(this, event);
             }
             this.signal(call, {input: this._input, keyboard: this, ...event});
         }
         else {
-            this.addAt(event.key, event.index);
+            this.addAt(event.key!, event.index);
         }
     }
 
-    _changeInput(input) {
+    _changeInput(input: string) {
         if(input.length > this._maxCharacters) {
             return;
         }
@@ -218,21 +273,21 @@ export default class Keyboard extends Lightning.Component {
             previousInput: this._input,
             input: this._input = input
         };
-        if(this._inputField && this._inputField.onInputChanged) {
-            this._inputField.onInputChanged(eventData);
+        if(this._inputField && (this._inputField as unknown as InputField).onInputChanged) {
+            (this._inputField as unknown as InputField).onInputChanged(eventData);
         }
-        this.signal('onInputChanged', eventData);
+        (this as Keyboard).signal('onInputChanged', eventData);
     }
 
-    focus(str) {
+    focus(str: string) {
         this._findKey(str);
     }
 
-    add(str) {
+    add(str: string) {
         this._changeInput(this._input + str);
     }
 
-    addAt(str, index) {
+    addAt(str: string, index: number) {
         if(index > this._input.length - 1) {
             this.add(str);
         }
@@ -245,7 +300,7 @@ export default class Keyboard extends Lightning.Component {
         this._changeInput(this._input.substring(0, this._input.length - 1));
     }
 
-    removeAt(index) {
+    removeAt(index: number) {
         if(index > this._input.length - 1) {
             this.remove();
         }
@@ -258,7 +313,7 @@ export default class Keyboard extends Lightning.Component {
         this._changeInput('');
     }
 
-    layout(key) {
+    layout(key: string) {
         if(key === this._layout) {
             return;
         }
@@ -269,11 +324,12 @@ export default class Keyboard extends Lightning.Component {
         }
     }
 
-    inputField(component) {
-        if(component && component.isComponent) {
+    inputField(component: Lightning.Component) {
+        if(component) {
+            const comp = component as unknown as InputField;
             this._rowIndex = 0;
             this._columnIndex = 0;
-            this._input = component.input !== undefined? component.input : '';
+            this._input = comp.input !== undefined ? comp.input : '';
             this._inputField = component;
         }
         else {
@@ -284,16 +340,18 @@ export default class Keyboard extends Lightning.Component {
         }
     }
 
-    navigate(direction, shift) {
+    navigate(direction: string, shift: number) : boolean {
         const targetIndex = (direction === 'row' ? this._columnIndex : this._rowIndex) + shift;
-        const currentRow = this.rows[this._rowIndex];
+        const currentRow = this.rows[this._rowIndex]!;
         if(direction === 'row' && targetIndex > -1 && targetIndex < currentRow.children.length) {
             this._previous = null;
-            return this._columnIndex = targetIndex;
-        } else if (direction === 'row' && this.navigationWrapAround) {
+            this._columnIndex = targetIndex
+            return true;
+        } else if (direction === 'row' && this._navigationWrapAround) {
             this._previous = null;
-            let rowLen = currentRow.children.length
-            return this._columnIndex = (targetIndex%rowLen + rowLen)%rowLen
+            let rowLen = currentRow.children.length;
+            this._columnIndex = (targetIndex%rowLen + rowLen)%rowLen;
+            return true
         }
         if(direction === 'column' && targetIndex > -1 && targetIndex < this.rows.length ) {
             const currentRowIndex = this._rowIndex;
@@ -305,9 +363,9 @@ export default class Keyboard extends Lightning.Component {
                 this._rowIndex = this._previous.row;
             }
             else {
-                const targetRow = this.rows[targetIndex];
+                const targetRow = this.rows[targetIndex]!;
                 const currentKey = this.currentKeyWrapper;
-                const currentRow = this.rows[this._rowIndex];
+                const currentRow = this.rows[this._rowIndex]!;
                 const currentX = currentRow.x - (currentRow.w * currentRow.mountX)  + currentKey.x;
                 const m = targetRow.children.map((key) => {
                     const keyX = targetRow.x - (targetRow.w * targetRow.mountX) + key.x;
@@ -326,8 +384,8 @@ export default class Keyboard extends Lightning.Component {
                     if(m[i] === -1 && acc > -1) {
                         break;
                     }
-                    if(m[i] > acc) {
-                        acc = m[i];
+                    if(m[i]! > acc) {
+                        acc = m[i]!;
                         t = i;
                     }
                 }
@@ -335,39 +393,41 @@ export default class Keyboard extends Lightning.Component {
                     this._rowIndex = targetIndex;
                     this._columnIndex = t;
                 } // if no next row found and wraparound is on, loop back to first row
-                else if(this.navigationWrapAround){
-                    this._columnIndex = Math.min(this.rows[0].children.length-1, this._columnIndex)
-                    return this._rowIndex = 0;
+                else if(this._navigationWrapAround){
+                    this._columnIndex = Math.min(this.rows[0]!.children.length-1, this._columnIndex)
+                    this._rowIndex = 0;
+                    return true;
                 }
             }
             if(this._rowIndex !== currentRowIndex) {
                 this._previous = {column: currentColumnIndex, row: currentRowIndex};
-                return this._rowIndex = targetIndex;
+                this._rowIndex = targetIndex;
+                return true;
             }
         }
-        else if(direction === 'column' && this.navigationWrapAround){
+        else if(direction === 'column' && this._navigationWrapAround){
           this._previous = {column: this._columnIndex, row: this._rowIndex};
           let nrRows = this.rows.length
           this._rowIndex = (targetIndex%nrRows + nrRows)%nrRows
-          this._columnIndex = Math.min(this.rows[this._rowIndex].children.length-1, this._columnIndex)
+          this._columnIndex = Math.min(this.rows[this._rowIndex]!.children.length-1, this._columnIndex)
         }
         return false;
     }
 
-    onSpace({index}) {
-        this.addAt(' ', index);
+    onSpace(event: HandleEnterEvent) {
+        this.addAt(' ', event.index ?? 0);
     }
 
-    onBackspace({index}) {
-        this.removeAt(index);
+    onBackspace(event: HandleEnterEvent) {
+        this.removeAt(event.index ?? 0);
     }
 
     onClear() {
         this.clear();
     }
 
-    onLayout({key}) {
-        this.layout(key);
+    onLayout(event: HandleEnterEvent) {
+        this.layout(event.key);
     }
 
     set config(obj) {
@@ -381,12 +441,12 @@ export default class Keyboard extends Lightning.Component {
         return this._config;
     }
 
-    set currentInputField(component) {
+    set currentInputField(component: Lightning.Component) {
         this.inputField(component);
     }
 
     get currentInputField() {
-        return this._inputField;
+        return this._inputField as Lightning.Component;
     }
 
     set currentLayout(str) {
@@ -406,14 +466,14 @@ export default class Keyboard extends Lightning.Component {
     }
 
     get rows() {
-        return this._keys && this._keys.children;
+        return this.Keys && this.Keys.children;
     }
 
     get currentKeyWrapper() {
-        return this.rows && this.rows[this._rowIndex].children[this._columnIndex];
+        return this.rows && this.rows[this._rowIndex]!.children[this._columnIndex] as KeyWrapper;
     }
 
     get currentKey() {
-        return this.currentKeyWrapper && this.currentKeyWrapper.key
+        return this.currentKeyWrapper && this.currentKeyWrapper.key!
     }
 }

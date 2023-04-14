@@ -9,7 +9,6 @@ import {
 } from './index.js';
 
 export interface CollectionWrapperTemplateSpec extends Lightning.Component.TemplateSpec {
-    [key: string]: any,
     direction?: string,
     spacing?: number,
     autoResize?: boolean,
@@ -97,7 +96,7 @@ interface UniqueIDs {
 
 export interface CollectionWrapperSignalMap extends Lightning.Component.SignalMap {
     onIndexChanged(event: IndexChangedEvent): void,
-    onRequestItems(event: RequestItemsEvent): void,
+    onRequestItems(event: RequestItemsEvent): Promise<Array<object> | object | string | number>,
     onItemsRepositioned(): void
 }
 
@@ -112,7 +111,7 @@ export default class CollectionWrapper<
     extends Lightning.Component<TemplateSpec, TypeConfig>
     implements Lightning.Component.ImplementTemplateSpec<CollectionWrapperTemplateSpec>
 {
-    Wrapper = (this as CollectionWrapper)!.getByRef('Wrapper')! as Lightning.Element;
+    Wrapper = (this as CollectionWrapper).getByRef('Wrapper')! as Lightning.Element;
 
     protected _scrollTransitionSettings = this.stage.transitions.createSettings({});
     protected _spacing: number = 0;
@@ -189,9 +188,9 @@ export default class CollectionWrapper<
         let obj = crossSize;
         if(typeof crossSize === 'number') {
             const {main, mainDim, crossDim} = this._getPlotProperties(this._direction);
-            const lastItem = this.wrapper.childList.last;
+            const lastItem = this.wrapper.children[this.wrapper.children.length-1];
             obj = {
-                [mainDim]: lastItem[main] + lastItem[mainDim],
+                [mainDim]: lastItem![main] + lastItem![mainDim],
                 [crossDim]: crossSize
             }
         }
@@ -220,7 +219,7 @@ export default class CollectionWrapper<
         this.scrollCollectionWrapper(obj);
 
         if (obj.previousIndex !== obj.index) {
-            this.signal('onIndexChanged', obj);
+            (this as CollectionWrapper).signal('onIndexChanged', obj);
         }
     }
 
@@ -232,7 +231,7 @@ export default class CollectionWrapper<
             max: 0
         }
         this._requestingItems = true;
-        (this.signal('onRequestItems', obj) as Promise<Array<object> | object | string | number>)
+        (this as CollectionWrapper).signal('onRequestItems', obj)
             .then((response: any) => {
                 if (response === false) {
                     this._requestsEnabled = false;
@@ -274,7 +273,7 @@ export default class CollectionWrapper<
         }
     }
 
-    protected override add(item: any) {
+    override add(item: any) {
         this.addAt(item);
     }
 
@@ -343,7 +342,7 @@ export default class CollectionWrapper<
 
     repositionItems() {
         //placeHolder
-        this.signal('onItemsRepositioned')
+        (this as CollectionWrapper).signal('onItemsRepositioned')
     }
 
     navigate(shift: number, direction?:number) {
@@ -446,8 +445,9 @@ export default class CollectionWrapper<
         let child = event.child;
         const index = child.componentIndex;
         for(let key in this._items[index]) {
-            if(child.component[key] !== undefined) {
-                this._items[index]![key] = child.component[key];
+            const comp = child.component as unknown as ItemType;
+            if(comp[key] !== undefined) {
+                this._items[index]![key] = comp[key];
             }
         }
         this._collectGarbage();
