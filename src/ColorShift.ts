@@ -2,6 +2,7 @@ import Lightning from '@lightningjs/core';
 import { findIndexOfObject } from './helpers/index.js';
 import type Stepper from './Stepper.js';
 import List from './List.js';
+import ArrowStepper from './ArrowStepper.js';
 
 
 interface ColorShiftTemplateSpec extends Lightning.Component.TemplateSpec {

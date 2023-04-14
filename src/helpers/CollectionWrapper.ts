@@ -273,7 +273,7 @@ export default class CollectionWrapper<
         }
     }
 
-    override add(item: any) {
+    protected override add(item: any) {
         this.addAt(item);
     }
 
