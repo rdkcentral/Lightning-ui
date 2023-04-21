@@ -1,11 +1,12 @@
 import Lightning from '@lightningjs/core';
-import { findIndexOfObject } from './helpers/index.js';
+import {findIndexOfObject } from './helpers/index.js';
 import type Stepper from './Stepper.js';
 import List from './List.js';
 import ArrowStepper from './ArrowStepper.js';
 
 
 interface ColorShiftTemplateSpec extends Lightning.Component.TemplateSpec {
+    [key: string]: any;
     autoColorShift: boolean;
     focusColor: number;
     labelColor: number;
@@ -91,11 +92,13 @@ export default class ColorShift extends Lightning.Component<ColorShiftTemplateSp
     }
 
     override _getFocused() {
-        return this.List as Lightning.Component;
+        return this.List;
     }
 
     _shiftColors() {
+        //@ts-expect-error
         if(this._autoColorShift && (this.application && this.application.colorshift)) {
+            //@ts-expect-error
             this.application.colorshift(this._settings.correction, this._settings);
         }
     }
@@ -123,7 +126,7 @@ export default class ColorShift extends Lightning.Component<ColorShiftTemplateSp
     }
 
     _update() {
-        const list = this.List;
+        const list = this.List
         const steppers = ['Brightness', 'Contrast', 'Gamma'];
         const options = this._options;
         const settings = this._settings;
@@ -135,15 +138,30 @@ export default class ColorShift extends Lightning.Component<ColorShiftTemplateSp
         this._shiftColors();
         const settingItems = steppers.map((stepper) => {
             const lowerC = stepper.toLocaleLowerCase();
-            return {type: (this[`${lowerC}Component`] as Lightning.Component), label: stepper, value: settings[lowerC], w: this.finalW, h: 80, ...colors}
+            return {type: this._findComponent(lowerC), label: stepper, value: settings[lowerC], w: this.finalW, h: 80, ...colors}
         });
-        settingItems.unshift({type: this.correctionComponent, options, value: findIndexOfObject(options, settings.correction, 'type'), label: 'Color adjustment', w: this.finalW, h: 80, ...colors});
+
+        settingItems.unshift({type: this.correctionComponent, value: findIndexOfObject(options, settings.correction, 'type'), label: 'Color adjustment', w: this.finalW, h: 80, ...colors});
         list.clear();
         list.add(settingItems);
     }
 
     override _firstActive() {
         this._update();
+    }
+
+    _findComponent(comp: string) {
+        switch(comp) {
+            case 'correction':
+                return this.correctionComponent;
+            case 'contrast':
+                return this.contrastComponent;
+            case 'brightness':
+                return this.brightnessComponent;
+            case 'gamma':
+                return this.gammaComponent;
+        }
+        return this.stepperComponent
     }
 
     set autoColorShift(bool: boolean) {

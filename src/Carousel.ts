@@ -12,6 +12,7 @@ interface CarouselTemplateSpec extends CollectionWrapperTemplateSpec {
 interface CarouselArray extends Array<Lightning.Component.NewPatchTemplate<Lightning.Component.Constructor<ItemWrapper>>> {
     [key: number]: Lightning.Component.NewPatchTemplate<Lightning.Component.Constructor<ItemWrapper>>
 }
+
 export default class Carousel extends CollectionWrapper<CarouselTemplateSpec>
     implements Lightning.Component.ImplementTemplateSpec<CarouselTemplateSpec>
 {
@@ -202,7 +203,8 @@ export default class Carousel extends CollectionWrapper<CarouselTemplateSpec>
         const childList = this.wrapper.childList;
         const {main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
         const currentDataIndex = this.currentItemWrapper.componentIndex;
-        let referenceItem = childList.last
+        
+        let referenceItem = childList.last;
         if (shift < 0) {
             referenceItem = childList.first;
         }

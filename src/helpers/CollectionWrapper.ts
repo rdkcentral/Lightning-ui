@@ -90,6 +90,8 @@ export interface ScrollOptions {
     forward?: number
 }
 
+type addItems = string | number | object | object[];
+
 interface UniqueIDs {
     [key: string]: boolean;
 }
@@ -178,7 +180,7 @@ export default class CollectionWrapper<
         this._collectGarbage(true);
     }
 
-    private _updateScrollTransition() {
+    _updateScrollTransition() {
         const axis = this._direction === 1 ? 'y' : 'x';
         this.Wrapper.transition(axis, this._scrollTransitionSettings);
         this._scrollTransition = this.Wrapper.transition(axis);
@@ -201,7 +203,7 @@ export default class CollectionWrapper<
         }
     }
 
-    protected _indexChanged(obj: IndexChangedEvent) {
+    _indexChanged(obj: IndexChangedEvent) {
         let previous = obj.previousMainIndex ?? obj.previousIndex;
         let target = obj.mainIndex ?? obj.index;
         let max = obj.lines ?? obj.dataLength;
@@ -223,7 +225,7 @@ export default class CollectionWrapper<
         }
     }
 
-    protected requestItems(reload?: boolean, obj?: RequestItemsEvent) {
+    requestItems(reload?: boolean, obj?: RequestItemsEvent) {
         reload = reload ?? false;
         obj = obj ?? {
             previous: 0,
@@ -247,7 +249,7 @@ export default class CollectionWrapper<
             })
     }
 
-    protected setIndex(index: number) {
+    setIndex(index: number) {
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
         this._index = targetIndex;
@@ -255,7 +257,7 @@ export default class CollectionWrapper<
         return previousIndex !== targetIndex;
     }
 
-    protected clear() {
+    clear() {
         this._uids = {};
         this._items = [];
         this._index = 0;
@@ -272,12 +274,19 @@ export default class CollectionWrapper<
             }
         }
     }
-
-    protected override add(item: any) {
-        this.addAt(item);
+    
+    override add<T extends addItems>(
+        element: T,
+    ): T;
+    override add<T extends Lightning.Component.Constructor>(element: Lightning.Element.NewPatchTemplate<T>): InstanceType<T>;
+    override add(
+        element: Array<Lightning.Element.NewPatchTemplate | Element>,
+    ): void;
+    override add(element: addItems) : void {
+        this.addAt(element);
     }
 
-    protected addAt(item: any, index?: number) {
+    addAt(item: any, index?: number) {
         index = index ?? this._items.length;
         if(index >= 0 && index <= this._items.length) {
             if(!Array.isArray(item)) {
@@ -293,7 +302,7 @@ export default class CollectionWrapper<
         }
     }
 
-    protected remove(target: any) {
+    remove(target: any) {
         if(this.hasItems && target.assignedID) {
             const itemWrappers = this.itemWrappers;
             for(let i = 0; i < this._items.length; i++) {
@@ -311,7 +320,7 @@ export default class CollectionWrapper<
         }
     }
 
-    protected removeAt(index: number, amount?: number) {
+    removeAt(index: number, amount?: number) {
         if(index < 0 && index >= this._items.length) {
             throw new Error('removeAt: The index ' + index + ' is out of bounds ' + this._items.length);
         }
@@ -322,7 +331,7 @@ export default class CollectionWrapper<
         return item;
     }
 
-    reload(items: [string, number, object, object[]]) {
+    reload(items: addItems) {
         this.clear();
         this.add(items);
     }

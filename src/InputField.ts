@@ -161,6 +161,7 @@ export default class InputField extends Lightning.Component<InputFieldTemplateSp
         return this._description;
     }
 
+    //@ts-expect-error
     override set cursor(obj: CursorPatch) {
         if(obj.x) {
             this._cursorX = obj.x as number;
@@ -169,6 +170,7 @@ export default class InputField extends Lightning.Component<InputFieldTemplateSp
         this.Cursor.patch(obj);
     }
 
+    //@ts-expect-error
     override get cursor() {
         return this.Cursor as CursorPatch;
     }

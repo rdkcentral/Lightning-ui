@@ -5,10 +5,14 @@ import type InputField from "./InputField.js";
 
 export interface KeyboardTemplateSpec extends Lightning.Component.TemplateSpecLoose {
     config?: object,
-    currentInputField?: Lightning.Component
+    currentInputField?: Lightning.Component,
     currentLayout?: string,
     maxCharacters?: number,
     Keys: object
+}
+
+interface LooseEvent {
+    [s: string]: any;
 }
 
 interface InputChangedEvent {
@@ -55,18 +59,19 @@ interface ButtonTypesSpec {
 }
 
 export interface KeyboardSignalMap extends Lightning.Component.SignalMap {
+    (event: LooseEvent): void,
     onInputChanged(event: InputChangedEvent): void,
 }
 
-export interface KeyboardTypeConfig extends Lightning.Component.TypeConfig {
+export interface KeyboardTypeConfig extends Lightning.Component.TypeConfigLoose {
     SignalMapType: KeyboardSignalMap
 }
 
 export default class Keyboard<
     TemplateSpec extends KeyboardTemplateSpec = KeyboardTemplateSpec,
-    TypeConfig extends KeyboardTypeConfig = KeyboardTypeConfig
+    TypeConfigLoose extends KeyboardTypeConfig = KeyboardTypeConfig
 >
-    extends Lightning.Component<TemplateSpec, TypeConfig>
+    extends Lightning.Component<TemplateSpec, TypeConfigLoose>
     implements Lightning.Component.ImplementTemplateSpec<KeyboardTemplateSpec>
 {
     Keys = (this as Keyboard).getByRef('Keys')! as Lightning.Element;
@@ -253,9 +258,10 @@ export default class Keyboard<
         if(action !== 'Input') {
             const split = event.key!.split(':')
             const call = `on${split[0]}`;
-            const eventFunction = this[call];
+            
+            const eventFunction = this[call as keyof this];
             event.key = split[1]!;
-            if(eventFunction && eventFunction.apply && eventFunction.call) {
+            if(eventFunction && (typeof eventFunction === 'function')) {
                 eventFunction.call(this, event);
             }
             this.signal(call, {input: this._input, keyboard: this, ...event});
@@ -283,7 +289,14 @@ export default class Keyboard<
         this._findKey(str);
     }
 
-    add(str: string) {
+    override add<T extends string>(
+        str: T,
+    ): T;
+    override add<T extends string>(str: T): void;
+    override add(
+        str: string,
+    ): void;
+    override add(str: string) : void {
         this._changeInput(this._input + str);
     }
 
