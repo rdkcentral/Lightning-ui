@@ -203,10 +203,10 @@ export default class Carousel extends CollectionWrapper<CarouselTemplateSpec>
         const childList = this.wrapper.childList;
         const {main, mainDim, mainMarginFrom, mainMarginTo} = this._getPlotProperties(this._direction);
         const currentDataIndex = this.currentItemWrapper.componentIndex;
-        
-        let referenceItem = childList.last;
+
+        let referenceItem = childList.last as ItemWrapper;
         if (shift < 0) {
-            referenceItem = childList.first;
+            referenceItem = childList.first as ItemWrapper;
         }
 
         const targetDataIndex = this._normalizeDataIndex(referenceItem.componentIndex + shift);

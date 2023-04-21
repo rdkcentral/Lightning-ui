@@ -44,7 +44,7 @@ export function getDirection(value: string): number {
 }
 
 export interface AnimationAttributes {
-    duration?: number;
+    duration: number;
     delay?: number;
     repeat?: number;
     repeatDelay?: number;

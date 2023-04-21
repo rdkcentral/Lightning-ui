@@ -21,6 +21,14 @@ interface ColorShiftTemplateSpec extends Lightning.Component.TemplateSpec {
     List: typeof List
 }
 
+interface ColorShiftSignalMap extends Lightning.Component.SignalMap {
+    onColorShift(settings: ColorSettings): void;
+}
+
+interface ColorShiftTypeConfig extends Lightning.Component.TypeConfig {
+    SignalMapType: ColorShiftSignalMap
+}
+
 interface ColorBlindType {
     type: string,
     label: string
@@ -35,7 +43,7 @@ interface ColorSettings {
 }
 
 
-export default class ColorShift extends Lightning.Component<ColorShiftTemplateSpec>
+export default class ColorShift extends Lightning.Component<ColorShiftTemplateSpec, ColorShiftTypeConfig>
     implements Lightning.Component.ImplementTemplateSpec<ColorShiftTemplateSpec>{
     private _autoColorShift: boolean = true;
     private _focusColor: number = 0xff009245;
@@ -45,7 +53,7 @@ export default class ColorShift extends Lightning.Component<ColorShiftTemplateSp
     private _currentCorrection: string = 'neutral';
 
     private _options: ColorBlindType[] = [
-        {   
+        {
             type: 'neutral',
             label: 'normal'
         },
@@ -82,7 +90,7 @@ export default class ColorShift extends Lightning.Component<ColorShiftTemplateSp
 
 
     List = (this as ColorShift).getByRef('List')!;
-    
+
     static override _template(): Lightning.Component.Template<ColorShiftTemplateSpec> {
         return {
             w: 574,
