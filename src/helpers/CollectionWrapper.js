@@ -86,8 +86,8 @@ export default class CollectionWrapper extends Lightning.Component {
                 previousMainIndex: this._previousIndex || 0,
                 crossIndex: this._crossIndex || 0,
                 previousCrossIndex: this._previousCrossIndex || 0,
-                lines: this._lines && this._lines.length || undefined,
-                dataLength: this._items.length
+                lines: this._lines && this._lines.length || 0,
+                dataLength: this._items && this._items.length || 0
             }
         }
         this._requestingItems = true;
