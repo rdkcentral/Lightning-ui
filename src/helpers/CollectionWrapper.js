@@ -129,8 +129,8 @@ export default class CollectionWrapper extends Lightning.Component {
             dataLength: this._items && this._items.length || 0
         }
         return this._request(obj)
-            .then((response) => {
-                if(response = []) {
+            .then((response = []) => {
+                if(response) {
                     const newData = [...data, ...response];
                     if(index > this._items.length + newData.length) {
                         return this._requestMore(index, newData);
