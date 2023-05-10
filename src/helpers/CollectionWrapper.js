@@ -80,34 +80,62 @@ export default class CollectionWrapper extends Lightning.Component {
     requestItems(reload = false, obj = undefined) {
         if(obj === undefined) {
             obj = {
-                previous: 0,
-                index: 0,
-                max: 0
+                previousIndex: 0, 
+                index: this._index,
+                mainIndex: this._mainIndex || 0,
+                previousMainIndex: this._previousIndex || 0,
+                crossIndex: this._crossIndex || 0,
+                previousCrossIndex: this._previousCrossIndex || 0,
+                lines: this._lines && this._lines.length || undefined,
+                dataLength: this._items.length
             }
         }
         this._requestingItems = true;
-        this.signal('onRequestItems', obj)
+        return new Promise((resolve) => {
+            this.signal('onRequestItems', obj)
+                .then((response) => {
+                    if (response === false) {
+                        this.enableRequests = false;
+                    }
+                    this._requestingItems = false;
+                    if(reload) {
+                        this.clear();
+                    }
+                    const type = typeof response;
+                    if ((Array.isArray(response) && response.length > 0) || type === 'object' ||  type === 'string' || type === 'number') {
+                        this.add(response);
+                        this.signal('onRequestItemsAdded');
+                        resolve(true);
+                    }
+                    else {
+                        resolve(false);
+                    }
+                });
+        });
+    }
+
+    async _requestMore(index) {
+        return this.requestItems()
             .then((response) => {
-                if (response === false) {
-                    this.enableRequests = false;
+                if(response) {
+                    if(index > this._items.length - 1) {
+                        return this._requestMore();
+                    }
+                    return true;
                 }
-                this._requestingItems = false;
-                if(reload) {
-                    this.clear();
-                }
-                const type = typeof response;
-                if (Array.isArray(response) || type === 'object' ||  type === 'string' || type === 'number') {
-                    this.add(response);
-                }
-            })
+                return false;
+            });
     }
  
-    setIndex(index) {
+    async setIndex(index) {
+        if(this._requestsEnabled && (index > this._items.length - 1)) {
+            await this._requestMore(index);
+        }
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
         this._index = targetIndex;
         this._indexChanged({ previousIndex, index: targetIndex, dataLength: this._items.length });
-        return previousIndex !== targetIndex;   
+        return previousIndex !== targetIndex;
     }
 
     clear() {
