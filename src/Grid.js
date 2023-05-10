@@ -18,9 +18,9 @@
  */
 
 import {
-  CollectionWrapper,
-  ItemWrapper,
-  limitWithinRange,
+    CollectionWrapper,
+    ItemWrapper,
+    limitWithinRange,
 } from './helpers';
 
 export default class Grid extends CollectionWrapper {
@@ -39,32 +39,37 @@ export default class Grid extends CollectionWrapper {
         this._previous = undefined;
     }
 
-    setIndex(index) {
+    async setIndex(index) {
+        if (this._requestsEnabled && (index > this._items.length - 1)) {
+            await this._requestMore(index);
+        }
+
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
-        const {mainIndex:previousMainIndex, crossIndex:previousCrossIndex} = this._findLocationOfIndex(this._index);
-        const {mainIndex, crossIndex} = this._findLocationOfIndex(targetIndex);
+        const { mainIndex: previousMainIndex, crossIndex: previousCrossIndex } = this._findLocationOfIndex(previousIndex);
+        const { mainIndex, crossIndex } = this._findLocationOfIndex(targetIndex);
         this._mainIndex = mainIndex;
         this._crossIndex = crossIndex;
-        this._previous = {mainIndex, crossIndex, realIndex: previousIndex};
+        this._previous = { mainIndex, crossIndex, realIndex: previousIndex };
         this._index = targetIndex;
-        this._indexChanged({previousIndex, index: targetIndex, mainIndex, previousMainIndex, crossIndex, previousCrossIndex, lines: this._lines.length, dataLength: this._items.length});
+        this._indexChanged({ previousIndex, index: targetIndex, mainIndex, previousMainIndex, crossIndex, previousCrossIndex, lines: this._lines.length, dataLength: this._items.length });
+        return previousIndex !== targetIndex;
     }
 
     _findLocationOfIndex(index) {
-        for(let i = 0; i < this._lines.length; i++) {
-            if(this._lines[i].includes(index)) {
-                return {mainIndex: i, crossIndex: this._lines[i].indexOf(index)};
+        for (let i = 0; i < this._lines.length; i++) {
+            if (this._lines[i].includes(index)) {
+                return { mainIndex: i, crossIndex: this._lines[i].indexOf(index) };
             }
         }
-        return {mainIndex: -1, crossIndex: -1};
+        return { mainIndex: -1, crossIndex: -1 };
     }
 
     plotItems() {
         const items = this._items;
         const wrapper = this.wrapper;
 
-        const {directionIsRow, mainDirection, main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim, crossMarginTo, crossMarginFrom} = this._getPlotProperties(this._direction);
+        const { directionIsRow, mainDirection, main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim, crossMarginTo, crossMarginFrom } = this._getPlotProperties(this._direction);
         const crossSize = this[crossDim];
         let mainPos = 0, crossPos = 0, lineIndex = 0;
 
@@ -82,11 +87,11 @@ export default class Grid extends CollectionWrapper {
             const sizes = this._getItemSizes(item);
             const targetCrossFromMargin = (sizes[crossMarginFrom] || sizes.margin || 0);
 
-            if(index === 0) {
+            if (index === 0) {
                 mainPos += (sizes[mainMarginFrom] || sizes.margin || 0);
             }
 
-            if(cl.length > 0 && ((this[mainDirection] > 0 && this[mainDirection] === cl.length) || (this[mainDirection] === 0 && crossPos + targetCrossFromMargin + sizes[crossDim] > crossSize))) {
+            if (cl.length > 0 && ((this[mainDirection] > 0 && this[mainDirection] === cl.length) || (this[mainDirection] === 0 && crossPos + targetCrossFromMargin + sizes[crossDim] > crossSize))) {
                 const bil = this._getBiggestInLine(cl);
                 mainPos = bil[main] + bil[mainDim] + (bil[mainMarginTo] || bil.margin || this._mainSpacing);
                 crossPos = targetCrossFromMargin;
@@ -97,21 +102,21 @@ export default class Grid extends CollectionWrapper {
             else {
                 crossPos += targetCrossFromMargin;
             }
-            
+
             const ref = `IW-${item.assignedID}`;
             let tmp = mainPos;
             let tcp = crossPos;
 
             const existingItemWrapper = wrapper.tag(ref);
-            
-            if(existingItemWrapper && 
+
+            if (existingItemWrapper &&
                 ((existingItemWrapper.active && (crossPos !== existingItemWrapper[cross] || mainPos !== existingItemWrapper[main])) ||
-                (!existingItemWrapper.active && ((renderContext[`p${main}`] + wrapper[main] + mainPos <= viewboundMain) || (renderContext[`p${cross}`] + wrapper[cross] + crossPos <= viewboundCross))))){
+                    (!existingItemWrapper.active && ((renderContext[`p${main}`] + wrapper[main] + mainPos <= viewboundMain) || (renderContext[`p${cross}`] + wrapper[cross] + crossPos <= viewboundCross))))) {
                 tmp = existingItemWrapper[main];
                 tcp = existingItemWrapper[cross];
                 animateItems.push(index);
             }
-            
+
             const newItem = {
                 ref,
                 type: ItemWrapper,
@@ -123,19 +128,19 @@ export default class Grid extends CollectionWrapper {
                 [main]: tmp,
                 [cross]: tcp
             }
-            
+
             crossPos += sizes[crossDim] + (sizes[crossMarginTo] || sizes.margin || this._crossSpacing);
             this._lines[lineIndex].push(index);
             cl.push(newItem);
-            return newItem; 
+            return newItem;
         });
-        
+
         wrapper.children = newChildren;
 
         animateItems.forEach((index) => {
             const item = wrapper.children[index];
             item.patch({
-                smooth: {x: item.assignedX, y: item.assignedY}
+                smooth: { x: item.assignedX, y: item.assignedY }
             });
         });
 
@@ -148,11 +153,11 @@ export default class Grid extends CollectionWrapper {
 
     repositionItems() {
         const wrapper = this.wrapper;
-        if(!wrapper && wrapper.children.length) {
+        if (!wrapper && wrapper.children.length) {
             return true;
         }
 
-        const {main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim, crossMarginTo, crossMarginFrom} = this._getPlotProperties(this._direction);
+        const { main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim, crossMarginTo, crossMarginFrom } = this._getPlotProperties(this._direction);
         const crossSize = this[crossDim];
         let mainPos = 0, crossPos = 0, lineIndex = 0;
 
@@ -165,10 +170,10 @@ export default class Grid extends CollectionWrapper {
             const sizes = this._getItemSizes(item);
             const targetCrossFromMargin = (sizes[crossMarginFrom] || sizes.margin || 0);
 
-            if(index === 0) {
+            if (index === 0) {
                 mainPos += (sizes[mainMarginFrom] || sizes.margin || 0);
             }
-            if(cl.length > 0 && ((this[mainDirection] > 0 && this[mainDirection] === cl.length) || (this[mainDirection] === 0 && crossPos + targetCrossFromMargin + sizes[crossDim] > crossSize))) {
+            if (cl.length > 0 && ((this[mainDirection] > 0 && this[mainDirection] === cl.length) || (this[mainDirection] === 0 && crossPos + targetCrossFromMargin + sizes[crossDim] > crossSize))) {
                 const bil = this._getBiggestInLine(cl);
                 mainPos = bil[main] + bil[mainDim] + (bil[mainMarginTo] || bil.margin || this._mainSpacing);
                 crossPos = targetCrossFromMargin;
@@ -179,7 +184,7 @@ export default class Grid extends CollectionWrapper {
             else {
                 crossPos += targetCrossFromMargin;
             }
-            
+
             item.patch({
                 [`assigned${main.toUpperCase()}`]: mainPos,
                 [`assigned${cross.toUpperCase()}`]: crossPos,
@@ -200,9 +205,9 @@ export default class Grid extends CollectionWrapper {
     }
 
     _getBiggestInLine(line) {
-        const {mainDim} = this._getPlotProperties(this._direction);
+        const { mainDim } = this._getPlotProperties(this._direction);
         return line.reduce((biggestItem, newItem) => {
-            if(newItem[mainDim] > biggestItem[mainDim]) {
+            if (newItem[mainDim] > biggestItem[mainDim]) {
                 return newItem;
             }
             return biggestItem;
@@ -210,32 +215,32 @@ export default class Grid extends CollectionWrapper {
     }
 
     navigate(shift, direction) {
-        const {directionIsRow, cross, crossDim} = this._getPlotProperties(this._direction);
-        const overCross = ((directionIsRow && direction === CollectionWrapper.DIRECTION.column) 
-                            || (!directionIsRow && direction === CollectionWrapper.DIRECTION.row));
+        const { directionIsRow, cross, crossDim } = this._getPlotProperties(this._direction);
+        const overCross = ((directionIsRow && direction === CollectionWrapper.DIRECTION.column)
+            || (!directionIsRow && direction === CollectionWrapper.DIRECTION.row));
 
         let targetMainIndex = this._mainIndex + !!(!overCross) * shift;
         let targetCrossIndex = this._crossIndex + !!overCross * shift;
         let targetIndex = this._index;
-        
-        if(overCross && targetCrossIndex > -1 && targetCrossIndex <= this._lines[targetMainIndex].length) {
-            if(this._lines[targetMainIndex][targetCrossIndex] !== undefined) {
+
+        if (overCross && targetCrossIndex > -1 && targetCrossIndex <= this._lines[targetMainIndex].length) {
+            if (this._lines[targetMainIndex][targetCrossIndex] !== undefined) {
                 targetIndex = this._lines[targetMainIndex][targetCrossIndex];
                 this._previous = undefined;
             }
-        } else if (!overCross && targetMainIndex < this._lines.length && targetMainIndex > -1){
+        } else if (!overCross && targetMainIndex < this._lines.length && targetMainIndex > -1) {
             const targetLine = this._lines[targetMainIndex];
-            if(this._previous && this._previous.mainIndex === targetMainIndex) {
+            if (this._previous && this._previous.mainIndex === targetMainIndex) {
                 targetIndex = this._previous.realIndex;
                 targetCrossIndex = this._previous.crossIndex;
-            } else if(targetLine){
+            } else if (targetLine) {
                 const currentItem = this.currentItemWrapper;
                 const m = targetLine.map((item) => {
                     const targetItem = this.wrapper.children[item];
-                    if(targetItem[cross] <= currentItem[cross] && currentItem[cross] <= targetItem[cross] + targetItem[crossDim]) {
+                    if (targetItem[cross] <= currentItem[cross] && currentItem[cross] <= targetItem[cross] + targetItem[crossDim]) {
                         return targetItem[cross] + targetItem[crossDim] - currentItem[cross];
                     }
-                    if(targetItem[cross] >= currentItem[cross] && targetItem[cross] <= currentItem[cross] + currentItem[crossDim]) {
+                    if (targetItem[cross] >= currentItem[cross] && targetItem[cross] <= currentItem[cross] + currentItem[crossDim]) {
                         return currentItem[cross] + currentItem[crossDim] - targetItem[cross];
                     }
                     return -1;
@@ -243,24 +248,24 @@ export default class Grid extends CollectionWrapper {
 
                 let acc = -1;
                 let t = -1;
-                for(let i = 0; i < m.length; i++) {
-                    if(m[i] === -1 && acc > -1) {
+                for (let i = 0; i < m.length; i++) {
+                    if (m[i] === -1 && acc > -1) {
                         break;
                     }
-                    if(m[i] > acc) {
+                    if (m[i] > acc) {
                         acc = m[i];
                         t = i;
                     }
                 }
-                if(t > -1) {
+                if (t > -1) {
                     targetCrossIndex = t;
                     targetIndex = targetLine[t];
                 }
             }
-            this._previous = {mainIndex: this._mainIndex, crossIndex: this._crossIndex, realIndex: this._index};
+            this._previous = { mainIndex: this._mainIndex, crossIndex: this._crossIndex, realIndex: this._index };
         }
 
-        if(this._index !== targetIndex) {
+        if (this._index !== targetIndex) {
             this.setIndex(targetIndex);
             return true;
         }
@@ -305,5 +310,9 @@ export default class Grid extends CollectionWrapper {
         this._spacing = num;
         this._mainSpacing = num;
         this._crossSpacing = num;
+    }
+
+    get spacing() {
+        return this._spacing;
     }
 }
