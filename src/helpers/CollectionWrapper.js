@@ -91,36 +91,53 @@ export default class CollectionWrapper extends Lightning.Component {
             }
         }
         this._requestingItems = true;
+        this._request(obj)
+            .then((response) => {
+                this._requestingItems = false;
+                if(reload) {
+                    this.clear();
+                }
+                if ((Array.isArray(response) && response.length > 0) || type === 'object' ||  type === 'string' || type === 'number') {
+                    this.add(response);
+                    obj.dataLength = this._items && this._items.length || 0;
+                    this.signal('onRequestItemsAdded', obj);
+                }
+            });
+    }
+
+    _request(obj) {
         return new Promise((resolve) => {
             this.signal('onRequestItems', obj)
                 .then((response) => {
-                    if (response === false || (Array.isArray(response) && response.length === 0)) {
+                    if(response === undefined || response === false || (Array.isArray(response) && response.length === 0)) {
                         this.enableRequests = false;
                     }
-                    this._requestingItems = false;
-                    if(reload) {
-                        this.clear();
-                    }
-                    const type = typeof response;
-                    if ((Array.isArray(response) && response.length > 0) || type === 'object' ||  type === 'string' || type === 'number') {
-                        this.add(response);
-                        this.signal('onRequestItemsAdded');
-                        resolve(response);
-                    }
-                    else {
-                        resolve(false);
-                    }
+                    resolve(response);
                 });
         });
     }
 
-    async _requestMore(index) {
-        return this.requestItems()
+    async _requestMore(index, data = []) {
+        const obj = {
+            previousIndex: data.length > 0 ? data.length-1 : this._index, 
+            index,
+            mainIndex: this._mainIndex || 0,
+            previousMainIndex: this._previousIndex || 0,
+            crossIndex: this._crossIndex || 0,
+            previousCrossIndex: this._previousCrossIndex || 0,
+            lines: this._lines && this._lines.length || 0,
+            dataLength: this._items && this._items.length || 0
+        }
+        return this._request(obj)
             .then((response) => {
-                if(response) {
-                    if(index > this._items.length - 1) {
-                        return this._requestMore(index);
+                if(response = []) {
+                    const newData = [...data, ...response];
+                    if(index > this._items.length + newData.length) {
+                        return this._requestMore(index, newData);
                     }
+                    this.add(newData);
+                    obj.dataLength = this._items && this._items.length || 0;
+                    this.signal('onRequestItemsAdded', obj);
                     return true;
                 }
                 return false;
