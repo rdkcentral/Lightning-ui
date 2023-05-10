@@ -19,7 +19,7 @@ interface ScrollingLabelTemplateSpec extends Lightning.Component.TemplateSpec {
 
 export default class ScrollingLabel extends Lightning.Component<ScrollingLabelTemplateSpec>
     implements Lightning.Component.ImplementTemplateSpec<ScrollingLabelTemplateSpec> {
-    
+
     private _autoStart: boolean = false;
     private _scrollAnimation: Lightning.types.Animation | false = false;
     private _fade: number = 30;
@@ -27,12 +27,12 @@ export default class ScrollingLabel extends Lightning.Component<ScrollingLabelTe
     private _label: object = {};
     private _align: 'left' | 'center' | 'right' = 'left';
 
-    private _animationSettings : AnimationAttributes = {
+    private _animationSettings: AnimationAttributes = {
         delay: 0.7,
         duration: 1,
         repeat: -1,
         stopMethod: 'immediate'
-    }
+    };
 
     LabelClipper: Lightning.Element = (this as ScrollingLabel).getByRef('LabelClipper')!
     Label: Lightning.Element = this.LabelClipper.getByRef('LabelWrapper')!.getByRef('Label')!;
@@ -99,7 +99,7 @@ export default class ScrollingLabel extends Lightning.Component<ScrollingLabelTe
                 ...this._animationSettings,
                 actions: [
                     {t: 'LabelWrapper', p: 'x', v: {sm: 0, 0: 0, 1.0: -(label.renderWidth + this._spacing)}},
-                    {t: 'LabelClipper', p: 'shader.left', v: {0: 0, 0.2: this._fade, 0.8: this._fade, 1.0: 0}},
+                    {t: 'LabelClipper', p: 'shader.left' as '$$number', v: {0: 0, 0.2: this._fade, 0.8: this._fade, 1.0: 0}},
                 ]
             });
         }
@@ -143,11 +143,11 @@ export default class ScrollingLabel extends Lightning.Component<ScrollingLabelTe
     get align() {
         return this._align;
     }
-    
+
     set autoStart(bool) {
-        this._autoStart = bool;   
+        this._autoStart = bool;
     }
-    
+
     get autoStart() {
         return this._autoStart;
     }
@@ -176,7 +176,7 @@ export default class ScrollingLabel extends Lightning.Component<ScrollingLabelTe
         return this._animationSettings.duration;
     }
 
-    set animationSettings(obj) {
+    set animationSettings(obj: Partial<AnimationAttributes>) {
         this._animationSettings = {...this._animationSettings, ...obj};
         if(this._scrollAnimation) {
             this._updateAnimation();

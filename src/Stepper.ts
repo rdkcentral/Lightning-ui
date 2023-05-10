@@ -1,5 +1,5 @@
 import Lightning from '@lightningjs/core';
-import type { InlineElement } from '@lightningjs/core/src/tree/Element.mjs';
+import type { InlineElement } from '@lightningjs/core/dist/src/tree/Element.d.mts';
 
 export interface StepperTemplateSpec extends Lightning.Component.TemplateSpec {
     focusColor?: number,

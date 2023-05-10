@@ -50,7 +50,7 @@ interface StylingSpec {
     marginBottom: number,
     spacing: number,
     horizontalSpacing: number,
-    verticalSpacing: number, 
+    verticalSpacing: number,
     align: 'left' | 'center' | 'right'
 }
 
@@ -258,13 +258,13 @@ export default class Keyboard<
         if(action !== 'Input') {
             const split = event.key!.split(':')
             const call = `on${split[0]}`;
-            
+
             const eventFunction = this[call as keyof this];
             event.key = split[1]!;
             if(eventFunction && (typeof eventFunction === 'function')) {
                 eventFunction.call(this, event);
             }
-            this.signal(call, {input: this._input, keyboard: this, ...event});
+            (this as Keyboard).signal(call, {input: this._input, keyboard: this, ...event});
         }
         else {
             this.addAt(event.key!, event.index);

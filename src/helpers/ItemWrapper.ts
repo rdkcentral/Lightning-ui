@@ -2,7 +2,6 @@ import Lightning from '@lightningjs/core';
 import type { ItemSizes, ItemType } from './CollectionWrapper';
 
 export interface ItemWrapperTemplateSpec extends Lightning.Component.TemplateSpec {
-    [key: string]: any,
     margin?: number,
     marginTop?: number,
     marginBottom?: number,
@@ -24,6 +23,11 @@ export default class ItemWrapper
 
     assignedX = 0;
     assignedY = 0;
+
+    marginTop: number = 0;
+    marginRight: number = 0;
+    marginBottom: number = 0;
+    marginLeft: number = 0;
 
     static override _template(): Lightning.Component.Template<ItemWrapperTemplateSpec> {
         return {
