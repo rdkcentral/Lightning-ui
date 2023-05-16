@@ -95,14 +95,18 @@ export default class Keyboard extends Lightning.Component {
                     }
                 }
 
-                const keySpacing = keyType.margin || keyType.type.margin;
-                const {
-                    w = keyType.type.width || 0,
-                    h = keyType.type.height || 0,
-                    marginLeft = keyType.type.marginLeft || keySpacing || 0,
-                    marginRight = keyType.type.marginRight || keySpacing || rowHorizontalSpacing,
-                } = keyType;
-
+                let keySpacing = keyType.margin || 0;
+                let w = 0;
+                let h = 0;
+                let marginLeft = 0;
+                let marginRight = rowHorizontalSpacing;
+                if(keyType.type) {
+                    keySpacing = keyType.margin || keySpacing;
+                    w = keyType.type.width || w;
+                    h = keyType.type.height || h;
+                    marginLeft = keyType.type.marginLeft || marginLeft;
+                    marginRight = keyType.type.marginRight || marginRight;
+                }
                 rowHeight = h > rowHeight ? h : rowHeight;
                 const currentPosition = keyPosition + marginLeft;
                 keyPosition += marginLeft + w + marginRight;
