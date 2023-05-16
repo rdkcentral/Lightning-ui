@@ -57,9 +57,8 @@ export default class CollectionWrapper extends Lightning.Component {
     }
     
     _indexChanged(obj) {    
-        let { previousIndex: previous, index: target, dataLength: max, mainIndex, previousMainIndex, lines } = obj;
+        let { index: target, dataLength: max, mainIndex, previousMainIndex, lines } = obj;
         if (!isNaN(previousMainIndex) && !isNaN(mainIndex) && !isNaN(lines)) {
-            previous = previousMainIndex;
             target = mainIndex;
             max = lines;
         }
@@ -90,6 +89,7 @@ export default class CollectionWrapper extends Lightning.Component {
                 dataLength: this._items && this._items.length || 0
             }
         }
+
         this._requestingItems = true;
         this._request(obj)
             .then((response) => {
@@ -126,7 +126,7 @@ export default class CollectionWrapper extends Lightning.Component {
             crossIndex: this._crossIndex || 0,
             previousCrossIndex: this._previousCrossIndex || 0,
             lines: this._lines && this._lines.length || 0,
-            dataLength: this._items && this._items.length || 0
+            dataLength: data.length + this._items && this._items.length || 0
         }
         return this._request(obj)
             .then((response = []) => {
@@ -144,14 +144,14 @@ export default class CollectionWrapper extends Lightning.Component {
             });
     }
  
-    async setIndex(index) {
+    async setIndex(index, options) {
         if(this._requestsEnabled && (index > this._items.length - 1)) {
             await this._requestMore(index);
         }
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
         this._index = targetIndex;
-        this._indexChanged({ previousIndex, index: targetIndex, dataLength: this._items.length });
+        this._indexChanged({ previousIndex, index: targetIndex, dataLength: this._items.length }, options);
         return previousIndex !== targetIndex;
     }
 
@@ -163,7 +163,7 @@ export default class CollectionWrapper extends Lightning.Component {
             this._scrollTransition.reset(0, 1);
         }
         if(this.wrapper) {
-            const hadChildren = this.wrapper.children > 0;
+            const hadChildren = this.wrapper.children.length > 0;
             this.wrapper.patch({
                 x: 0, y: 0, children: []
             });
@@ -201,6 +201,9 @@ export default class CollectionWrapper extends Lightning.Component {
                     item = itemWrappers[i].component;
                 }
                 if(target.assignedID === item.assignedID) {
+                    if(i === this._items.length-1 && item.hasFocus()) {
+                        this._index = this._index - 1;
+                    }
                     return this.removeAt(i);
                 }
             }
@@ -289,7 +292,8 @@ export default class CollectionWrapper extends Lightning.Component {
         return this.setIndex(this._index + shift);
     }
 
-    scrollCollectionWrapper(obj) {
+    scrollCollectionWrapper(obj, options) {
+        const { immediate = false } = options;
         let {previousIndex:previous, index:target, dataLength:max, mainIndex, previousMainIndex, lines} = obj;
         if(!isNaN(previousMainIndex) && !isNaN(mainIndex) && !isNaN(lines)) {
             previous = previousMainIndex;
@@ -366,7 +370,7 @@ export default class CollectionWrapper extends Lightning.Component {
             }
         }
 
-        if(this.active && !isNaN(scroll) && this._scrollTransition) {
+        if(!immediate && this.active && !isNaN(scroll) && this._scrollTransition) {
             if(this._scrollTransition.isRunning()) {
                 this._scrollTransition.reset(scroll, 0.05);
             }
