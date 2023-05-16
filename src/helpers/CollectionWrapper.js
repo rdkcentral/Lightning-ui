@@ -222,7 +222,9 @@ export default class CollectionWrapper extends Lightning.Component {
         }
         const item = this._items[index];
         this._items.splice(index, amount);
-        this.plotItems();
+        if(this._items.length > 0) {
+            this.plotItems();
+        }
         return item;
     }
 
