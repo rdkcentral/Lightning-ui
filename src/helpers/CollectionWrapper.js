@@ -188,7 +188,8 @@ export default class CollectionWrapper extends Lightning.Component {
             const items = this._normalizeDataItems(item);
             this._items.splice(index, 0, ...items);
             this.plotItems();
-            this.setIndex(this._index, options);
+            const targetIndex = index < this._index ? this._index + items.length : this._index;
+            this.setIndex(targetIndex, options);
         }
         else {
             throw new Error('addAt: The index ' + index + ' is out of bounds ' + this._items.length);
