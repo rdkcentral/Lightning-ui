@@ -413,7 +413,7 @@ export default class Keyboard extends Lightning.Component {
     }
 
     get currentKeyWrapper() {
-        return this.rows && this.rows[this._rowIndex].children[this._columnIndex];
+        return this.rows && this.rows[this._rowIndex] && this.rows[this._rowIndex].children[this._columnIndex];
     }
 
     get currentKey() {
