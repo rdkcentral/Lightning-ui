@@ -39,7 +39,7 @@ export default class Grid extends CollectionWrapper {
         this._previous = undefined;
     }
 
-    async setIndex(index) {
+    async setIndex(index, options) {
         if(this._requestsEnabled && (index > this._items.length - 1)) {
             await this._requestMore(index);
         }
@@ -54,7 +54,7 @@ export default class Grid extends CollectionWrapper {
         this._crossIndex = crossIndex;
         this._previous = {mainIndex, crossIndex, realIndex: previousIndex};
         this._index = targetIndex;
-        this._indexChanged({previousIndex, index: targetIndex, mainIndex, previousMainIndex, crossIndex, previousCrossIndex, lines: this._lines.length, dataLength: this._items.length});
+        this._indexChanged({previousIndex, index: targetIndex, mainIndex, previousMainIndex, crossIndex, previousCrossIndex, lines: this._lines.length, dataLength: this._items.length}, options);
     }
 
     _findLocationOfIndex(index) {
