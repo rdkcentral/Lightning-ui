@@ -82,9 +82,9 @@ export default class CollectionWrapper extends Lightning.Component {
                 previousIndex: 0, 
                 index: this._index,
                 mainIndex: this._mainIndex || 0,
-                previousMainIndex: this._previousIndex || 0,
+                previousMainIndex: this._mainIndex || 0,
                 crossIndex: this._crossIndex || 0,
-                previousCrossIndex: this._previousCrossIndex || 0,
+                previousCrossIndex: this._crossIndex || 0,
                 lines: this._lines && this._lines.length || 0,
                 dataLength: this._items && this._items.length || 0
             }
@@ -119,12 +119,12 @@ export default class CollectionWrapper extends Lightning.Component {
 
     async _requestMore(index, data = []) {
         const obj = {
-            previousIndex: data.length > 0 ? data.length-1 : this._index, 
+            previousIndex: this._index, 
             index,
             mainIndex: this._mainIndex || 0,
-            previousMainIndex: this._previousIndex || 0,
+            previousMainIndex: this._previous && this._previous.mainIndex || 0,
             crossIndex: this._crossIndex || 0,
-            previousCrossIndex: this._previousCrossIndex || 0,
+            previousCrossIndex: this._previous && this._previous.crossIndex || 0,
             lines: this._lines && this._lines.length || 0,
             dataLength: data.length + this._items && this._items.length || 0
         }

@@ -42,8 +42,8 @@ export default class Grid extends CollectionWrapper {
     setIndex(index) {
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
-        const {mainIndex:previousMainIndex, crossIndex:previousCrossIndex} = this._findLocationOfIndex(this._index);
-        const {mainIndex, crossIndex} = this._findLocationOfIndex(targetIndex);
+        const { mainIndex: previousMainIndex, crossIndex: previousCrossIndex } = this._findLocationOfIndex(previousIndex);
+        const { mainIndex, crossIndex } = this._findLocationOfIndex(targetIndex);
         this._mainIndex = mainIndex;
         this._crossIndex = crossIndex;
         this._previous = {mainIndex, crossIndex, realIndex: previousIndex};
