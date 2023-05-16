@@ -39,7 +39,13 @@ export default class Grid extends CollectionWrapper {
         this._previous = undefined;
     }
 
-    setIndex(index) {
+    async setIndex(index) {
+        if(this._requestsEnabled && (index > this._items.length - 1)) {
+            await this._requestMore(index);
+        }
+        if(this._items.length === 0) {
+            return;
+        }
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
         const { mainIndex: previousMainIndex, crossIndex: previousCrossIndex } = this._findLocationOfIndex(previousIndex);
