@@ -176,11 +176,11 @@ export default class CollectionWrapper extends Lightning.Component {
         }
     }
 
-    add(item) {
-        this.addAt(item);
+    add(item, options) {
+        this.addAt(item, this._items.length, options);
     }
 
-    addAt(item, index = this._items.length) {
+    addAt(item, index = this._items.length, options) {
         if(index >= 0 && index <= this._items.length) {
             if(!Array.isArray(item)) {
                 item = [item];
@@ -188,7 +188,7 @@ export default class CollectionWrapper extends Lightning.Component {
             const items = this._normalizeDataItems(item);
             this._items.splice(index, 0, ...items);
             this.plotItems();
-            this.setIndex(this._index);
+            this.setIndex(this._index, options);
         }
         else {
             throw new Error('addAt: The index ' + index + ' is out of bounds ' + this._items.length);
