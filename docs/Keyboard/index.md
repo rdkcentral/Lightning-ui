@@ -375,6 +375,9 @@ Sets a new layout for the Keyboard component to update to. Expected input is a `
 ### maxCharacters
 Sets the maximum input length the Keyboard registers. Expected input is a `number`.
 
+### snapToRow
+Sets if the navigation to the closest key in the next row.
+
 ## Getters
 
 ### config
@@ -388,3 +391,6 @@ Returns the current `layout` key that is being used.
 
 ### maxCharacters
 Returns the maximum amount of `characters` the Keyboard component registers. Default value is 56.
+
+### snapToRow
+Returns the current `snapToRow` value.

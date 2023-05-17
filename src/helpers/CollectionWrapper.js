@@ -57,9 +57,8 @@ export default class CollectionWrapper extends Lightning.Component {
     }
     
     _indexChanged(obj) {    
-        let { previousIndex: previous, index: target, dataLength: max, mainIndex, previousMainIndex, lines } = obj;
+        let { index: target, dataLength: max, mainIndex, previousMainIndex, lines } = obj;
         if (!isNaN(previousMainIndex) && !isNaN(mainIndex) && !isNaN(lines)) {
-            previous = previousMainIndex;
             target = mainIndex;
             max = lines;
         }
@@ -80,34 +79,84 @@ export default class CollectionWrapper extends Lightning.Component {
     requestItems(reload = false, obj = undefined) {
         if(obj === undefined) {
             obj = {
-                previous: 0,
-                index: 0,
-                max: 0
+                previousIndex: 0, 
+                index: this._index,
+                mainIndex: this._mainIndex || 0,
+                previousMainIndex: this._mainIndex || 0,
+                crossIndex: this._crossIndex || 0,
+                previousCrossIndex: this._crossIndex || 0,
+                lines: this._lines && this._lines.length || 0,
+                dataLength: this._items && this._items.length || 0
             }
         }
+
         this._requestingItems = true;
-        this.signal('onRequestItems', obj)
+        this._request(obj)
             .then((response) => {
-                if (response === false) {
-                    this.enableRequests = false;
-                }
                 this._requestingItems = false;
                 if(reload) {
                     this.clear();
                 }
-                const type = typeof response;
-                if (Array.isArray(response) || type === 'object' ||  type === 'string' || type === 'number') {
+
+                if ((Array.isArray(response) && response.length > 0) || type === 'object' ||  type === 'string' || type === 'number') {
                     this.add(response);
+                    obj.dataLength = this._items && this._items.length || 0;
+                    this.signal('onRequestItemsAdded', obj);
                 }
-            })
+            });
+    }
+
+    _request(obj) {
+        return new Promise((resolve) => {
+            this.signal('onRequestItems', obj)
+                .then((response) => {
+                    if(response === undefined || response === false || (Array.isArray(response) && response.length === 0)) {
+                        this.enableRequests = false;
+                    }
+                    resolve(response);
+                });
+        });
+    }
+
+    async _requestMore(index, data = []) {
+        const obj = {
+            previousIndex: this._index, 
+            index,
+            mainIndex: this._mainIndex || 0,
+            previousMainIndex: this._previous && this._previous.mainIndex || 0,
+            crossIndex: this._crossIndex || 0,
+            previousCrossIndex: this._previous && this._previous.crossIndex || 0,
+            lines: this._lines && this._lines.length || 0,
+            dataLength: data.length + this._items && this._items.length || 0
+        }
+        return this._request(obj)
+            .then((response = []) => {
+                if(response) {
+                    const newData = [...data, ...response];
+                    if(index > this._items.length + newData.length) {
+                        return this._requestMore(index, newData);
+                    }
+                    this.add(newData);
+                    obj.dataLength = this._items && this._items.length || 0;
+                    this.signal('onRequestItemsAdded', obj);
+                    return true;
+                }
+                return false;
+            });
     }
  
-    setIndex(index) {
+    async setIndex(index, options) {
+        if(this._requestsEnabled && (index > this._items.length - 1)) {
+            await this._requestMore(index);
+        }
+        if(this._items.length === 0) {
+            return;
+        }
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
         this._index = targetIndex;
-        this._indexChanged({ previousIndex, index: targetIndex, dataLength: this._items.length });
-        return previousIndex !== targetIndex;   
+        this._indexChanged({ previousIndex, index: targetIndex, dataLength: this._items.length }, options);
+        return previousIndex !== targetIndex;
     }
 
     clear() {
@@ -118,7 +167,7 @@ export default class CollectionWrapper extends Lightning.Component {
             this._scrollTransition.reset(0, 1);
         }
         if(this.wrapper) {
-            const hadChildren = this.wrapper.children > 0;
+            const hadChildren = this.wrapper.children.length > 0;
             this.wrapper.patch({
                 x: 0, y: 0, children: []
             });
@@ -128,11 +177,11 @@ export default class CollectionWrapper extends Lightning.Component {
         }
     }
 
-    add(item) {
-        this.addAt(item);
+    add(item, options) {
+        this.addAt(item, this._items.length, options);
     }
 
-    addAt(item, index = this._items.length) {
+    addAt(item, index = this._items.length, options) {
         if(index >= 0 && index <= this._items.length) {
             if(!Array.isArray(item)) {
                 item = [item];
@@ -140,7 +189,8 @@ export default class CollectionWrapper extends Lightning.Component {
             const items = this._normalizeDataItems(item);
             this._items.splice(index, 0, ...items);
             this.plotItems();
-            this.setIndex(this._index);
+            const targetIndex = index < this._index ? this._index + items.length : this._index;
+            this.setIndex(targetIndex, options);
         }
         else {
             throw new Error('addAt: The index ' + index + ' is out of bounds ' + this._items.length);
@@ -156,6 +206,9 @@ export default class CollectionWrapper extends Lightning.Component {
                     item = itemWrappers[i].component;
                 }
                 if(target.assignedID === item.assignedID) {
+                    if(i === this._items.length-1 && item.hasFocus()) {
+                        this._index = this._index - 1;
+                    }
                     return this.removeAt(i);
                 }
             }
@@ -171,7 +224,9 @@ export default class CollectionWrapper extends Lightning.Component {
         }
         const item = this._items[index];
         this._items.splice(index, amount);
-        this.plotItems();
+        if(this._items.length > 0) {
+            this.plotItems();
+        }
         return item;
     }
 
@@ -244,7 +299,8 @@ export default class CollectionWrapper extends Lightning.Component {
         return this.setIndex(this._index + shift);
     }
 
-    scrollCollectionWrapper(obj) {
+    scrollCollectionWrapper(obj, options) {
+        const { immediate = false } = options;
         let {previousIndex:previous, index:target, dataLength:max, mainIndex, previousMainIndex, lines} = obj;
         if(!isNaN(previousMainIndex) && !isNaN(mainIndex) && !isNaN(lines)) {
             previous = previousMainIndex;
@@ -321,7 +377,7 @@ export default class CollectionWrapper extends Lightning.Component {
             }
         }
 
-        if(this.active && !isNaN(scroll) && this._scrollTransition) {
+        if(!immediate && this.active && !isNaN(scroll) && this._scrollTransition) {
             if(this._scrollTransition.isRunning()) {
                 this._scrollTransition.reset(scroll, 0.05);
             }

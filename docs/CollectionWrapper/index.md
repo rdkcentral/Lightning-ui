@@ -292,6 +292,9 @@ set filter (v) {
 
 This forces the CollectionWrapper to signal the onRequestItems function to provide data.
 
+
+When you've set up the Requests functionality and use the setIndex with a value that is higher than the amount of items currently available the CollectionWrapper will try to catch up to that point by calling the onRequestItems signal until it has enough data.
+
 ## Signals
 The Collection Wrapper makes use of signals if you want to respond to certain actions:
 ```js
@@ -351,16 +354,16 @@ This signal is fired when the Items have been repositioned by the Collection Wra
 ### add
 You can add items to the Collection Wrapper on the fly by using the `add` method:
 ```js
-this.tag('MyGrid').add(items)
+this.tag('MyGrid').add(items, options)
 ```
-The parameter `items` can either be an array, object, string, or number.
+The parameter `items` can either be an array, object, string, or number. The parameter `options` is an object passed to the setIndex function.
 
 ### addAt
 You can add items to the Collection Wrapper at a starting from a specific index using the `addAt` method:
 ```js
-this.tag('MyGrid').addAt(items, index)
+this.tag('MyGrid').addAt(items, index, options)
 ```
-The parameter `items` can either be an array, object, string, or number. The parameter `index` should be a number starting from 0.
+The parameter `items` can either be an array, object, string, or number. The parameter `index` should be a number starting from 0. The parameter `options` is an object passed to the setIndex function.
 
 ### reload
 You can reload the Collection Wrapper with a new set of items by using the `reload` method.
@@ -418,9 +421,12 @@ this.collectionWrapper.reposition()
 ### setIndex
 You can set the index of the Collection Wrapper by using the `setIndex` method: 
 ```js
-this.tag('MyGrid').setIndex(index)
+this.tag('MyGrid').setIndex(index, options)
 ```
-The parameter `index` should be a number starting from 0.
+The parameter `index` should be a number starting from 0. The parameter `options` should be an object containing options settings.
+
+#### immediate
+This option forces the collection wrapper to set the index without animation to that index.
 
 ### first
 You can set the index to the first item in the Collection Wrapper by using the `first` method:

@@ -34,6 +34,7 @@ export default class Keyboard extends Lightning.Component {
         this._inputField = undefined;
         this._maxCharacters = 56;
         this.navigationWrapAround = false;
+        this._snapToRow = false;
         this.resetFocus();
     }
 
@@ -95,14 +96,20 @@ export default class Keyboard extends Lightning.Component {
                     }
                 }
 
-                const keySpacing = keyType.margin || keyType.type.margin;
-                const {
-                    w = keyType.type.width || 0,
-                    h = keyType.type.height || 0,
-                    marginLeft = keyType.type.marginLeft || keySpacing || 0,
-                    marginRight = keyType.type.marginRight || keySpacing || rowHorizontalSpacing,
-                } = keyType;
-
+                let keySpacing = keyType && keyType.margin || 0;
+                let w = 0;
+                let h = 0;
+                let marginLeft = 0;
+                let marginRight = rowHorizontalSpacing;
+                if(keyType.type) {
+                    keySpacing = keyType.type.margin || keySpacing;
+                    w = keyType.type.width || w;
+                    h = keyType.type.height || h;
+                    marginLeft = keyType.type.marginLeft || marginLeft;
+                    marginRight = keyType.type.marginRight || marginRight;
+                }
+                w = keyType.w || w;
+                h = keyType.h || h;
                 rowHeight = h > rowHeight ? h : rowHeight;
                 const currentPosition = keyPosition + marginLeft;
                 keyPosition += marginLeft + w + marginRight;
@@ -284,6 +291,57 @@ export default class Keyboard extends Lightning.Component {
         }
     }
 
+    _findKeyInRow(currentKey, currentRow, targetRow) {
+        const currentX = currentRow.x - (currentRow.w * currentRow.mountX)  + currentKey.x;
+        const m = targetRow.children.map((key) => {
+            const keyX = targetRow.x - (targetRow.w * targetRow.mountX) + key.x;
+            if(keyX <= currentX && (this._snapToRow || currentX < keyX + key.w)) {
+                return (keyX + key.w) - currentX;
+            }
+            if(keyX >= currentX && (this._snapToRow || keyX < currentX + currentKey.w)) {
+                return (currentX + currentKey.w) - keyX;
+            }
+            return -1;
+        });
+        if(!this._snapToRow) {
+            let acc = -1;
+            let t = -1;
+            for(let i = 0; i < m.length; i++) {
+                if(m[i] === -1 && acc > -1) {
+                    break;
+                }
+                if(m[i] > acc) {
+                    acc = m[i];
+                    t = i;
+                }
+            }
+            return t;
+        }
+        let t = m.indexOf(currentKey.w);
+        if(t === -1 && m.length > 0) {
+            let acc = this.w;
+            for(let i = 0; i < m.length; i++) {
+                if(m[i] >= 0) {
+                    const cutoff = ((currentX + currentKey.w) - currentX) - m[i];
+                    if(cutoff < acc) {
+                        acc = cutoff;
+                        t = i;
+                    }
+                }
+            }
+            if(t === -1) {
+                acc = this.w;
+                for(let i = 0; i < m.length; i++) {
+                    if(Math.abs(m[i]) < acc) {
+                        acc = Math.abs(m[i]);
+                        t = i;
+                    }
+                }
+            }
+        }
+        return t;
+    }
+
     navigate(direction, shift) {
         const targetIndex = (direction === 'row' ? this._columnIndex : this._rowIndex) + shift;
         const currentRow = this.rows[this._rowIndex];
@@ -308,35 +366,14 @@ export default class Keyboard extends Lightning.Component {
                 const targetRow = this.rows[targetIndex];
                 const currentKey = this.currentKeyWrapper;
                 const currentRow = this.rows[this._rowIndex];
-                const currentX = currentRow.x - (currentRow.w * currentRow.mountX)  + currentKey.x;
-                const m = targetRow.children.map((key) => {
-                    const keyX = targetRow.x - (targetRow.w * targetRow.mountX) + key.x;
-                    if(keyX <= currentX && currentX < keyX + key.w) {
-                        return (keyX + key.w) - currentX;
-                    }
-                    if(keyX >= currentX && keyX <= currentX + currentKey.w) {
-                        return (currentX + currentKey.w) - keyX;
-                    }
-                    return -1;
-                });
-                let acc = -1;
-                let t = -1;
-
-                for(let i = 0; i < m.length; i++) {
-                    if(m[i] === -1 && acc > -1) {
-                        break;
-                    }
-                    if(m[i] > acc) {
-                        acc = m[i];
-                        t = i;
-                    }
-                }
+                let t = this._findKeyInRow(currentKey, currentRow, targetRow);
                 if(t > -1) {
                     this._rowIndex = targetIndex;
                     this._columnIndex = t;
                 } // if no next row found and wraparound is on, loop back to first row
                 else if(this.navigationWrapAround){
-                    this._columnIndex = Math.min(this.rows[0].children.length-1, this._columnIndex)
+                    t = this._findKeyInRow(currentKey, currentRow, this.rows[0]);
+                    this._columnIndex = t > -1 ? t : Math.min(this.rows[0].children.length-1, this._columnIndex)
                     return this._rowIndex = 0;
                 }
             }
@@ -405,12 +442,20 @@ export default class Keyboard extends Lightning.Component {
         return this._maxCharacters;
     }
 
+    set snapToRow(bool) {
+        this._snapToRow = bool;
+    }
+
+    get snapToRow() {
+        return true;
+    }
+
     get rows() {
         return this._keys && this._keys.children;
     }
 
     get currentKeyWrapper() {
-        return this.rows && this.rows[this._rowIndex].children[this._columnIndex];
+        return this.rows && this.rows[this._rowIndex] && this.rows[this._rowIndex].children[this._columnIndex];
     }
 
     get currentKey() {
