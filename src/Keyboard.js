@@ -330,7 +330,7 @@ export default class Keyboard extends Lightning.Component {
                 
                 if(t === -1 && m.length > 0) {
                     if(!this._snapToRow) {
-                        const checkForOverlap = m.map((v, index) => v + targetRow.children[index])
+                        const checkForOverlap = m.map((v, index) => v + targetRow.children[index].w)
                         console.log('test', checkForOverlap)
                     }
                 }
