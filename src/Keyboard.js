@@ -291,6 +291,57 @@ export default class Keyboard extends Lightning.Component {
         }
     }
 
+    _findKeyInRow(currentKey, currentRow, targetRow) {
+        const currentX = currentRow.x - (currentRow.w * currentRow.mountX)  + currentKey.x;
+        const m = targetRow.children.map((key) => {
+            const keyX = targetRow.x - (targetRow.w * targetRow.mountX) + key.x;
+            if(keyX <= currentX && (!this._snapToRow || currentX < keyX + key.w)) {
+                return (keyX + key.w) - currentX;
+            }
+            if(keyX >= currentX && (!this._snapToRow || keyX < currentX + currentKey.w)) {
+                return (currentX + currentKey.w) - keyX;
+            }
+            return -1;
+        });
+        if(!this._snapToRow) {
+            let acc = -1;
+            let t = -1;
+            for(let i = 0; i < m.length; i++) {
+                if(m[i] === -1 && acc > -1) {
+                    break;
+                }
+                if(m[i] > acc) {
+                    acc = m[i];
+                    t = i;
+                }
+            }
+            return t;
+        }
+        let t = m.indexOf(currentKey.w);
+        if(t === -1 && m.length > 0) {
+            let acc = this.w;
+            for(let i = 0; i < m.length; i++) {
+                if(m[i] >= 0) {
+                    const cutoff = ((currentX + currentKey.w) - currentX) - m[i];
+                    if(cutoff < acc) {
+                        acc = cutoff;
+                        t = i;
+                    }
+                }
+            }
+            if(t === -1) {
+                acc = this.w;
+                for(let i = 0; i < m.length; i++) {
+                    if(Math.abs(m[i]) < acc) {
+                        acc = Math.abs(m[i]);
+                        t = i;
+                    }
+                }
+            }
+        }
+        return t;
+    }
+
     navigate(direction, shift) {
         const targetIndex = (direction === 'row' ? this._columnIndex : this._rowIndex) + shift;
         const currentRow = this.rows[this._rowIndex];
@@ -315,40 +366,14 @@ export default class Keyboard extends Lightning.Component {
                 const targetRow = this.rows[targetIndex];
                 const currentKey = this.currentKeyWrapper;
                 const currentRow = this.rows[this._rowIndex];
-                const currentX = currentRow.x - (currentRow.w * currentRow.mountX)  + currentKey.x;
-                const m = targetRow.children.map((key) => {
-                    const keyX = targetRow.x - (targetRow.w * targetRow.mountX) + key.x;
-                    if(keyX <= currentX) {
-                        return (keyX + key.w) - currentX;
-                    }
-                    if(keyX >= currentX) {
-                        return (currentX + currentKey.w) - keyX;
-                    }
-                    return -1;
-                });
-                let t = m.indexOf((currentX + currentKey.w) - currentX);
-                
-                if(t === -1 && m.length > 0) {
-                    if(!this._snapToRow) {
-                        const checkForOverlap = m.map((v, index) => v + targetRow.children[index].w)
-                        console.log('test', checkForOverlap)
-                    }
-                }
-                // for(let i = 0; i < m.length; i++) {
-                //     if(m[i] === -1 && acc > -1) {
-                //         break;
-                //     }
-                //     if(m[i] > acc) {
-                //         acc = m[i];
-                //         t = i;
-                //     }
-                // }
+                let t = this._findKeyInRow(currentKey, currentRow, targetRow);
                 if(t > -1) {
                     this._rowIndex = targetIndex;
                     this._columnIndex = t;
                 } // if no next row found and wraparound is on, loop back to first row
                 else if(this.navigationWrapAround){
-                    this._columnIndex = Math.min(this.rows[0].children.length-1, this._columnIndex)
+                    t = this._findKeyInRow(currentKey, currentRow, this.rows[0]);
+                    this._columnIndex = t > -1 ? t : Math.min(this.rows[0].children.length-1, this._columnIndex)
                     return this._rowIndex = 0;
                 }
             }
@@ -415,6 +440,14 @@ export default class Keyboard extends Lightning.Component {
 
     get maxCharacters() {
         return this._maxCharacters;
+    }
+
+    set snapToRow(bool) {
+        this._snapToRow = bool;
+    }
+
+    get snapToRow() {
+        return true;
     }
 
     get rows() {
