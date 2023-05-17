@@ -292,6 +292,7 @@ set filter (v) {
 
 This forces the CollectionWrapper to signal the onRequestItems function to provide data.
 
+
 When you've set up the Requests functionality and use the setIndex with a value that is higher than the amount of items currently available the CollectionWrapper will try to catch up to that point by calling the onRequestItems signal until it has enough data.
 
 ## Signals
