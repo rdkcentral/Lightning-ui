@@ -1,4 +1,14 @@
 # Changelog
+
+## v1.3.8
+
+*17 may 2023*
+
+- add snapToRow functionality to Keyboard
+- optimized navigation function Keyboard
+- improved Request feature CollectionWrapper
+- Resolved minor bugs CollectionWrapper
+
 ## v1.3.7
 
 *3 feb 2023*
