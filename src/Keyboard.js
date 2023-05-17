@@ -295,10 +295,10 @@ export default class Keyboard extends Lightning.Component {
         const currentX = currentRow.x - (currentRow.w * currentRow.mountX)  + currentKey.x;
         const m = targetRow.children.map((key) => {
             const keyX = targetRow.x - (targetRow.w * targetRow.mountX) + key.x;
-            if(keyX <= currentX && (!this._snapToRow || currentX < keyX + key.w)) {
+            if(keyX <= currentX && (this._snapToRow || currentX < keyX + key.w)) {
                 return (keyX + key.w) - currentX;
             }
-            if(keyX >= currentX && (!this._snapToRow || keyX < currentX + currentKey.w)) {
+            if(keyX >= currentX && (this._snapToRow || keyX < currentX + currentKey.w)) {
                 return (currentX + currentKey.w) - keyX;
             }
             return -1;
