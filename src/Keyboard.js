@@ -34,6 +34,7 @@ export default class Keyboard extends Lightning.Component {
         this._inputField = undefined;
         this._maxCharacters = 56;
         this.navigationWrapAround = false;
+        this._snapToRow = false;
         this.resetFocus();
     }
 
@@ -95,18 +96,20 @@ export default class Keyboard extends Lightning.Component {
                     }
                 }
 
-                let keySpacing = keyType.margin || 0;
+                let keySpacing = keyType && keyType.margin || 0;
                 let w = 0;
                 let h = 0;
                 let marginLeft = 0;
                 let marginRight = rowHorizontalSpacing;
                 if(keyType.type) {
-                    keySpacing = keyType.margin || keySpacing;
+                    keySpacing = keyType.type.margin || keySpacing;
                     w = keyType.type.width || w;
                     h = keyType.type.height || h;
                     marginLeft = keyType.type.marginLeft || marginLeft;
                     marginRight = keyType.type.marginRight || marginRight;
                 }
+                w = keyType.w || w;
+                h = keyType.h || h;
                 rowHeight = h > rowHeight ? h : rowHeight;
                 const currentPosition = keyPosition + marginLeft;
                 keyPosition += marginLeft + w + marginRight;
@@ -324,7 +327,13 @@ export default class Keyboard extends Lightning.Component {
                     return -1;
                 });
                 let t = m.indexOf((currentX + currentKey.w) - currentX);
-
+                
+                if(t === -1 && m.length > 0) {
+                    if(!this._snapToRow) {
+                        const checkForOverlap = m.map((v, index) => v + targetRow.children[index])
+                        console.log('test', checkForOverlap)
+                    }
+                }
                 // for(let i = 0; i < m.length; i++) {
                 //     if(m[i] === -1 && acc > -1) {
                 //         break;
