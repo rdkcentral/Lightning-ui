@@ -39,7 +39,7 @@ export default class Grid extends CollectionWrapper {
         this._previous = undefined;
     }
 
-    async setIndex(index, options) {
+    async setIndex(index, options = {}) {
         if(this._requestsEnabled && (index > this._items.length - 1)) {
             await this._requestMore(index);
         }
@@ -66,7 +66,8 @@ export default class Grid extends CollectionWrapper {
         return {mainIndex: -1, crossIndex: -1};
     }
 
-    plotItems() {
+    plotItems(options = {}) {
+        const { immediate = false } = options;
         const items = this._items;
         const wrapper = this.wrapper;
 
@@ -138,10 +139,11 @@ export default class Grid extends CollectionWrapper {
         
         wrapper.children = newChildren;
 
+        const animationDuration = immediate ? 0 : 0.2
         animateItems.forEach((index) => {
             const item = wrapper.children[index];
             item.patch({
-                smooth: {x: item.assignedX, y: item.assignedY}
+                smooth: {x: [item.assignedX, { duration: animationDuration }], y: [item.assignedY, { duration: animationDuration }]}
             });
         });
 
@@ -215,7 +217,7 @@ export default class Grid extends CollectionWrapper {
         });
     }
 
-    navigate(shift, direction) {
+    navigate(shift, direction, options = {}) {
         const {directionIsRow, cross, crossDim} = this._getPlotProperties(this._direction);
         const overCross = ((directionIsRow && direction === CollectionWrapper.DIRECTION.column) 
                             || (!directionIsRow && direction === CollectionWrapper.DIRECTION.row));
@@ -267,7 +269,7 @@ export default class Grid extends CollectionWrapper {
         }
 
         if(this._index !== targetIndex) {
-            this.setIndex(targetIndex);
+            this.setIndex(targetIndex, options);
             return true;
         }
         return false;
@@ -311,5 +313,9 @@ export default class Grid extends CollectionWrapper {
         this._spacing = num;
         this._mainSpacing = num;
         this._crossSpacing = num;
+    }
+
+    get spacing() {
+        return this._spacing;
     }
 }

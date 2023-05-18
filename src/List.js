@@ -23,7 +23,8 @@ import {
 } from './helpers';
 
 export default class List extends CollectionWrapper {
-    plotItems() {
+    plotItems(options = {}) {
+        const { immediate = false } = options;
         const items = this._items;
         const wrapper = this.wrapper;
         const {directionIsRow, main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim} = this._getPlotProperties(this._direction);
@@ -71,10 +72,11 @@ export default class List extends CollectionWrapper {
             }
         });
         wrapper.children = newChildren;
+        const animationDuration = immediate ? 0 : 0.2
         animateItems.forEach((index) => {
             const item = wrapper.children[index];
             item.patch({
-                smooth: {x: item.assignedX, y: item.assignedY}
+                smooth: {x: [item.assignedX, { duration: animationDuration }], y: [item.assignedY, { duration: animationDuration }]}
             });
         })
         this._resizeWrapper(crossSize);
