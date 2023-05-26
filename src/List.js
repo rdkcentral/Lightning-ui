@@ -72,12 +72,13 @@ export default class List extends CollectionWrapper {
             }
         });
         wrapper.children = newChildren;
-        const animationDuration = immediate ? 0 : 0.2
         animateItems.forEach((index) => {
             const item = wrapper.children[index];
-            item.patch({
-                smooth: {x: [item.assignedX, { duration: animationDuration }], y: [item.assignedY, { duration: animationDuration }]}
-            });
+            if (immediate) {
+                item.patch({ x: item.assignedX, y: item.assignedY })
+            } else {
+                item.patch({ smooth: { x: item.assignedX, y: item.assignedY }})
+            }
         })
         this._resizeWrapper(crossSize);
     }

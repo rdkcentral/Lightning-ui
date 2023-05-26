@@ -98,6 +98,7 @@ export default class CollectionWrapper extends Lightning.Component {
                     this.clear();
                 }
 
+                const type = typeof response;
                 if ((Array.isArray(response) && response.length > 0) || type === 'object' ||  type === 'string' || type === 'number') {
                     this.add(response);
                     obj.dataLength = this._items && this._items.length || 0;
