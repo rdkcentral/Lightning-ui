@@ -35,7 +35,7 @@ export default class CollectionWrapper extends Lightning.Component {
 
         this._spacing = 0;
         this._autoResize = false;
-        
+
         this._requestingItems = false;
         this._requestThreshold = 1;
         this._requestsEnabled = false;
@@ -55,8 +55,8 @@ export default class CollectionWrapper extends Lightning.Component {
         this.wrapper.transition(axis, this._scrollTransitionSettings);
         this._scrollTransition = this.wrapper.transition(axis);
     }
-    
-    _indexChanged(obj) {    
+
+    _indexChanged(obj, options = {}) {
         let { index: target, dataLength: max, mainIndex, previousMainIndex, lines } = obj;
         if (!isNaN(previousMainIndex) && !isNaN(mainIndex) && !isNaN(lines)) {
             target = mainIndex;
@@ -69,7 +69,7 @@ export default class CollectionWrapper extends Lightning.Component {
         }
 
         this._refocus();
-        this.scrollCollectionWrapper(obj);
+        this.scrollCollectionWrapper(obj, options);
 
         if (obj.previousIndex !== obj.index) {
             this.signal('onIndexChanged', obj);
@@ -79,7 +79,7 @@ export default class CollectionWrapper extends Lightning.Component {
     requestItems(reload = false, obj = undefined) {
         if(obj === undefined) {
             obj = {
-                previousIndex: 0, 
+                previousIndex: 0,
                 index: this._index,
                 mainIndex: this._mainIndex || 0,
                 previousMainIndex: this._mainIndex || 0,
@@ -118,39 +118,51 @@ export default class CollectionWrapper extends Lightning.Component {
         });
     }
 
-    async _requestMore(index, data = []) {
+    _requestMore(index, data = [], options) {
         const obj = {
-            previousIndex: this._index, 
+            previousIndex: this._index,
             index,
             mainIndex: this._mainIndex || 0,
             previousMainIndex: this._previous && this._previous.mainIndex || 0,
             crossIndex: this._crossIndex || 0,
             previousCrossIndex: this._previous && this._previous.crossIndex || 0,
             lines: this._lines && this._lines.length || 0,
-            dataLength: data.length + this._items && this._items.length || 0
+            dataLength: data.length + (this._items && this._items.length || 0)
         }
-        return this._request(obj)
-            .then((response = []) => {
-                if(response) {
-                    const newData = [...data, ...response];
-                    if(index > this._items.length + newData.length) {
-                        return this._requestMore(index, newData);
+        this._requestingItems = true;
+        return new Promise((resolve) => {
+            this._request(obj)
+                .then((response = []) => {
+                    if (response) {
+                        const newData = [...data, ...response];
+                        if (index > this._items.length + newData.length) {
+                            this._requestMore(index, newData).then(resolve);
+                        } else {
+                            this.add(newData);
+                            obj.dataLength = this._items && this._items.length || 0;
+                            this.signal('onRequestItemsAdded', obj);
+                            this._requestingItems = false;
+                            this.setIndex(index, options)
+                            resolve(true);
+                        }
+                    } else {
+                      this._requestingItems = false;
+                      resolve(false);
                     }
-                    this.add(newData);
-                    obj.dataLength = this._items && this._items.length || 0;
-                    this.signal('onRequestItemsAdded', obj);
-                    return true;
-                }
-                return false;
-            });
+                });
+        })
     }
- 
-    async setIndex(index, options) {
-        if(this._requestsEnabled && (index > this._items.length - 1)) {
-            await this._requestMore(index);
+
+    setIndex(index, options = {}) {
+        if (this._requestsEnabled && this._requestingItems) {
+          return true;
+        }
+        if (this._requestsEnabled && (index > this._items.length - 1)) {
+            this._requestMore(index, [], options);
+            return true
         }
         if(this._items.length === 0) {
-            return;
+            return false;
         }
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
@@ -177,18 +189,18 @@ export default class CollectionWrapper extends Lightning.Component {
         }
     }
 
-    add(item, options) {
+    add(item, options = {}) {
         this.addAt(item, this._items.length, options);
     }
 
-    addAt(item, index = this._items.length, options) {
+    addAt(item, index = this._items.length, options = {}) {
         if(index >= 0 && index <= this._items.length) {
             if(!Array.isArray(item)) {
                 item = [item];
             }
             const items = this._normalizeDataItems(item);
             this._items.splice(index, 0, ...items);
-            this.plotItems();
+            this.plotItems(options);
             const targetIndex = index < this._index ? this._index + items.length : this._index;
             this.setIndex(targetIndex, options);
         }
@@ -197,7 +209,7 @@ export default class CollectionWrapper extends Lightning.Component {
         }
     }
 
-    remove(target) {
+    remove(target, options = {}) {
         if(this.hasItems && target.assignedID) {
             const itemWrappers = this.itemWrappers;
             for(let i = 0; i < this._items.length; i++) {
@@ -209,7 +221,7 @@ export default class CollectionWrapper extends Lightning.Component {
                     if(i === this._items.length-1 && item.hasFocus()) {
                         this._index = this._index - 1;
                     }
-                    return this.removeAt(i);
+                    return this.removeAt(i, options);
                 }
             }
         }
@@ -218,14 +230,14 @@ export default class CollectionWrapper extends Lightning.Component {
         }
     }
 
-    removeAt(index, amount = 1)  {
+    removeAt(index, amount = 1, options = {})  {
         if(index < 0 && index >= this._items.length) {
             throw new Error('removeAt: The index ' + index + ' is out of bounds ' + this._items.length);
         }
         const item = this._items[index];
         this._items.splice(index, amount);
         if(this._items.length > 0) {
-            this.plotItems();
+            this.plotItems(options);
         }
         return item;
     }
@@ -235,7 +247,7 @@ export default class CollectionWrapper extends Lightning.Component {
         this.add(item)
     }
 
-    plotItems(items, options) {
+    plotItems(options = {}) {
         //placeholder
     }
 
@@ -253,53 +265,53 @@ export default class CollectionWrapper extends Lightning.Component {
         this.signal('onItemsRepositioned')
     }
 
-    up() {
-        return this._attemptNavigation(-1, 1);
+    up(options = {}) {
+        return this._attemptNavigation(-1, 1, options);
     }
 
-    down() {
-        return this._attemptNavigation(1, 1);
+    down(options = {}) {
+        return this._attemptNavigation(1, 1, options);
     }
 
-    left() {
-        return this._attemptNavigation(-1, 0);
+    left(options = {}) {
+        return this._attemptNavigation(-1, 0, options);
     }
 
-    right() {
-        return this._attemptNavigation(1, 0);
+    right(options = {}) {
+        return this._attemptNavigation(1, 0, options);
     }
 
-    first() {
-        return this.setIndex(0);
+    first(options = {}) {
+        return this.setIndex(0, options);
     }
 
-    last() {
-        return this.setIndex(this._items.length - 1);
+    last(options = {}) {
+        return this.setIndex(this._items.length - 1, options);
     }
 
-    next() {
-        return this.setIndex(this._index + 1);
+    next(options = {}) {
+        return this.setIndex(this._index + 1, options);
     }
 
-    previous() {
-        return this.setIndex(this._index - 1);
+    previous(options = {}) {
+        return this.setIndex(this._index - 1, options);
     }
 
-    _attemptNavigation(shift, direction) {
+    _attemptNavigation(shift, direction, options = {}) {
         if(this.hasItems) {
-            return this.navigate(shift, direction);
+            return this.navigate(shift, direction, options);
         }
         return false;
     }
 
-    navigate(shift, direction = this._direction) {
+    navigate(shift, direction = this._direction, options = {}) {
         if(direction !== this._direction) {
             return false;
         }
-        return this.setIndex(this._index + shift);
+        return this.setIndex(this._index + shift, options);
     }
 
-    scrollCollectionWrapper(obj, options) {
+    scrollCollectionWrapper(obj, options = {}) {
         const { immediate = false } = options;
         let {previousIndex:previous, index:target, dataLength:max, mainIndex, previousMainIndex, lines} = obj;
         if(!isNaN(previousMainIndex) && !isNaN(mainIndex) && !isNaN(lines)) {
@@ -341,7 +353,7 @@ export default class CollectionWrapper extends Lightning.Component {
                 }
                 if(mod === jump - 1) {
                     const actualSize = marginFrom + cw[mainDim] + marginTo;
-                    scroll = (mod * actualSize) + marginFrom - cw[main]; 
+                    scroll = (mod * actualSize) + marginFrom - cw[main];
                 }
             }
             else if(after) {
@@ -425,7 +437,7 @@ export default class CollectionWrapper extends Lightning.Component {
     _generateUniqueID() {
         let id = '';
         while(this._uids[id] || id === '') {
-            id = Math.random().toString(36).substr(2, 9);
+            id = Math.random().toString(36).substring(2, 9);
         }
         this._uids[id] = true;
         return id;
@@ -447,7 +459,7 @@ export default class CollectionWrapper extends Lightning.Component {
             crossMarginFrom: directionIsRow ? 'marginTop' : 'marginLeft',
         }
     }
-    
+
     _getItemSizes(item) {
         const itemType = item.type;
         if(item.component && item.component.__attached) {
@@ -543,7 +555,7 @@ export default class CollectionWrapper extends Lightning.Component {
 
     get forceLoad() {
         return this._forceLoad;
-    }    
+    }
 
     get requestingItems() {
         return this._requestingItems;
