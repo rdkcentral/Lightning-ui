@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.3.9
+
+*26 may 2023*
+
+- fixed critical exception error
+- add options to more methods
+
 ## v1.3.8
 
 *17 may 2023*
