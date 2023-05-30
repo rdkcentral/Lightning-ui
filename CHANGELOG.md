@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.3.10
+
+*30 may 2023*
+
+- Grid setIndex was `async` and now its  `sync` as it was before `v1.3.8`
+- Immediate option on setIndex (and other methods) patch is now `sync` instead of an `async` (with duration: 0)
+
 ## v1.3.9
 
 *26 may 2023*
