@@ -39,12 +39,16 @@ export default class Grid extends CollectionWrapper {
         this._previous = undefined;
     }
 
-    async setIndex(index, options = {}) {
-        if(this._requestsEnabled && (index > this._items.length - 1)) {
-            await this._requestMore(index);
+    setIndex(index, options = {}) {
+        if (this._requestsEnabled && this._requestingItems) {
+          return true;
+        }
+        if (this._requestsEnabled && (index > this._items.length - 1)) {
+            this._requestMore(index, [], options);
+            return true;
         }
         if(this._items.length === 0) {
-            return;
+            return false;
         }
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
@@ -55,6 +59,7 @@ export default class Grid extends CollectionWrapper {
         this._previous = {mainIndex, crossIndex, realIndex: previousIndex};
         this._index = targetIndex;
         this._indexChanged({previousIndex, index: targetIndex, mainIndex, previousMainIndex, crossIndex, previousCrossIndex, lines: this._lines.length, dataLength: this._items.length}, options);
+        return previousIndex !== targetIndex;
     }
 
     _findLocationOfIndex(index) {
@@ -136,15 +141,14 @@ export default class Grid extends CollectionWrapper {
             cl.push(newItem);
             return newItem; 
         });
-        
         wrapper.children = newChildren;
-
-        const animationDuration = immediate ? 0 : 0.2
         animateItems.forEach((index) => {
             const item = wrapper.children[index];
-            item.patch({
-                smooth: {x: [item.assignedX, { duration: animationDuration }], y: [item.assignedY, { duration: animationDuration }]}
-            });
+            if (immediate) {
+                item.patch({ x: item.assignedX, y: item.assignedY })
+            } else {
+                item.patch({ smooth: { x: item.assignedX, y: item.assignedY }})
+            }
         });
 
         const biggestInLastLine = this._getBiggestInLine(cl);
