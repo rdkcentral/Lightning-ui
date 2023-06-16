@@ -222,7 +222,7 @@ export default class CollectionWrapper extends Lightning.Component {
                     if(i === this._items.length-1 && item.hasFocus()) {
                         this._index = this._index - 1;
                     }
-                    return this.removeAt(i, options);
+                    return this.removeAt(i, 1, options);
                 }
             }
         }
