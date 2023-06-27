@@ -163,6 +163,7 @@ export default class CollectionWrapper extends Lightning.Component {
             return true
         }
         if(this._items.length === 0) {
+            this._index = 0;
             return false;
         }
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
@@ -240,6 +241,7 @@ export default class CollectionWrapper extends Lightning.Component {
         if(this._items.length > 0) {
             this.plotItems(options);
         }
+        this.setIndex(this.index);
         return item;
     }
 
