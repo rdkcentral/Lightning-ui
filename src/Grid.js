@@ -48,6 +48,9 @@ export default class Grid extends CollectionWrapper {
             return true;
         }
         if(this._items.length === 0) {
+            this._mainIndex = 0;
+            this._crossIndex = 0;
+            this._index = 0;
             return false;
         }
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
