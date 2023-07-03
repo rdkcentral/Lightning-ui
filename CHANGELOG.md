@@ -1,5 +1,15 @@
 # Changelog
 
+*3 juli 2023*
+
+## v1.3.12
+- Focus fix when removing last element
+
+*june 2023*
+
+## v1.3.11
+- Fix remove function CollectionWrapper
+
 ## v1.3.10
 
 *30 may 2023*
