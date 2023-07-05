@@ -40,11 +40,10 @@ export default class Grid extends CollectionWrapper {
     }
 
     setIndex(index, options = {}) {
-        if (this._requestsEnabled && this._requestingItems) {
-          return true;
-        }
         if (this._requestsEnabled && (index > this._items.length - 1)) {
-            this._requestMore(index, [], options);
+            if (!this._requestingItems) {
+                this._requestMore(index, [], options);
+            }
             return true;
         }
         if(this._items.length === 0) {
