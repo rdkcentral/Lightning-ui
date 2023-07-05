@@ -1,5 +1,10 @@
 # Changelog
 
+*5 juli 2023*
+
+## v1.3.13
+- fixes the navigation getting stuck when the onRequestItems callback takes a while to resolve
+
 *3 juli 2023*
 
 ## v1.3.12
