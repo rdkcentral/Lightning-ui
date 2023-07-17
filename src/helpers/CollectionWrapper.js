@@ -176,7 +176,7 @@ export default class CollectionWrapper extends Lightning.Component {
         this._uids = [];
         this._items = [];
         this._index = 0;
-        if (this._scrollTransition) {
+        if (this._scrollTransition && this._scrollTransition.isRunning()) {
             this._scrollTransition.reset(0, 1);
         }
         if(this.wrapper) {
@@ -244,9 +244,9 @@ export default class CollectionWrapper extends Lightning.Component {
         return item;
     }
 
-    reload(item) {
+    reload(item, options = {}) {
         this.clear();
-        this.add(item)
+        this.add(item, options)
     }
 
     plotItems(options = {}) {
