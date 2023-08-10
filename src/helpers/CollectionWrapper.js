@@ -147,8 +147,8 @@ export default class CollectionWrapper extends Lightning.Component {
                             resolve(true);
                         }
                     } else {
-                      this._requestingItems = false;
-                      resolve(false);
+                        this._requestingItems = false;
+                        resolve(false);
                     }
                 });
         })
@@ -391,15 +391,19 @@ export default class CollectionWrapper extends Lightning.Component {
             }
         }
 
-        if(!immediate && this.active && !isNaN(scroll) && this._scrollTransition) {
-            if(this._scrollTransition.isRunning()) {
+        if (this.active && !isNaN(scroll) && this._scrollTransition) {
+            if (this._scrollTransition.isRunning()) {
                 this._scrollTransition.reset(scroll, 0.05);
-            }
-            else {
-                this._scrollTransition.start(scroll);
+            } else {
+                if (immediate) {
+                    this._scrollTransition.updateTargetValue(scroll);
+                    this._scrollTransition.finish();
+                } else {
+                    this._scrollTransition.start(scroll);
+                }
             }
         }
-        else if(!isNaN(scroll)) {
+        else if (!isNaN(scroll)) {
             this.wrapper[main] = scroll
         }
     }
@@ -490,13 +494,13 @@ export default class CollectionWrapper extends Lightning.Component {
         return array.map((item, index) => {
             return this._normalizeDataItem(item) || index;
         })
-        .filter((item) => {
+            .filter((item) => {
             if(!isNaN(item)) {
-                console.warn(`Item at index: ${item}, is not a valid item. Removing it from dataset`);
-                return false;
-            }
-            return true;
-        });
+                    console.warn(`Item at index: ${item}, is not a valid item. Removing it from dataset`);
+                    return false;
+                }
+                return true;
+            });
     }
 
     _normalizeDataItem(item, index) {
