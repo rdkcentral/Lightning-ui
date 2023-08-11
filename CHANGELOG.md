@@ -1,16 +1,26 @@
 # Changelog
 
-*5 juli 2023*
+*11 aug 2023*
+
+## v1.3.15
+- fix immediate options flow when forcing transition to finish right away.
+
+*17 jul 2023*
+
+## v1.3.14
+- fixes scrolltransition resetting when not running.
+
+*5 jul 2023*
 
 ## v1.3.13
 - fixes the navigation getting stuck when the onRequestItems callback takes a while to resolve
 
-*3 juli 2023*
+*3 jul 2023*
 
 ## v1.3.12
 - Focus fix when removing last element
 
-*june 2023*
+*jun 2023*
 
 ## v1.3.11
 - Fix remove function CollectionWrapper
