@@ -391,15 +391,19 @@ export default class CollectionWrapper extends Lightning.Component {
             }
         }
 
-        if(!immediate && this.active && !isNaN(scroll) && this._scrollTransition) {
-            if(this._scrollTransition.isRunning()) {
-                this._scrollTransition.reset(scroll, 0.05);
-            }
-            else {
-                this._scrollTransition.start(scroll);
+        if (this.active && !isNaN(scroll) && this._scrollTransition) {
+            if (immediate) {
+                this._scrollTransition.updateTargetValue(scroll);
+                this._scrollTransition.finish();
+            } else {
+                if (this._scrollTransition.isRunning()) {
+                    this._scrollTransition.reset(scroll, 0.05);
+                } else {
+                    this._scrollTransition.start(scroll);
+                }
             }
         }
-        else if(!isNaN(scroll)) {
+        else if (!isNaN(scroll)) {
             this.wrapper[main] = scroll
         }
     }
