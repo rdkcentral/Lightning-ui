@@ -39,12 +39,18 @@ export default class Grid extends CollectionWrapper {
         this._previous = undefined;
     }
 
-    async setIndex(index, options) {
-        if(this._requestsEnabled && (index > this._items.length - 1)) {
-            await this._requestMore(index);
+    setIndex(index, options = {}) {
+        if (this._requestsEnabled && (index > this._items.length - 1)) {
+            if (!this._requestingItems) {
+                this._requestMore(index, [], options);
+            }
+            return true;
         }
         if(this._items.length === 0) {
-            return;
+            this._mainIndex = 0;
+            this._crossIndex = 0;
+            this._index = 0;
+            return false;
         }
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
@@ -55,6 +61,7 @@ export default class Grid extends CollectionWrapper {
         this._previous = {mainIndex, crossIndex, realIndex: previousIndex};
         this._index = targetIndex;
         this._indexChanged({previousIndex, index: targetIndex, mainIndex, previousMainIndex, crossIndex, previousCrossIndex, lines: this._lines.length, dataLength: this._items.length}, options);
+        return previousIndex !== targetIndex;
     }
 
     _findLocationOfIndex(index) {
@@ -140,9 +147,11 @@ export default class Grid extends CollectionWrapper {
 
         animateItems.forEach((index) => {
             const item = wrapper.children[index];
-            item.patch({
-                smooth: {x: item.assignedX, y: item.assignedY}
-            });
+            if (immediate) {
+                item.patch({ x: item.assignedX, y: item.assignedY })
+            } else {
+                item.patch({ smooth: { x: item.assignedX, y: item.assignedY }})
+            }
         });
 
         const biggestInLastLine = this._getBiggestInLine(cl);
@@ -158,7 +167,7 @@ export default class Grid extends CollectionWrapper {
             return true;
         }
 
-        const {main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim, crossMarginTo, crossMarginFrom} = this._getPlotProperties(this._direction);
+        const {mainDirection, main, mainDim, mainMarginTo, mainMarginFrom, cross, crossDim, crossMarginTo, crossMarginFrom} = this._getPlotProperties(this._direction);
         const crossSize = this[crossDim];
         let mainPos = 0, crossPos = 0, lineIndex = 0;
 
@@ -170,6 +179,10 @@ export default class Grid extends CollectionWrapper {
         wrapper.children.forEach((item, index) => {
             const sizes = this._getItemSizes(item);
             const targetCrossFromMargin = (sizes[crossMarginFrom] || sizes.margin || 0);
+
+            const ref = item.ref;
+            let tmp = mainPos;
+            let tcp = crossPos;
 
             if(index === 0) {
                 mainPos += (sizes[mainMarginFrom] || sizes.margin || 0);
@@ -192,6 +205,18 @@ export default class Grid extends CollectionWrapper {
                 [main]: mainPos,
                 [cross]: crossPos
             });
+
+            const newItem = {
+                ref,
+                type: ItemWrapper,
+                componentIndex: index,
+                forceLoad: this._forceLoad,
+                ...sizes,
+                [`assigned${main.toUpperCase()}`]: mainPos,
+                [`assigned${cross.toUpperCase()}`]: crossPos,
+                [main]: tmp,
+                [cross]: tcp
+              }
             crossPos += sizes[crossDim] + (sizes[crossMarginTo] || sizes.margin || this._crossSpacing)
             this._lines[lineIndex].push(index);
             cl.push(newItem);
@@ -267,7 +292,7 @@ export default class Grid extends CollectionWrapper {
         }
 
         if(this._index !== targetIndex) {
-            this.setIndex(targetIndex);
+            this.setIndex(targetIndex, options);
             return true;
         }
         return false;
@@ -311,5 +336,9 @@ export default class Grid extends CollectionWrapper {
         this._spacing = num;
         this._mainSpacing = num;
         this._crossSpacing = num;
+    }
+
+    get spacing() {
+        return this._spacing;
     }
 }
