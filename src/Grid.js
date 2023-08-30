@@ -73,7 +73,8 @@ export default class Grid extends CollectionWrapper {
         return {mainIndex: -1, crossIndex: -1};
     }
 
-    plotItems() {
+    plotItems(options = {}) {
+        const { immediate = false } = options;
         const items = this._items;
         const wrapper = this.wrapper;
 
@@ -240,7 +241,7 @@ export default class Grid extends CollectionWrapper {
         });
     }
 
-    navigate(shift, direction) {
+    navigate(shift, direction, options = {}) {
         const {directionIsRow, cross, crossDim} = this._getPlotProperties(this._direction);
         const overCross = ((directionIsRow && direction === CollectionWrapper.DIRECTION.column) 
                             || (!directionIsRow && direction === CollectionWrapper.DIRECTION.row));
