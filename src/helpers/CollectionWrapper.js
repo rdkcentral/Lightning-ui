@@ -393,8 +393,7 @@ export default class CollectionWrapper extends Lightning.Component {
 
         if (this.active && !isNaN(scroll) && this._scrollTransition) {
             if (immediate) {
-                this._scrollTransition.updateTargetValue(scroll);
-                this._scrollTransition.finish();
+                this._scrollTransition.reset(scroll, 1);
             } else {
                 if (this._scrollTransition.isRunning()) {
                     this._scrollTransition.reset(scroll, 0.05);
