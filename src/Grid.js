@@ -39,12 +39,18 @@ export default class Grid extends CollectionWrapper {
         this._previous = undefined;
     }
 
-    async setIndex(index, options) {
-        if(this._requestsEnabled && (index > this._items.length - 1)) {
-            await this._requestMore(index);
+    setIndex(index, options = {}) {
+        if (this._requestsEnabled && (index > this._items.length - 1)) {
+            if (!this._requestingItems) {
+                this._requestMore(index, [], options);
+            }
+            return true;
         }
         if(this._items.length === 0) {
-            return;
+            this._mainIndex = 0;
+            this._crossIndex = 0;
+            this._index = 0;
+            return false;
         }
         const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
         const previousIndex = this._index;
@@ -55,6 +61,7 @@ export default class Grid extends CollectionWrapper {
         this._previous = {mainIndex, crossIndex, realIndex: previousIndex};
         this._index = targetIndex;
         this._indexChanged({previousIndex, index: targetIndex, mainIndex, previousMainIndex, crossIndex, previousCrossIndex, lines: this._lines.length, dataLength: this._items.length}, options);
+        return previousIndex !== targetIndex;
     }
 
     _findLocationOfIndex(index) {
@@ -66,7 +73,8 @@ export default class Grid extends CollectionWrapper {
         return {mainIndex: -1, crossIndex: -1};
     }
 
-    plotItems() {
+    plotItems(options = {}) {
+        const { immediate = false } = options;
         const items = this._items;
         const wrapper = this.wrapper;
 
@@ -135,14 +143,14 @@ export default class Grid extends CollectionWrapper {
             cl.push(newItem);
             return newItem; 
         });
-        
         wrapper.children = newChildren;
-
         animateItems.forEach((index) => {
             const item = wrapper.children[index];
-            item.patch({
-                smooth: {x: item.assignedX, y: item.assignedY}
-            });
+            if (immediate) {
+                item.patch({ x: item.assignedX, y: item.assignedY })
+            } else {
+                item.patch({ smooth: { x: item.assignedX, y: item.assignedY }})
+            }
         });
 
         const biggestInLastLine = this._getBiggestInLine(cl);
@@ -215,7 +223,7 @@ export default class Grid extends CollectionWrapper {
         });
     }
 
-    navigate(shift, direction) {
+    navigate(shift, direction, options = {}) {
         const {directionIsRow, cross, crossDim} = this._getPlotProperties(this._direction);
         const overCross = ((directionIsRow && direction === CollectionWrapper.DIRECTION.column) 
                             || (!directionIsRow && direction === CollectionWrapper.DIRECTION.row));
@@ -267,7 +275,7 @@ export default class Grid extends CollectionWrapper {
         }
 
         if(this._index !== targetIndex) {
-            this.setIndex(targetIndex);
+            this.setIndex(targetIndex, options);
             return true;
         }
         return false;
@@ -311,5 +319,9 @@ export default class Grid extends CollectionWrapper {
         this._spacing = num;
         this._mainSpacing = num;
         this._crossSpacing = num;
+    }
+
+    get spacing() {
+        return this._spacing;
     }
 }
