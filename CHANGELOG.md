@@ -1,5 +1,11 @@
 # Changelog
 
+*25 sep 2023*
+
+## v1.3.16
+- fix immediate transition finish when transition is active but immediate is true.
+- fix reposition exception (issue #69)
+
 *11 aug 2023*
 
 ## v1.3.15
