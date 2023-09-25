@@ -202,7 +202,7 @@ export default class Grid extends CollectionWrapper {
             });
             crossPos += sizes[crossDim] + (sizes[crossMarginTo] || sizes.margin || this._crossSpacing)
             this._lines[lineIndex].push(index);
-            cl.push(newItem);
+            cl.push(item);
         });
 
         const biggestInLastLine = this._getBiggestInLine(cl);
