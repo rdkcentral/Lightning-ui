@@ -403,7 +403,8 @@ export default class CollectionWrapper extends Lightning.Component {
             }
         }
         else if (!isNaN(scroll)) {
-            this.wrapper[main] = scroll
+            this.wrapper[main] = scroll;
+            this._scrollTransition.reset(scroll, 1);
         }
     }
 
