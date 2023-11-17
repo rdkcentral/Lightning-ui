@@ -2,7 +2,7 @@
 
 *17 nov 2023*
 
-## v1.3.17
+## v1.3.17 / v1.3.18
 -This fixes an issue that when you use setIndex when the component is inactive and when _cleanUp from Carousel is called, it clears all the items because the scrollTransition.targetValue is not updated.
 
 *25 sep 2023*
