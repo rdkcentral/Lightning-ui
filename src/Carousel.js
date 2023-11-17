@@ -283,7 +283,7 @@ export default class Carousel extends CollectionWrapper {
             const {main, mainDim, directionIsRow} = this._getPlotProperties(this._direction);
             const bound = this[mainDim];
             const viewboundMain = directionIsRow ? 1920 : 1080;
-            const offset = this._scrollTransition && this._scrollTransition.targetValue || 0;
+            const offset = this.wrapper[main];
 
             const boundStart =  -viewboundMain * 0.66;
             const boundEnd = bound + viewboundMain * 0.66;
