@@ -39,3 +39,4 @@ linting and code formatting in a Git commit hook.
 In the following repository you can find code examples on how to use the components
 
 [Ui-component-examples](https://github.com/mlapps/ui-component-examples)
+
