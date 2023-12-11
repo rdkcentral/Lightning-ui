@@ -1,5 +1,10 @@
 # Changelog
 
+*11 dec 2023*
+
+## v1.3.19 
+- When removing the last item from a CollectionWrapper using the remove method and that last item is out of bounds, no longer throws an error.
+
 *17 nov 2023*
 ## v1.3.17 / v1.3.18
 -This fixes an issue that when you use setIndex when the component is inactive and when _cleanUp from Carousel is called, it clears all the items because the scrollTransition.targetValue is not updated.
