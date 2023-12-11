@@ -212,14 +212,10 @@ export default class CollectionWrapper extends Lightning.Component {
 
     remove(target, options = {}) {
         if(this.hasItems && target.assignedID) {
-            const itemWrappers = this.itemWrappers;
             for(let i = 0; i < this._items.length; i++) {
                 let item = this._items[i];
-                if(itemWrappers[i] && itemWrappers[i].component.isAlive) {
-                    item = itemWrappers[i].component;
-                }
                 if(target.assignedID === item.assignedID) {
-                    if(i === this._items.length-1 && item.hasFocus()) {
+                    if(i === this._items.length - 1 && this._index === this._items.length - 1) {
                         this._index = this._index - 1;
                     }
                     return this.removeAt(i, 1, options);

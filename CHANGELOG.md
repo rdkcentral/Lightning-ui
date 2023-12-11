@@ -1,4 +1,8 @@
 # Changelog
+*11 dec 2023*
+
+## v1.3.19 
+- When removing the last item from a CollectionWrapper using the remove method and that last item is out of bounds, no longer throws an error.
 
 *17 nov 2023*
 ## v1.3.17 / v1.3.18
